@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced Lua Developer Suite</title>
+    <title>Universal Anti-Dump Lua Obfuscator</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -17,63 +17,19 @@
         }
         .container {
             width: 100%;
-            max-width: 950px;
+            max-width: 900px;
             background: #1e1e1e;
             padding: 25px;
             border-radius: 8px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
             box-sizing: border-box;
         }
-        
-        /* Navigation Tabs Styles */
-        .tabs {
-            display: flex;
-            border-bottom: 2px solid #3c3c3c;
-            margin-bottom: 25px;
-            gap: 5px;
-        }
-        .tab-btn {
-            background: #252526;
-            color: #aaa;
-            border: 1px solid #3c3c3c;
-            border-bottom: none;
-            padding: 12px 24px;
-            font-size: 15px;
-            font-weight: bold;
-            cursor: pointer;
-            border-top-left-radius: 6px;
-            border-top-right-radius: 6px;
-            transition: all 0.2s;
-        }
-        .tab-btn:hover {
-            background: #2d2d30;
-            color: #fff;
-        }
-        .tab-btn.active {
-            background: #4caf50;
-            color: white;
-            border-color: #4caf50;
-        }
-        .tab-btn.deobfuscate-tab.active {
-            background: #00bcd4;
-            border-color: #00bcd4;
-        }
-
-        .tab-content {
-            display: none;
-        }
-        .tab-content.active {
-            display: block;
-        }
-
         h1 {
+            color: #4caf50;
             margin-top: 0;
             text-align: center;
-            font-size: 26px;
+            font-size: 24px;
         }
-        .obfuscate-title { color: #4caf50; }
-        .deobfuscate-title { color: #00bcd4; }
-
         p {
             color: #b0b0b0;
             font-size: 14px;
@@ -82,16 +38,13 @@
         }
         .drop-zone {
             border: 2px dashed #4caf50;
-            padding: 25px;
+            padding: 30px;
             text-align: center;
             background: #252526;
             cursor: pointer;
             border-radius: 6px;
             margin-bottom: 20px;
             transition: background 0.2s;
-        }
-        .deobfuscate-zone {
-            border-color: #00bcd4;
         }
         .drop-zone:hover, .drop-zone.dragover {
             background: #2d2d30;
@@ -100,10 +53,8 @@
             font-weight: bold;
             display: block;
             margin: 15px 0 5px;
+            color: #4caf50;
         }
-        .obfuscate-lbl { color: #4caf50; }
-        .deobfuscate-lbl { color: #00bcd4; }
-
         textarea {
             width: 100%;
             height: 180px;
@@ -117,6 +68,7 @@
             box-sizing: border-box;
         }
         .btn {
+            background-color: #4caf50;
             color: white;
             border: none;
             padding: 12px 20px;
@@ -126,352 +78,204 @@
             cursor: pointer;
             width: 100%;
             margin-top: 15px;
-            transition: opacity 0.2s;
+            transition: background 0.2s;
         }
         .btn:hover {
-            opacity: 0.9;
+            background-color: #45a049;
         }
-        .btn-obfuscate { background-color: #4caf50; }
-        .btn-deobfuscate { background-color: #00bcd4; }
-        .btn-dl-obf { background-color: #007acc; }
-        .btn-dl-deobf { background-color: #7b1fa2; }
-
         .status {
             margin-top: 10px;
             font-style: italic;
             text-align: center;
-            color: #e0e0e0;
+            color: #00bcd4;
         }
     </style>
 </head>
 <body>
 
 <div class="container">
+    <h1>Universal Anti-Dump Lua Obfuscator</h1>
+    <p>Paste your code below or drag & drop a .lua / .txt file anywhere on this window to secure it.</p>
+
+    <div class="drop-zone" id="dropZone">
+        Drop your <strong>.lua</strong> or <strong>.txt</strong> file here or click to browse
+        <input type="file" id="fileInput" accept=".lua,.txt" style="display: none;">
+    </div>
+
+    <label for="inputCode">Source Lua Code:</label>
+    <textarea id="inputCode" placeholder="-- Paste your Lua script here..."></textarea>
+
+    <button class="btn" id="obfuscateBtn">Obfuscate Code</button>
+    <div class="status" id="statusMessage"></div>
+
+    <label for="outputCode">Obfuscated Protected Output:</label>
+    <textarea id="outputCode" readonly placeholder="-- Protected output will appear here..."></textarea>
     
-    <!-- Tab Controls -->
-    <div class="tabs">
-        <button id="btn-obfuscator" class="tab-btn active" onclick="switchTab('obfuscator')">Lua Obfuscator</button>
-        <button id="btn-deobfuscator" class="tab-btn deobfuscate-tab" onclick="switchTab('deobfuscator')">Luau Deobfuscator</button>
-    </div>
-
-    <!-- TAB 1: OBFUSCATOR PANEL -->
-    <div id="obfuscator" class="tab-content active">
-        <h1 class="obfuscate-title">Universal Anti-Dump Lua Obfuscator</h1>
-        <p>Paste your script or drag & drop a file below to protect your code.</p>
-
-        <div class="drop-zone" id="dropZoneObf">
-            Drop your <strong>.lua</strong> or <strong>.txt</strong> here or click to browse
-            <input type="file" id="fileInputObf" accept=".lua,.txt" style="display: none;">
-        </div>
-
-        <label class="obfuscate-lbl" for="inputCodeObf">Source Lua Code:</label>
-        <textarea id="inputCodeObf" placeholder="-- Paste your source script here..."></textarea>
-
-        <button class="btn btn-obfuscate" id="obfuscateBtn">Obfuscate Code</button>
-        <div class="status" id="statusMessageObf"></div>
-
-        <label class="obfuscate-lbl" for="outputCodeObf">Protected Output:</label>
-        <textarea id="outputCodeObf" readonly placeholder="-- Protected output will appear here..."></textarea>
-        
-        <button class="btn btn-dl-obf" id="downloadBtnObf" style="display: none;">Download Obfuscated File</button>
-    </div>
-
-    <!-- TAB 2: DEOBFUSCATOR PANEL -->
-    <div id="deobfuscator" class="tab-content">
-        <h1 class="deobfuscate-title">Luau & WeAreDevs Static Deobfuscator</h1>
-        <p>Drop protected scripts here to reverse byte codes, tables, and concatenation locks.</p>
-
-        <div class="drop-zone deobfuscate-zone" id="dropZoneDe">
-            Drop obfuscated <strong>.lua</strong> or <strong>.txt</strong> here or click to browse
-            <input type="file" id="fileInputDe" accept=".lua,.txt" style="display: none;">
-        </div>
-
-        <label class="deobfuscate-lbl" for="inputCodeDe">Obfuscated Input Code:</label>
-        <textarea id="inputCodeDe" placeholder="-- Paste compressed or obfuscated raw code here..."></textarea>
-
-        <button class="btn btn-deobfuscate" id="deobfuscateBtn">Deobfuscate Code</button>
-        <div class="status" id="statusMessageDe"></div>
-
-        <label class="deobfuscate-lbl" for="outputCodeDe">Cleaned Static Code Output:</label>
-        <textarea id="outputCodeDe" readonly placeholder="-- Reconstructed readable source output..."></textarea>
-        
-        <button class="btn btn-dl-deobf" id="downloadBtnDe" style="display: none;">Download Deobfuscated File</button>
-    </div>
-
+    <button class="btn" id="downloadBtn" style="background-color: #007acc; display: none;">Download Obfuscated File</button>
 </div>
 
 <script>
-    // Fixed Tab Swapping Engine
-    function switchTab(tabId) {
-        // Hide all panels
-        document.getElementById('obfuscator').classList.remove('active');
-        document.getElementById('deobfuscator').classList.remove('active');
-        
-        // Deactivate all buttons
-        document.getElementById('btn-obfuscator').classList.remove('active');
-        document.getElementById('btn-deobfuscator').classList.remove('active');
-        
-        // Activate chosen targets
-        document.getElementById(tabId).classList.add('active');
-        document.getElementById('btn-' + tabId).classList.add('active');
-    }
-
-    // --- Tab 1 Setup Variables ---
-    const dropZoneObf = document.getElementById('dropZoneObf');
-    const fileInputObf = document.getElementById('fileInputObf');
-    const inputCodeObf = document.getElementById('inputCodeObf');
-    const outputCodeObf = document.getElementById('outputCodeObf');
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    const inputCode = document.getElementById('inputCode');
+    const outputCode = document.getElementById('outputCode');
     const obfuscateBtn = document.getElementById('obfuscateBtn');
-    const downloadBtnObf = document.getElementById('downloadBtnObf');
-    const statusMessageObf = document.getElementById('statusMessageObf');
-    let fileObfName = "script.lua";
+    const downloadBtn = document.getElementById('downloadBtn');
+    const statusMessage = document.getElementById('statusMessage');
 
-    // --- Tab 2 Setup Variables ---
-    const dropZoneDe = document.getElementById('dropZoneDe');
-    const fileInputDe = document.getElementById('fileInputDe');
-    const inputCodeDe = document.getElementById('inputCodeDe');
-    const outputCodeDe = document.getElementById('outputCodeDe');
-    const deobfuscateBtn = document.getElementById('deobfuscateBtn');
-    const downloadBtnDe = document.getElementById('downloadBtnDe');
-    const statusMessageDe = document.getElementById('statusMessageDe');
-    let fileDeName = "protected.lua";
+    let currentFileName = "script.lua";
 
-    // --- Universal Drag & Drop Setup Helper ---
-    function makeDropZone(zone, input, callback) {
-        window.addEventListener('dragover', (e) => { e.preventDefault(); zone.classList.add('dragover'); });
-        window.addEventListener('dragleave', () => { zone.classList.remove('dragover'); });
-        window.addEventListener('drop', (e) => {
-            e.preventDefault(); zone.classList.remove('dragover');
-            if(e.dataTransfer.files.length > 0) callback(e.dataTransfer.files[0]);
-        });
-        zone.addEventListener('click', () => input.click());
-        input.addEventListener('change', (e) => {
-            if(e.target.files.length > 0) callback(e.target.files[0]);
-        });
+    // Setup drag and drop events
+    window.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
+    window.addEventListener('dragleave', () => { dropZone.classList.remove('dragover'); });
+    window.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('dragover');
+        if(e.dataTransfer.files.length > 0) {
+            handleFile(e.dataTransfer.files[0]);
+        }
+    });
+
+    dropZone.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', (e) => {
+        if(e.target.files.length > 0) {
+            handleFile(e.target.files[0]);
+        }
+    });
+
+    function handleFile(file) {
+        currentFileName = file.name;
+        statusMessage.innerText = `Loaded: ${currentFileName}`;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            inputCode.value = e.target.result;
+        };
+        reader.readAsText(file);
     }
 
-    makeDropZone(dropZoneObf, fileInputObf, (file) => {
-        fileObfName = file.name;
-        statusMessageObf.innerText = `Loaded: ${fileObfName}`;
-        let reader = new FileReader();
-        reader.onload = (e) => inputCodeObf.value = e.target.result;
-        reader.readAsText(file);
-    });
+    // Helper to mirror C# Random hex variables
+    function getRandHex() {
+        const num = Math.floor(Math.random() * (0xffff - 0x1000 + 1)) + 0x1000;
+        return `_0x${num.toString(16)}`;
+    }
 
-    makeDropZone(dropZoneDe, fileInputDe, (file) => {
-        fileDeName = file.name;
-        statusMessageDe.innerText = `Loaded Input: ${fileDeName}`;
-        let reader = new FileReader();
-        reader.onload = (e) => inputCodeDe.value = e.target.result;
-        reader.readAsText(file);
-    });
+    // Mirroring C# rand.Next(min, max)
+    function getRandRange(min, max) {
+        return Math.floor(Math.random() * (max - min)) + min;
+    }
 
-    // --- Core Tab 1 Logic: Obfuscator ---
-    function getRandHex() { return `_0x${(Math.floor(Math.random() * (0xffff - 0x1000 + 1)) + 0x1000).toString(16)}`; }
-    function getRandRange(min, max) { return Math.floor(Math.random() * (max - min)) + min; }
+    // Core Obfuscation Engine logic transferred from C#
+    function universalAntiDumpObfuscate(source) {
+        // Generate random variable tags
+        const varEnv = getRandHex();
+        const varRealData = getRandHex();
+        const varDecoyData = getRandHex();
+        const varLoader = getRandHex();
+        const varTamper = getRandHex();
+        const varActive = getRandHex();
+        const varKey = getRandHex();
+        const varChars = getRandHex();
+        const varDecrypt = getRandHex();
+        const varPayload = getRandHex();
+        const varExec = getRandHex();
+        const varTrace = getRandHex();
 
-    obfuscateBtn.addEventListener('click', () => {
-        const source = inputCodeObf.value.trim();
-        if(!source) return alert("Paste or drop a file code layout first!");
-        
-        statusMessageObf.innerText = "Processing Encryption Layer...";
-        
-        const varEnv = getRandHex(), varRealData = getRandHex(), varDecoyData = getRandHex();
-        const varLoader = getRandHex(), varTamper = getRandHex(), varActive = getRandHex();
-        const varKey = getRandHex(), varChars = getRandHex(), varDecrypt = getRandHex();
-        const varPayload = getRandHex(), varExec = getRandHex(), varTrace = getRandHex();
-
+        // Encode real code using Uint8Array (mimicking C# Encoding.UTF8.GetBytes)
         const encoder = new TextEncoder();
         const realBytes = encoder.encode(source);
         const realKey = getRandRange(40, 85);
         let realList = [];
-        for (let i = 0; i < realBytes.length; i++) realList.push(realBytes[i] ^ (realKey + (i % 7)));
+        
+        for (let i = 0; i < realBytes.length; i++) {
+            realList.push(realBytes[i] ^ (realKey + (i % 7)));
+        }
 
+        // Encode decoy screen trap payload
         const decoySource = 'print("this gng really thought he could get my code! what a skid. ")';
         const decoyBytes = encoder.encode(decoySource);
         const decoyKey = getRandRange(40, 85);
         let decoyList = [];
-        for (let i = 0; i < decoyBytes.length; i++) decoyList.push(decoyBytes[i] ^ (decoyKey + (i % 7)));
-
-        let res = `local ${varEnv} = { [(4)] = game, [(9)] = workspace }; `;
-        res += `local ${varRealData} = {${realList.join(',')}}; `;
-        res += `local ${varDecoyData} = {${decoyList.join(',')}}; `;
-        res += "local _p1 = 'load'; local _p2 = 'str'; local _p3 = 'ing'; ";
-        res += `local ${varLoader} = getfenv()[_p1 .. _p2 .. _p3]; `;
-        res += `local ${varTamper} = false; `;
-        res += `local ${varTrace} = debug.info and debug.info(1, 's') or ''; `;
-        res += `if ${varTrace} == '=(string)' or string.find(${varTrace}, 'dump') or string.find(${varTrace}, 'chunk') then ${varTamper} = true; end; `;
-        res += `if debug.info and debug.info(${varLoader}, 's') ~= '[C]' then ${varTamper} = true; end; `;
-        res += `if getfenv() == nil or getmetatable(getfenv()) ~= nil then ${varTamper} = true; end; `;
-        res += `local ${varActive} = ${varRealData}; local ${varKey} = ${realKey}; `;
-        res += `if ${varTamper} then ${varActive} = ${varDecoyData}; ${varKey} = ${decoyKey}; end; `;
-        res += `local ${varChars} = {}; for i = 1, #${varActive} do `;
-        res += `local ${varDecrypt} = bit32.bxor(${varActive}[i], ${varKey} + ((i - 1) % 7)); ${varChars}[i] = string.char(${varDecrypt}); end; `;
-        res += `local ${varPayload} = table.concat(${varChars}); local ${varExec} = ${varLoader}(${varPayload}); ${varExec}();`;
-
-        outputCodeObf.value = res;
-        statusMessageObf.innerText = "Script Protected Successfully!";
-        downloadBtnObf.style.display = "block";
-    });
-
-    downloadBtnObf.addEventListener('click', () => {
-        triggerDownload(outputCodeObf.value, fileObfName, "_Obfuscated");
-    });
-
-    // --- Core Tab 2 Logic: Deobfuscator Engine[cite: 2] ---
-    function unescapeStrings(str) {
-        const escapeChar = (c) => (c === '"' || c === '\\') ? '\\' + c : c;
-        let res = str.replace(/\\([0-9]{1,3})/g, (match, g1) => {
-            let val = parseInt(g1, 10);
-            if (val >= 32 && val <= 126) return escapeChar(String.fromCharCode(val));[cite: 2]
-            if (val === 10) return "\\n";[cite: 2]
-            if (val === 9) return "\\t";[cite: 2]
-            return match;[cite: 2]
-        });
-        res = res.replace(/\\x([0-9a-fA-F]{2})/g, (match, g1) => {
-            let val = parseInt(g1, 16);
-            if (val >= 32 && val <= 126) return escapeChar(String.fromCharCode(val));[cite: 2]
-            if (val === 10) return "\\n";[cite: 2]
-            if (val === 9) return "\\t";[cite: 2]
-            return match;[cite: 2]
-        });
-        return res;
-    }
-
-    function unwrapStringChar(str) {
-        return str.replace(/string\.char\s*\(\s*([0-9\s,\x20]+)\s*\)/g, (match, csv) => {
-            let parts = csv.split(',');
-            let out = '"';
-            parts.forEach(part => {
-                let asciiVal = parseInt(part.trim(), 10);
-                if (!isNaN(asciiVal)) {
-                    let c = String.fromCharCode(asciiVal);
-                    if (c === '"') out += '\\"';[cite: 2]
-                    else if (c === '\\') out += '\\\\';[cite: 2]
-                    else if (c === '\n') out += '\\n';[cite: 2]
-                    else if (c === '\t') out += '\\t';[cite: 2]
-                    else out += c;[cite: 2]
-                }
-            });
-            return out + '"';
-        });
-    }
-
-    function resolveGlobalAliases(str) {
-        const aliasRegex = /local\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*=\s*(print|getfenv|setfenv|string|table|math|pairs|ipairs|next|select|type|tostring|tonumber|unpack|rawget|rawset|game|workspace|Instance|task);?\r?\n?/g;[cite: 2]
-        let aliases = {};
-        let match;
-        while ((match = aliasRegex.exec(str)) !== null) {
-            aliases[match[1]] = match[2];[cite: 2]
+        
+        for (let i = 0; i < decoyBytes.length; i++) {
+            decoyList.push(decoyBytes[i] ^ (decoyKey + (i % 7)));
         }
-        let res = str;
-        for (let key in aliases) {
-            let target = aliases[key];
-            let declRegex = new RegExp(`local\\s+${key}\\s*=\\s*${target};?\\r?\\n?`, 'g');[cite: 2]
-            res = res.replace(declRegex, "");
-            let usageRegex = new RegExp(`\\b${key}\\b`, 'g');[cite: 2]
-            res = res.replace(usageRegex, target);[cite: 2]
+
+        // Reassemble the script exact matching the C# SB structure
+        let result = "";
+        result += `local ${varEnv} = { [(4)] = game, [(9)] = workspace }; `;
+        result += `local ${varRealData} = {${realList.join(',')}}; `;
+        result += `local ${varDecoyData} = {${decoyList.join(',')}}; `;
+
+        result += "local _p1 = 'load'; local _p2 = 'str'; local _p3 = 'ing'; ";
+        result += `local ${varLoader} = getfenv()[_p1 .. _p2 .. _p3]; `;
+
+        result += `local ${varTamper} = false; `;
+        result += `local ${varTrace} = debug.info and debug.info(1, 's') or ''; `;
+        result += `if ${varTrace} == '=(string)' or string.find(${varTrace}, 'dump') or string.find(${varTrace}, 'chunk') then `;
+        result += `${varTamper} = true; `;
+        result += "end; ";
+        result += `if debug.info and debug.info(${varLoader}, 's') ~= '[C]' then `;
+        result += `${varTamper} = true; `;
+        result += "end; ";
+        result += `if getfenv() == nil or getmetatable(getfenv()) ~= nil then `;
+        result += `${varTamper} = true; `;
+        result += "end; ";
+
+        result += `local ${varActive} = ${varRealData}; `;
+        result += `local ${varKey} = ${realKey}; `;
+        result += `if ${varTamper} then `;
+        result += `${varActive} = ${varDecoyData}; `;
+        result += `${varKey} = ${decoyKey}; `;
+        result += "end; ";
+
+        result += `local ${varChars} = {}; `;
+        result += `for i = 1, #${varActive} do `;
+        result += `local ${varDecrypt} = bit32.bxor(${varActive}[i], ${varKey} + ((i - 1) % 7)); `;
+        result += `${varChars}[i] = string.char(${varDecrypt}); `;
+        result += "end; ";
+
+        result += `local ${varPayload} = table.concat(${varChars}); `;
+        result += `local ${varExec} = ${varLoader}(${varPayload}); `;
+        result += `${varExec}();`;
+
+        return result;
+    }
+
+    // Button event actions
+    obfuscateBtn.addEventListener('click', () => {
+        const code = inputCode.value.trim();
+        if(!code) {
+            alert("Please enter or drop some code first!");
+            return;
         }
-        return res;
-    }
 
-    function inlineConstantTables(str) {
-        const tableRegex = /local\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*=\s*\{\s*([^\}]+)\s*\}/g;[cite: 2]
-        let res = str;
-        let match;
-        while ((match = tableRegex.exec(str)) !== null) {
-            let name = match[1];[cite: 2]
-            let content = match[2];[cite: 2]
-            let lookup = {};
-            if (content.includes('[') && content.includes(']')) {[cite: 2]
-                let entryRegex = /\[\s*(0x[0-9a-fA-F]+|[0-9]+)\s*\]\s*=\s*("[^"]*"|'[^']*'|[0-9\-\.]+)/g;[cite: 2]
-                let entry;
-                while ((entry = entryRegex.exec(content)) !== null) {
-                    let idxStr = entry[1].trim();[cite: 2]
-                    let val = entry[2].trim();[cite: 2]
-                    let numIdx = idxStr.startsWith("0x") ? parseInt(idxStr, 16) : parseInt(idxStr, 10);[cite: 2]
-                    lookup[numIdx.toString()] = val;[cite: 2]
-                    lookup["0x" + numIdx.toString(16)] = val;[cite: 2]
-                }
-            } else {
-                let elements = content.split(',');
-                for (let i = 0; i < elements.length; i++) {
-                    let val = elements[i].trim();[cite: 2]
-                    if (val) {
-                        let idx = i + 1;[cite: 2]
-                        lookup[idx.toString()] = val;[cite: 2]
-                        lookup["0x" + idx.toString(16)] = val;[cite: 2]
-                    }
-                }
-            }
-            let swappedAny = false;
-            for (let key in lookup) {
-                let pattern = new RegExp(`${name}\\s*\\[\\s*${key}\\s*\\]`, 'g');[cite: 2]
-                if (pattern.test(res)) {
-                    res = res.replace(pattern, lookup[key]);[cite: 2]
-                    swappedAny = true;[cite: 2]
-                }
-            }
-            if (swappedAny) {
-                let escapedContent = content.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
-                let purgeRegex = new RegExp(`local\\s+${name}\\s*=\\s*\\{\\s*${escapedContent}\\s*\\};?\\r?\\n?`, 'g');[cite: 2]
-                res = res.replace(purgeRegex, "");[cite: 2]
-            }
-        }
-        return res;
-    }
-
-    function foldStringConcatenations(str) {
-        let pattern = /"([^"]*)"\s*\.\.\s*"([^"]*)"/g;[cite: 2]
-        let res = str;
-        let limit = 0;
-        while (pattern.test(res) && limit < 10) {[cite: 2]
-            res = res.replace(pattern, (m, left, right) => `"${left}${right}"`);[cite: 2]
-            limit++;[cite: 2]
-        }
-        return res;
-    }
-
-    function cleanJunkVariables(str) {
-        let cleaned = str.replace(/local\s+_[a-zA-Z0-9_]+\s*=\s*([0-9]+|\{\});?\r?\n?/g, "");[cite: 2]
-        return cleaned.replace(/(\r?\n){3,}/g, "\r\n\r\n");[cite: 2]
-    }
-
-    deobfuscateBtn.addEventListener('click', () => {
-        let code = inputCodeDe.value.trim();
-        if(!code) return alert("Please supply obfuscated data strings first!");
         try {
-            statusMessageDe.innerText = "Analyzing Obfuscated Structure passes...";
-            code = unescapeStrings(code);[cite: 2]
-            code = unwrapStringChar(code);[cite: 2]
-            code = resolveGlobalAliases(code);[cite: 2]
-            code = inlineConstantTables(code);[cite: 2]
-            code = foldStringConcatenations(code);[cite: 2]
-            code = cleanJunkVariables(code);[cite: 2]
-            outputCodeDe.value = code;
-            statusMessageDe.innerText = "Reconstruction analysis completed!";
-            downloadBtnDe.style.display = "block";
-        } catch(err) {
-            statusMessageDe.innerText = "Deobfuscation Interrupted: " + err.message;
+            statusMessage.innerText = "Obfuscating...";
+            const output = universalAntiDumpObfuscate(code);
+            outputCode.value = output;
+            
+            statusMessage.innerText = "Done Obfuscating Script!";
+            downloadBtn.style.display = "block";
+        } catch (err) {
+            statusMessage.innerText = "An error occurred: " + err.message;
         }
     });
 
-    downloadBtnDe.addEventListener('click', () => {
-        triggerDownload(outputCodeDe.value, fileDeName, "_deobfuscated");[cite: 2]
-    });
-
-    function triggerDownload(textData, baseName, suffix) {
-        const blob = new Blob([textData], { type: 'text/plain' });
+    downloadBtn.addEventListener('click', () => {
+        const blob = new Blob([outputCode.value], { type: 'text/plain' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
-        const dotIndex = baseName.lastIndexOf('.');
-        const name = dotIndex !== -1 ? baseName.substring(0, dotIndex) : baseName;
-        const ext = dotIndex !== -1 ? baseName.substring(dotIndex) : ".lua";
+        
+        // Structure naming format identically to C# setup
+        const dotIndex = currentFileName.lastIndexOf('.');
+        const name = dotIndex !== -1 ? currentFileName.substring(0, dotIndex) : currentFileName;
+        const ext = dotIndex !== -1 ? currentFileName.substring(dotIndex) : ".lua";
+        
         a.href = url;
-        a.download = `${name}${suffix}${ext}`;[cite: 2]
+        a.download = `${name}_Obfuscated${ext}`;
         a.click();
         URL.revokeObjectURL(url);
-    }
+    });
 </script>
 
 </body>
