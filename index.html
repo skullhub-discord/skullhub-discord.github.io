@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Universal Anti-Dump Lua Obfuscator</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #121212;
+            color: #e0e0e0;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .container {
+            width: 100%;
+            max-width: 900px;
+            background: #1e1e1e;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            box-sizing: border-box;
+        }
+        h1 {
+            color: #4caf50;
+            margin-top: 0;
+            text-align: center;
+            font-size: 24px;
+        }
+        p {
+            color: #b0b0b0;
+            font-size: 14px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .drop-zone {
+            border: 2px dashed #4caf50;
+            padding: 30px;
+            text-align: center;
+            background: #252526;
+            cursor: pointer;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            transition: background 0.2s;
+        }
+        .drop-zone:hover, .drop-zone.dragover {
+            background: #2d2d30;
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            margin: 15px 0 5px;
+            color: #4caf50;
+        }
+        textarea {
+            width: 100%;
+            height: 180px;
+            background: #252526;
+            color: #d4d4d4;
+            border: 1px solid #3c3c3c;
+            border-radius: 4px;
+            padding: 10px;
+            font-family: 'Courier New', Courier, monospace;
+            resize: vertical;
+            box-sizing: border-box;
+        }
+        .btn {
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 15px;
+            transition: background 0.2s;
+        }
+        .btn:hover {
+            background-color: #45a049;
+        }
+        .status {
+            margin-top: 10px;
+            font-style: italic;
+            text-align: center;
+            color: #00bcd4;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Universal Anti-Dump Lua Obfuscator</h1>
+    <p>Paste your code below or drag & drop a .lua / .txt file anywhere on this window to secure it.</p>
+
+    <div class="drop-zone" id="dropZone">
+        Drop your <strong>.lua</strong> or <strong>.txt</strong> file here or click to browse
+        <input type="file" id="fileInput" accept=".lua,.txt" style="display: none;">
+    </div>
+
+    <label for="inputCode">Source Lua Code:</label>
+    <textarea id="inputCode" placeholder="-- Paste your Lua script here..."></textarea>
+
+    <button class="btn" id="obfuscateBtn">Obfuscate Code</button>
+    <div class="status" id="statusMessage"></div>
+
+    <label for="outputCode">Obfuscated Protected Output:</label>
+    <textarea id="outputCode" readonly placeholder="-- Protected output will appear here..."></textarea>
+    
+    <button class="btn" id="downloadBtn" style="background-color: #007acc; display: none;">Download Obfuscated File</button>
+</div>
+
+<script>
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    const inputCode = document.getElementById('inputCode');
+    const outputCode = document.getElementById('outputCode');
+    const obfuscateBtn = document.getElementById('obfuscateBtn');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const statusMessage = document.getElementById('statusMessage');
+
+    let currentFileName = "script.lua";
+
+    // Setup drag and drop events
+    window.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
+    window.addEventListener('dragleave', () => { dropZone.classList.remove('dragover'); });
+    window.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('dragover');
+        if(e.dataTransfer.files.length > 0) {
+            handleFile(e.dataTransfer.files[0]);
+        }
+    });
+
+    dropZone.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', (e) => {
+        if(e.target.files.length > 0) {
+            handleFile(e.target.files[0]);
+        }
+    });
+
+    function handleFile(file) {
+        currentFileName = file.name;
+        statusMessage.innerText = `Loaded: ${currentFileName}`;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            inputCode.value = e.target.result;
+        };
+        reader.readAsText(file);
+    }
+
+    // Helper to mirror C# Random hex variables
+    function getRandHex() {
+        const num = Math.floor(Math.random() * (0xffff - 0x1000 + 1)) + 0x1000;
+        return `_0x${num.toString(16)}`;
+    }
+
+    // Mirroring C# rand.Next(min, max)
+    function getRandRange(min, max) {
+        return Math.floor(Math.random() * (max - min)) + min;
+    }
+
+    // Core Obfuscation Engine logic transferred from C#
+    function universalAntiDumpObfuscate(source) {
+        // Generate random variable tags
+        const varEnv = getRandHex();
+        const varRealData = getRandHex();
+        const varDecoyData = getRandHex();
+        const varLoader = getRandHex();
+        const varTamper = getRandHex();
+        const varActive = getRandHex();
+        const varKey = getRandHex();
+        const varChars = getRandHex();
+        const varDecrypt = getRandHex();
+        const varPayload = getRandHex();
+        const varExec = getRandHex();
+        const varTrace = getRandHex();
+
+        // Encode real code using Uint8Array (mimicking C# Encoding.UTF8.GetBytes)
+        const encoder = new TextEncoder();
+        const realBytes = encoder.encode(source);
+        const realKey = getRandRange(40, 85);
+        let realList = [];
+        
+        for (let i = 0; i < realBytes.length; i++) {
+            realList.push(realBytes[i] ^ (realKey + (i % 7)));
+        }
+
+        // Encode decoy screen trap payload
+        const decoySource = 'print("this gng really thought he could get my code! what a skid. ")';
+        const decoyBytes = encoder.encode(decoySource);
+        const decoyKey = getRandRange(40, 85);
+        let decoyList = [];
+        
+        for (let i = 0; i < decoyBytes.length; i++) {
+            decoyList.push(decoyBytes[i] ^ (decoyKey + (i % 7)));
+        }
+
+        // Reassemble the script exact matching the C# SB structure
+        let result = "";
+        result += `local ${varEnv} = { [(4)] = game, [(9)] = workspace }; `;
+        result += `local ${varRealData} = {${realList.join(',')}}; `;
+        result += `local ${varDecoyData} = {${decoyList.join(',')}}; `;
+
+        result += "local _p1 = 'load'; local _p2 = 'str'; local _p3 = 'ing'; ";
+        result += `local ${varLoader} = getfenv()[_p1 .. _p2 .. _p3]; `;
+
+        result += `local ${varTamper} = false; `;
+        result += `local ${varTrace} = debug.info and debug.info(1, 's') or ''; `;
+        result += `if ${varTrace} == '=(string)' or string.find(${varTrace}, 'dump') or string.find(${varTrace}, 'chunk') then `;
+        result += `${varTamper} = true; `;
+        result += "end; ";
+        result += `if debug.info and debug.info(${varLoader}, 's') ~= '[C]' then `;
+        result += `${varTamper} = true; `;
+        result += "end; ";
+        result += `if getfenv() == nil or getmetatable(getfenv()) ~= nil then `;
+        result += `${varTamper} = true; `;
+        result += "end; ";
+
+        result += `local ${varActive} = ${varRealData}; `;
+        result += `local ${varKey} = ${realKey}; `;
+        result += `if ${varTamper} then `;
+        result += `${varActive} = ${varDecoyData}; `;
+        result += `${varKey} = ${decoyKey}; `;
+        result += "end; ";
+
+        result += `local ${varChars} = {}; `;
+        result += `for i = 1, #${varActive} do `;
+        result += `local ${varDecrypt} = bit32.bxor(${varActive}[i], ${varKey} + ((i - 1) % 7)); `;
+        result += `${varChars}[i] = string.char(${varDecrypt}); `;
+        result += "end; ";
+
+        result += `local ${varPayload} = table.concat(${varChars}); `;
+        result += `local ${varExec} = ${varLoader}(${varPayload}); `;
+        result += `${varExec}();`;
+
+        return result;
+    }
+
+    // Button event actions
+    obfuscateBtn.addEventListener('click', () => {
+        const code = inputCode.value.trim();
+        if(!code) {
+            alert("Please enter or drop some code first!");
+            return;
+        }
+
+        try {
+            statusMessage.innerText = "Obfuscating...";
+            const output = universalAntiDumpObfuscate(code);
+            outputCode.value = output;
+            
+            statusMessage.innerText = "Done Obfuscating Script!";
+            downloadBtn.style.display = "block";
+        } catch (err) {
+            statusMessage.innerText = "An error occurred: " + err.message;
+        }
+    });
+
+    downloadBtn.addEventListener('click', () => {
+        const blob = new Blob([outputCode.value], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        
+        // Structure naming format identically to C# setup
+        const dotIndex = currentFileName.lastIndexOf('.');
+        const name = dotIndex !== -1 ? currentFileName.substring(0, dotIndex) : currentFileName;
+        const ext = dotIndex !== -1 ? currentFileName.substring(dotIndex) : ".lua";
+        
+        a.href = url;
+        a.download = `${name}_Obfuscated${ext}`;
+        a.click();
+        URL.revokeObjectURL(url);
+    });
+</script>
+
+</body>
+</html>
