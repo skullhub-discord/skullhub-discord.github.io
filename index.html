@@ -12,6 +12,7 @@
             --accent-glow: rgba(0, 119, 255, 0.4);
             --text-main: #ffffff;
             --text-muted: #6c757d;
+            --input-bg: #161920;
         }
 
         * {
@@ -30,7 +31,6 @@
             align-items: center;
         }
 
-        /* Trigger Button centered on screen */
         .open-btn {
             background: transparent;
             color: var(--text-main);
@@ -55,7 +55,7 @@
             position: fixed;
             bottom: 0;
             left: 50%;
-            transform: translate(-50%, 100%); /* Start hidden under the screen */
+            transform: translate(-50%, 100%);
             width: 100%;
             max-width: 800px;
             background-color: var(--panel-color);
@@ -69,12 +69,10 @@
             z-index: 100;
         }
 
-        /* Active state to pop up */
         .panel-container.active {
             transform: translate(-50%, 0);
         }
 
-        /* Drag handle indicator accent */
         .panel-handle {
             width: 50px;
             height: 4px;
@@ -113,7 +111,52 @@
             color: #ff4444;
         }
 
-        /* Interface Content Elements */
+        /* Navigation Tabs */
+        .tab-menu {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 10px;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            padding: 6px 12px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: color 0.2s;
+            position: relative;
+        }
+
+        .tab-btn.active {
+            color: var(--accent-color);
+            text-shadow: 0 0 8px var(--accent-glow);
+        }
+
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -11px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--accent-color);
+            box-shadow: 0 0 8px var(--accent-color);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* File Upload View */
         .upload-zone {
             border: 2px dashed rgba(0, 119, 255, 0.2);
             border-radius: 8px;
@@ -139,14 +182,53 @@
             color: var(--text-muted);
             font-size: 13px;
         }
+
+        /* Text Area View */
+        .text-zone {
+            width: 100%;
+            height: 150px;
+            background-color: var(--input-bg);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 12px;
+            color: var(--text-main);
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 13px;
+            resize: none;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .text-zone:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 5px rgba(0, 119, 255, 0.2);
+        }
+
+        /* Obfuscate Action Button */
+        .action-btn {
+            width: 100%;
+            background: var(--accent-color);
+            color: var(--text-main);
+            border: none;
+            padding: 12px;
+            margin-top: 15px;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            box-shadow: 0 0 10px var(--accent-glow);
+            transition: background 0.2s, box-shadow 0.2s;
+        }
+
+        .action-btn:hover {
+            background: #0066dd;
+            box-shadow: 0 0 15px var(--accent-color);
+        }
     </style>
 </head>
 <body>
 
-    <!-- Main Button to toggle UI -->
     <button class="open-btn" onclick="togglePanel()">Launch Obfuscator UI</button>
 
-    <!-- Glowing Bottom Panel -->
     <div class="panel-container" id="obfuscatorPanel">
         <div class="panel-handle" onclick="togglePanel()"></div>
         
@@ -155,16 +237,42 @@
             <button class="close-btn" onclick="togglePanel()">&times;</button>
         </div>
 
-        <div class="upload-zone">
-            <div class="upload-text">Drag & Drop your Luau script here</div>
-            <div class="upload-subtext">Supports .lua or .txt files</div>
+        <!-- Navigation System -->
+        <div class="tab-menu">
+            <button class="tab-btn active" onclick="switchTab('file-tab')">File Upload</button>
+            <button class="tab-btn" onclick="switchTab('text-tab')">Raw Code</button>
         </div>
+
+        <!-- View 1: Drag & Drop Files -->
+        <div id="file-tab" class="tab-content active">
+            <div class="upload-zone" onclick="document.getElementById('fileInput').click()">
+                <div class="upload-text">Drag & Drop your Luau script here</div>
+                <div class="upload-subtext">Supports .lua or .txt files</div>
+                <input type="file" id="fileInput" style="display: none;" accept=".lua,.txt">
+            </div>
+        </div>
+
+        <!-- View 2: Raw Code Input -->
+        <div id="text-tab" class="tab-content">
+            <textarea class="text-zone" placeholder="-- Paste your Luau source code directly here..."></textarea>
+        </div>
+
+        <button class="action-btn">Obfuscate Script</button>
     </div>
 
     <script>
         function togglePanel() {
-            const panel = document.getElementById('obfuscatorPanel');
-            panel.classList.toggle('active');
+            document.getElementById('obfuscatorPanel').classList.toggle('active');
+        }
+
+        function switchTab(tabId) {
+            // Remove active classes from all tabs and contents
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            // Add active class to selected elements
+            event.target.classList.add('active');
+            document.getElementById(tabId).classList.add('active');
         }
     </script>
 </body>
