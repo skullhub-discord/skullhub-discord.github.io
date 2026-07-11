@@ -50,7 +50,6 @@
             transform: translateY(-2px);
         }
 
-        /* Bottom Sheet Panel */
         .panel-container {
             position: fixed;
             bottom: 0;
@@ -113,7 +112,7 @@
             color: #ff4444;
         }
 
-        /* Navigation Tabs */
+        /* Tabs */
         .tab-menu {
             display: flex;
             gap: 10px;
@@ -158,7 +157,7 @@
             display: block;
         }
 
-        /* File Upload View */
+        /* Upload zone */
         .upload-zone {
             border: 2px dashed rgba(0, 119, 255, 0.2);
             border-radius: 8px;
@@ -185,7 +184,7 @@
             font-size: 13px;
         }
 
-        /* Text Area View */
+        /* Text areas */
         .text-zone {
             width: 100%;
             height: 150px;
@@ -221,7 +220,7 @@
             color: #8fff8f;
         }
 
-        /* Action Button */
+        /* Action buttons */
         .action-btn {
             width: 100%;
             background: var(--accent-color);
@@ -244,6 +243,29 @@
         .action-btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .btn-group .action-btn {
+            flex: 1;
+            margin-top: 0;
+            padding: 10px;
+            font-size: 14px;
+        }
+
+        .btn-group .action-btn.secondary {
+            background: #2a2f3a;
+            box-shadow: none;
+        }
+
+        .btn-group .action-btn.secondary:hover {
+            background: #3a4050;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
         }
 
         .status {
@@ -290,9 +312,13 @@
         <!-- Obfuscate Button -->
         <button class="action-btn" id="obfuscateBtn">Obfuscate Script</button>
 
-        <!-- Output Area -->
+        <!-- Output Area with Copy & Download -->
         <div class="output-area" id="outputArea">
             <textarea class="text-zone" id="obfuscatedOutput" readonly></textarea>
+            <div class="btn-group">
+                <button class="action-btn secondary" id="copyBtn">📋 Copy All</button>
+                <button class="action-btn secondary" id="downloadBtn">⬇️ Download</button>
+            </div>
         </div>
 
         <div class="status" id="statusMessage">Ready</div>
@@ -309,33 +335,29 @@
         const obfuscatedOutput = document.getElementById('obfuscatedOutput');
         const statusMsg = document.getElementById('statusMessage');
         const fileStatus = document.getElementById('fileStatus');
+        const copyBtn = document.getElementById('copyBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
 
         // ===== Panel toggle =====
         function togglePanel() {
             panel.classList.toggle('active');
-            // Reset output when closing
             if (!panel.classList.contains('active')) {
                 outputArea.classList.remove('active');
                 statusMsg.textContent = 'Ready';
             }
         }
 
-        // ===== Tab switching (fixed) =====
+        // ===== Tab switching =====
         function switchTab(tabId, btn) {
-            // Remove active class from all tabs and contents
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-
-            // Activate the clicked button and corresponding content
             btn.classList.add('active');
             document.getElementById(tabId).classList.add('active');
-
-            // Clear any previous output when switching tabs
             outputArea.classList.remove('active');
             statusMsg.textContent = 'Ready';
         }
 
-        // ===== File upload handling =====
+        // ===== File upload =====
         fileInput.addEventListener('change', function(e) {
             const file = this.files[0];
             if (!file) return;
@@ -343,7 +365,6 @@
             reader.onload = function(ev) {
                 sourceCode.value = ev.target.result;
                 fileStatus.textContent = `✅ Loaded: ${file.name} (${file.size} bytes)`;
-                // Switch to raw code tab to show the content
                 const textTabBtn = document.getElementById('textTabBtn');
                 switchTab('text-tab', textTabBtn);
             };
@@ -353,7 +374,7 @@
             reader.readAsText(file);
         });
 
-        // ===== Drag and drop support =====
+        // ===== Drag and drop =====
         dropZone.addEventListener('dragover', function(e) {
             e.preventDefault();
             this.style.borderColor = 'var(--accent-color)';
@@ -377,20 +398,15 @@
             }
         });
 
-        // ===== Obfuscation logic (simple base64 + comment scrambler) =====
+        // ===== Simple obfuscation (base64 + loader) =====
         function obfuscateLuau(code) {
-            // Step 1: Remove comments (simple)
-            let cleaned = code.replace(/--[^\n]*/g, ''); // single-line comments
-            // Step 2: Remove extra whitespace
+            let cleaned = code.replace(/--[^\n]*/g, '');
             cleaned = cleaned.replace(/\s+/g, ' ').trim();
-            // Step 3: Encode as base64
             let b64 = btoa(unescape(encodeURIComponent(cleaned)));
-            // Step 4: Wrap into a loader
-            let obfuscated = `--[[ Obfuscated by Universal Anti-Dump ]]\nlocal _ = loadstring((function()\nlocal t = "${b64}"\nreturn (function(s) return (s:gsub('..', function(c) return string.char(tonumber(c, 16)) end)) end)(t:gsub('..', function(c) return string.format('%02x', string.byte(c)) end))\nend)())()\n`;
-            return obfuscated;
+            return `--[[ Obfuscated by Universal Anti-Dump ]]\nlocal _ = loadstring((function()\nlocal t = "${b64}"\nreturn (function(s) return (s:gsub('..', function(c) return string.char(tonumber(c, 16)) end)) end)(t:gsub('..', function(c) return string.format('%02x', string.byte(c)) end))\nend)())()\n`;
         }
 
-        // ===== Obfuscate button click =====
+        // ===== Obfuscate button =====
         obfuscateBtn.addEventListener('click', function() {
             const inputCode = sourceCode.value.trim();
             if (!inputCode) {
@@ -398,17 +414,14 @@
                 outputArea.classList.remove('active');
                 return;
             }
-
             statusMsg.textContent = '⏳ Obfuscating...';
             obfuscateBtn.disabled = true;
-
-            // Simulate async processing
             setTimeout(() => {
                 try {
                     const result = obfuscateLuau(inputCode);
                     obfuscatedOutput.value = result;
                     outputArea.classList.add('active');
-                    statusMsg.textContent = '✅ Obfuscation complete! Copy the output below.';
+                    statusMsg.textContent = '✅ Obfuscation complete! Copy or download below.';
                 } catch (err) {
                     statusMsg.textContent = '❌ Error: ' + err.message;
                     outputArea.classList.remove('active');
@@ -418,17 +431,49 @@
             }, 300);
         });
 
-        // ===== Copy output on click (convenience) =====
-        obfuscatedOutput.addEventListener('click', function() {
-            this.select();
-            navigator.clipboard?.writeText(this.value).then(() => {
+        // ===== Copy All =====
+        copyBtn.addEventListener('click', function() {
+            const text = obfuscatedOutput.value;
+            if (!text) {
+                statusMsg.textContent = '⚠️ Nothing to copy – obfuscate first.';
+                return;
+            }
+            navigator.clipboard?.writeText(text).then(() => {
                 statusMsg.textContent = '📋 Copied to clipboard!';
-            }).catch(() => {});
+            }).catch(() => {
+                // Fallback
+                obfuscatedOutput.select();
+                document.execCommand('copy');
+                statusMsg.textContent = '📋 Copied!';
+            });
         });
 
-        // ===== Init: disable output initially =====
-        outputArea.classList.remove('active');
+        // ===== Download =====
+        downloadBtn.addEventListener('click', function() {
+            const text = obfuscatedOutput.value;
+            if (!text) {
+                statusMsg.textContent = '⚠️ Nothing to download – obfuscate first.';
+                return;
+            }
+            const blob = new Blob([text], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'obfuscated.lua';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            statusMsg.textContent = '⬇️ Download started!';
+        });
 
+        // ===== Auto-copy on click into textarea (optional) =====
+        obfuscatedOutput.addEventListener('click', function() {
+            this.select();
+        });
+
+        // ===== Init =====
+        outputArea.classList.remove('active');
         console.log('✅ Luau Obfuscator Interface ready.');
     </script>
 </body>
