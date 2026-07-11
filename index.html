@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Luau Obfuscator Interface</title>
     <style>
         :root {
@@ -67,6 +67,8 @@
             padding: 24px;
             transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
             z-index: 100;
+            max-height: 90vh;
+            overflow-y: auto;
         }
 
         .panel-container.active {
@@ -194,7 +196,7 @@
             color: var(--text-main);
             font-family: 'Courier New', Courier, monospace;
             font-size: 13px;
-            resize: none;
+            resize: vertical;
             outline: none;
             transition: border-color 0.3s;
         }
@@ -204,7 +206,22 @@
             box-shadow: 0 0 5px rgba(0, 119, 255, 0.2);
         }
 
-        /* Obfuscate Action Button */
+        .output-area {
+            margin-top: 12px;
+            display: none;
+        }
+
+        .output-area.active {
+            display: block;
+        }
+
+        .output-area .text-zone {
+            height: 120px;
+            background-color: #0d0f14;
+            color: #8fff8f;
+        }
+
+        /* Action Button */
         .action-btn {
             width: 100%;
             background: var(--accent-color);
@@ -223,6 +240,18 @@
             background: #0066dd;
             box-shadow: 0 0 15px var(--accent-color);
         }
+
+        .action-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .status {
+            margin-top: 10px;
+            font-size: 14px;
+            color: var(--text-muted);
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -231,49 +260,176 @@
 
     <div class="panel-container" id="obfuscatorPanel">
         <div class="panel-handle" onclick="togglePanel()"></div>
-        
+
         <div class="panel-header">
             <div class="panel-title">Universal Anti-Dump Obfuscator</div>
             <button class="close-btn" onclick="togglePanel()">&times;</button>
         </div>
 
-        <!-- Navigation System -->
+        <!-- Navigation Tabs -->
         <div class="tab-menu">
-            <button class="tab-btn active" onclick="switchTab('file-tab')">File Upload</button>
-            <button class="tab-btn" onclick="switchTab('text-tab')">Raw Code</button>
+            <button class="tab-btn active" id="fileTabBtn" onclick="switchTab('file-tab', this)">File Upload</button>
+            <button class="tab-btn" id="textTabBtn" onclick="switchTab('text-tab', this)">Raw Code</button>
         </div>
 
-        <!-- View 1: Drag & Drop Files -->
+        <!-- Tab: File Upload -->
         <div id="file-tab" class="tab-content active">
-            <div class="upload-zone" onclick="document.getElementById('fileInput').click()">
-                <div class="upload-text">Drag & Drop your Luau script here</div>
+            <div class="upload-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
+                <div class="upload-text">Drag &amp; Drop your Luau script here</div>
                 <div class="upload-subtext">Supports .lua or .txt files</div>
-                <input type="file" id="fileInput" style="display: none;" accept=".lua,.txt">
+                <input type="file" id="fileInput" style="display: none;" accept=".lua,.txt" />
             </div>
+            <div id="fileStatus" class="status" style="margin-top: 8px;"></div>
         </div>
 
-        <!-- View 2: Raw Code Input -->
+        <!-- Tab: Raw Code Input -->
         <div id="text-tab" class="tab-content">
-            <textarea class="text-zone" placeholder="-- Paste your Luau source code directly here..."></textarea>
+            <textarea class="text-zone" id="sourceCode" placeholder="-- Paste your Luau source code directly here..."></textarea>
         </div>
 
-        <button class="action-btn">Obfuscate Script</button>
+        <!-- Obfuscate Button -->
+        <button class="action-btn" id="obfuscateBtn">Obfuscate Script</button>
+
+        <!-- Output Area -->
+        <div class="output-area" id="outputArea">
+            <textarea class="text-zone" id="obfuscatedOutput" readonly></textarea>
+        </div>
+
+        <div class="status" id="statusMessage">Ready</div>
     </div>
 
     <script>
+        // ===== DOM references =====
+        const panel = document.getElementById('obfuscatorPanel');
+        const fileInput = document.getElementById('fileInput');
+        const dropZone = document.getElementById('dropZone');
+        const sourceCode = document.getElementById('sourceCode');
+        const obfuscateBtn = document.getElementById('obfuscateBtn');
+        const outputArea = document.getElementById('outputArea');
+        const obfuscatedOutput = document.getElementById('obfuscatedOutput');
+        const statusMsg = document.getElementById('statusMessage');
+        const fileStatus = document.getElementById('fileStatus');
+
+        // ===== Panel toggle =====
         function togglePanel() {
-            document.getElementById('obfuscatorPanel').classList.toggle('active');
+            panel.classList.toggle('active');
+            // Reset output when closing
+            if (!panel.classList.contains('active')) {
+                outputArea.classList.remove('active');
+                statusMsg.textContent = 'Ready';
+            }
         }
 
-        function switchTab(tabId) {
-            // Remove active classes from all tabs and contents
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-            
-            // Add active class to selected elements
-            event.target.classList.add('active');
+        // ===== Tab switching (fixed) =====
+        function switchTab(tabId, btn) {
+            // Remove active class from all tabs and contents
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+            // Activate the clicked button and corresponding content
+            btn.classList.add('active');
             document.getElementById(tabId).classList.add('active');
+
+            // Clear any previous output when switching tabs
+            outputArea.classList.remove('active');
+            statusMsg.textContent = 'Ready';
         }
+
+        // ===== File upload handling =====
+        fileInput.addEventListener('change', function(e) {
+            const file = this.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(ev) {
+                sourceCode.value = ev.target.result;
+                fileStatus.textContent = `✅ Loaded: ${file.name} (${file.size} bytes)`;
+                // Switch to raw code tab to show the content
+                const textTabBtn = document.getElementById('textTabBtn');
+                switchTab('text-tab', textTabBtn);
+            };
+            reader.onerror = function() {
+                fileStatus.textContent = '❌ Failed to read file.';
+            };
+            reader.readAsText(file);
+        });
+
+        // ===== Drag and drop support =====
+        dropZone.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            this.style.borderColor = 'var(--accent-color)';
+            this.style.background = 'rgba(0, 119, 255, 0.1)';
+        });
+
+        dropZone.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            this.style.borderColor = 'rgba(0, 119, 255, 0.2)';
+            this.style.background = 'rgba(0, 0, 0, 0.2)';
+        });
+
+        dropZone.addEventListener('drop', function(e) {
+            e.preventDefault();
+            this.style.borderColor = 'rgba(0, 119, 255, 0.2)';
+            this.style.background = 'rgba(0, 0, 0, 0.2)';
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                fileInput.files = files;
+                fileInput.dispatchEvent(new Event('change'));
+            }
+        });
+
+        // ===== Obfuscation logic (simple base64 + comment scrambler) =====
+        function obfuscateLuau(code) {
+            // Step 1: Remove comments (simple)
+            let cleaned = code.replace(/--[^\n]*/g, ''); // single-line comments
+            // Step 2: Remove extra whitespace
+            cleaned = cleaned.replace(/\s+/g, ' ').trim();
+            // Step 3: Encode as base64
+            let b64 = btoa(unescape(encodeURIComponent(cleaned)));
+            // Step 4: Wrap into a loader
+            let obfuscated = `--[[ Obfuscated by Universal Anti-Dump ]]\nlocal _ = loadstring((function()\nlocal t = "${b64}"\nreturn (function(s) return (s:gsub('..', function(c) return string.char(tonumber(c, 16)) end)) end)(t:gsub('..', function(c) return string.format('%02x', string.byte(c)) end))\nend)())()\n`;
+            return obfuscated;
+        }
+
+        // ===== Obfuscate button click =====
+        obfuscateBtn.addEventListener('click', function() {
+            const inputCode = sourceCode.value.trim();
+            if (!inputCode) {
+                statusMsg.textContent = '⚠️ Please paste or load some Luau code first.';
+                outputArea.classList.remove('active');
+                return;
+            }
+
+            statusMsg.textContent = '⏳ Obfuscating...';
+            obfuscateBtn.disabled = true;
+
+            // Simulate async processing
+            setTimeout(() => {
+                try {
+                    const result = obfuscateLuau(inputCode);
+                    obfuscatedOutput.value = result;
+                    outputArea.classList.add('active');
+                    statusMsg.textContent = '✅ Obfuscation complete! Copy the output below.';
+                } catch (err) {
+                    statusMsg.textContent = '❌ Error: ' + err.message;
+                    outputArea.classList.remove('active');
+                } finally {
+                    obfuscateBtn.disabled = false;
+                }
+            }, 300);
+        });
+
+        // ===== Copy output on click (convenience) =====
+        obfuscatedOutput.addEventListener('click', function() {
+            this.select();
+            navigator.clipboard?.writeText(this.value).then(() => {
+                statusMsg.textContent = '📋 Copied to clipboard!';
+            }).catch(() => {});
+        });
+
+        // ===== Init: disable output initially =====
+        outputArea.classList.remove('active');
+
+        console.log('✅ Luau Obfuscator Interface ready.');
     </script>
 </body>
 </html>
