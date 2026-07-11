@@ -3,280 +3,169 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Universal Anti-Dump Lua Obfuscator</title>
+    <title>Luau Obfuscator Interface</title>
     <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #121212;
-            color: #e0e0e0;
+        :root {
+            --bg-color: #0a0b0d;
+            --panel-color: #111318;
+            --accent-color: #0077ff;
+            --accent-glow: rgba(0, 119, 255, 0.4);
+            --text-main: #ffffff;
+            --text-muted: #6c757d;
+        }
+
+        * {
+            box-sizing: border-box;
             margin: 0;
-            padding: 20px;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            height: 100vh;
+            overflow: hidden;
             display: flex;
-            flex-direction: column;
+            justify-content: center;
             align-items: center;
         }
-        .container {
-            width: 100%;
-            max-width: 900px;
-            background: #1e1e1e;
-            padding: 25px;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-            box-sizing: border-box;
-        }
-        h1 {
-            color: #4caf50;
-            margin-top: 0;
-            text-align: center;
-            font-size: 24px;
-        }
-        p {
-            color: #b0b0b0;
-            font-size: 14px;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-        .drop-zone {
-            border: 2px dashed #4caf50;
-            padding: 30px;
-            text-align: center;
-            background: #252526;
+
+        /* Trigger Button centered on screen */
+        .open-btn {
+            background: transparent;
+            color: var(--text-main);
+            border: 2px solid var(--accent-color);
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: 600;
             cursor: pointer;
             border-radius: 6px;
-            margin-bottom: 20px;
-            transition: background 0.2s;
+            box-shadow: 0 0 10px var(--accent-glow);
+            transition: all 0.3s ease;
         }
-        .drop-zone:hover, .drop-zone.dragover {
-            background: #2d2d30;
+
+        .open-btn:hover {
+            background: var(--accent-color);
+            box-shadow: 0 0 20px var(--accent-color);
+            transform: translateY(-2px);
         }
-        label {
-            font-weight: bold;
-            display: block;
-            margin: 15px 0 5px;
-            color: #4caf50;
-        }
-        textarea {
+
+        /* Bottom Sheet Panel */
+        .panel-container {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translate(-50%, 100%); /* Start hidden under the screen */
             width: 100%;
-            height: 180px;
-            background: #252526;
-            color: #d4d4d4;
-            border: 1px solid #3c3c3c;
-            border-radius: 4px;
-            padding: 10px;
-            font-family: 'Courier New', Courier, monospace;
-            resize: vertical;
-            box-sizing: border-box;
+            max-width: 800px;
+            background-color: var(--panel-color);
+            border-top-left-radius: 16px;
+            border-top-right-radius: 16px;
+            border: 1px solid rgba(0, 119, 255, 0.3);
+            border-bottom: none;
+            box-shadow: 0 -10px 35px var(--accent-glow);
+            padding: 24px;
+            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 100;
         }
-        .btn {
-            background-color: #4caf50;
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            font-size: 16px;
-            font-weight: bold;
-            border-radius: 4px;
+
+        /* Active state to pop up */
+        .panel-container.active {
+            transform: translate(-50%, 0);
+        }
+
+        /* Drag handle indicator accent */
+        .panel-handle {
+            width: 50px;
+            height: 4px;
+            background-color: var(--accent-color);
+            box-shadow: 0 0 8px var(--accent-color);
+            border-radius: 2px;
+            margin: 0 auto 20px auto;
             cursor: pointer;
-            width: 100%;
-            margin-top: 15px;
-            transition: background 0.2s;
         }
-        .btn:hover {
-            background-color: #45a049;
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
         }
-        .status {
-            margin-top: 10px;
-            font-style: italic;
+
+        .panel-title {
+            color: var(--text-main);
+            font-size: 20px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-shadow: 0 0 10px var(--accent-glow);
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 24px;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .close-btn:hover {
+            color: #ff4444;
+        }
+
+        /* Interface Content Elements */
+        .upload-zone {
+            border: 2px dashed rgba(0, 119, 255, 0.2);
+            border-radius: 8px;
+            padding: 40px 20px;
             text-align: center;
-            color: #00bcd4;
+            background: rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            transition: border-color 0.3s, background-color 0.3s;
+        }
+
+        .upload-zone:hover {
+            border-color: var(--accent-color);
+            background: rgba(0, 119, 255, 0.05);
+        }
+
+        .upload-text {
+            color: var(--text-main);
+            font-size: 15px;
+            margin-bottom: 8px;
+        }
+
+        .upload-subtext {
+            color: var(--text-muted);
+            font-size: 13px;
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>Universal Anti-Dump Lua Obfuscator</h1>
-    <p>Paste your code below or drag & drop a .lua / .txt file anywhere on this window to secure it.</p>
+    <!-- Main Button to toggle UI -->
+    <button class="open-btn" onclick="togglePanel()">Launch Obfuscator UI</button>
 
-    <div class="drop-zone" id="dropZone">
-        Drop your <strong>.lua</strong> or <strong>.txt</strong> file here or click to browse
-        <input type="file" id="fileInput" accept=".lua,.txt" style="display: none;">
+    <!-- Glowing Bottom Panel -->
+    <div class="panel-container" id="obfuscatorPanel">
+        <div class="panel-handle" onclick="togglePanel()"></div>
+        
+        <div class="panel-header">
+            <div class="panel-title">Universal Anti-Dump Obfuscator</div>
+            <button class="close-btn" onclick="togglePanel()">&times;</button>
+        </div>
+
+        <div class="upload-zone">
+            <div class="upload-text">Drag & Drop your Luau script here</div>
+            <div class="upload-subtext">Supports .lua or .txt files</div>
+        </div>
     </div>
 
-    <label for="inputCode">Source Lua Code:</label>
-    <textarea id="inputCode" placeholder="-- Paste your Lua script here..."></textarea>
-
-    <button class="btn" id="obfuscateBtn">Obfuscate Code</button>
-    <div class="status" id="statusMessage"></div>
-
-    <label for="outputCode">Obfuscated Protected Output:</label>
-    <textarea id="outputCode" readonly placeholder="-- Protected output will appear here..."></textarea>
-    
-    <button class="btn" id="downloadBtn" style="background-color: #007acc; display: none;">Download Obfuscated File</button>
-</div>
-
-<script>
-    const dropZone = document.getElementById('dropZone');
-    const fileInput = document.getElementById('fileInput');
-    const inputCode = document.getElementById('inputCode');
-    const outputCode = document.getElementById('outputCode');
-    const obfuscateBtn = document.getElementById('obfuscateBtn');
-    const downloadBtn = document.getElementById('downloadBtn');
-    const statusMessage = document.getElementById('statusMessage');
-
-    let currentFileName = "script.lua";
-
-    // Setup drag and drop events
-    window.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
-    window.addEventListener('dragleave', () => { dropZone.classList.remove('dragover'); });
-    window.addEventListener('drop', (e) => {
-        e.preventDefault();
-        dropZone.classList.remove('dragover');
-        if(e.dataTransfer.files.length > 0) {
-            handleFile(e.dataTransfer.files[0]);
+    <script>
+        function togglePanel() {
+            const panel = document.getElementById('obfuscatorPanel');
+            panel.classList.toggle('active');
         }
-    });
-
-    dropZone.addEventListener('click', () => fileInput.click());
-    fileInput.addEventListener('change', (e) => {
-        if(e.target.files.length > 0) {
-            handleFile(e.target.files[0]);
-        }
-    });
-
-    function handleFile(file) {
-        currentFileName = file.name;
-        statusMessage.innerText = `Loaded: ${currentFileName}`;
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            inputCode.value = e.target.result;
-        };
-        reader.readAsText(file);
-    }
-
-    // Helper to mirror C# Random hex variables
-    function getRandHex() {
-        const num = Math.floor(Math.random() * (0xffff - 0x1000 + 1)) + 0x1000;
-        return `_0x${num.toString(16)}`;
-    }
-
-    // Mirroring C# rand.Next(min, max)
-    function getRandRange(min, max) {
-        return Math.floor(Math.random() * (max - min)) + min;
-    }
-
-    // Core Obfuscation Engine logic transferred from C#
-    function universalAntiDumpObfuscate(source) {
-        // Generate random variable tags
-        const varEnv = getRandHex();
-        const varRealData = getRandHex();
-        const varDecoyData = getRandHex();
-        const varLoader = getRandHex();
-        const varTamper = getRandHex();
-        const varActive = getRandHex();
-        const varKey = getRandHex();
-        const varChars = getRandHex();
-        const varDecrypt = getRandHex();
-        const varPayload = getRandHex();
-        const varExec = getRandHex();
-        const varTrace = getRandHex();
-
-        // Encode real code using Uint8Array (mimicking C# Encoding.UTF8.GetBytes)
-        const encoder = new TextEncoder();
-        const realBytes = encoder.encode(source);
-        const realKey = getRandRange(40, 85);
-        let realList = [];
-        
-        for (let i = 0; i < realBytes.length; i++) {
-            realList.push(realBytes[i] ^ (realKey + (i % 7)));
-        }
-
-        // Encode decoy screen trap payload
-        const decoySource = 'print("this gng really thought he could get my code! what a skid. ")';
-        const decoyBytes = encoder.encode(decoySource);
-        const decoyKey = getRandRange(40, 85);
-        let decoyList = [];
-        
-        for (let i = 0; i < decoyBytes.length; i++) {
-            decoyList.push(decoyBytes[i] ^ (decoyKey + (i % 7)));
-        }
-
-        // Reassemble the script exact matching the C# SB structure
-        let result = "";
-        result += `local ${varEnv} = { [(4)] = game, [(9)] = workspace }; `;
-        result += `local ${varRealData} = {${realList.join(',')}}; `;
-        result += `local ${varDecoyData} = {${decoyList.join(',')}}; `;
-
-        result += "local _p1 = 'load'; local _p2 = 'str'; local _p3 = 'ing'; ";
-        result += `local ${varLoader} = getfenv()[_p1 .. _p2 .. _p3]; `;
-
-        result += `local ${varTamper} = false; `;
-        result += `local ${varTrace} = debug.info and debug.info(1, 's') or ''; `;
-        result += `if ${varTrace} == '=(string)' or string.find(${varTrace}, 'dump') or string.find(${varTrace}, 'chunk') then `;
-        result += `${varTamper} = true; `;
-        result += "end; ";
-        result += `if debug.info and debug.info(${varLoader}, 's') ~= '[C]' then `;
-        result += `${varTamper} = true; `;
-        result += "end; ";
-        result += `if getfenv() == nil or getmetatable(getfenv()) ~= nil then `;
-        result += `${varTamper} = true; `;
-        result += "end; ";
-
-        result += `local ${varActive} = ${varRealData}; `;
-        result += `local ${varKey} = ${realKey}; `;
-        result += `if ${varTamper} then `;
-        result += `${varActive} = ${varDecoyData}; `;
-        result += `${varKey} = ${decoyKey}; `;
-        result += "end; ";
-
-        result += `local ${varChars} = {}; `;
-        result += `for i = 1, #${varActive} do `;
-        result += `local ${varDecrypt} = bit32.bxor(${varActive}[i], ${varKey} + ((i - 1) % 7)); `;
-        result += `${varChars}[i] = string.char(${varDecrypt}); `;
-        result += "end; ";
-
-        result += `local ${varPayload} = table.concat(${varChars}); `;
-        result += `local ${varExec} = ${varLoader}(${varPayload}); `;
-        result += `${varExec}();`;
-
-        return result;
-    }
-
-    // Button event actions
-    obfuscateBtn.addEventListener('click', () => {
-        const code = inputCode.value.trim();
-        if(!code) {
-            alert("Please enter or drop some code first!");
-            return;
-        }
-
-        try {
-            statusMessage.innerText = "Obfuscating...";
-            const output = universalAntiDumpObfuscate(code);
-            outputCode.value = output;
-            
-            statusMessage.innerText = "Done Obfuscating Script!";
-            downloadBtn.style.display = "block";
-        } catch (err) {
-            statusMessage.innerText = "An error occurred: " + err.message;
-        }
-    });
-
-    downloadBtn.addEventListener('click', () => {
-        const blob = new Blob([outputCode.value], { type: 'text/plain' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        
-        // Structure naming format identically to C# setup
-        const dotIndex = currentFileName.lastIndexOf('.');
-        const name = dotIndex !== -1 ? currentFileName.substring(0, dotIndex) : currentFileName;
-        const ext = dotIndex !== -1 ? currentFileName.substring(dotIndex) : ".lua";
-        
-        a.href = url;
-        a.download = `${name}_Obfuscated${ext}`;
-        a.click();
-        URL.revokeObjectURL(url);
-    });
-</script>
-
+    </script>
 </body>
 </html>
