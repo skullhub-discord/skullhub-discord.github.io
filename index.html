@@ -112,7 +112,6 @@
             color: #ff4444;
         }
 
-        /* Tabs */
         .tab-menu {
             display: flex;
             gap: 10px;
@@ -157,7 +156,6 @@
             display: block;
         }
 
-        /* Upload zone */
         .upload-zone {
             border: 2px dashed rgba(0, 119, 255, 0.2);
             border-radius: 8px;
@@ -184,7 +182,6 @@
             font-size: 13px;
         }
 
-        /* Text areas */
         .text-zone {
             width: 100%;
             height: 150px;
@@ -220,7 +217,6 @@
             color: #8fff8f;
         }
 
-        /* Action buttons */
         .action-btn {
             width: 100%;
             background: var(--accent-color);
@@ -398,18 +394,24 @@
             }
         });
 
-        // ===== Simple obfuscation (base64 + loader) =====
+        // ===== RELIABLE OBFUSCATION (hex encoding) =====
         function obfuscateLuau(code) {
-            let cleaned = code.replace(/--[^\n]*/g, '');
-            cleaned = cleaned.replace(/\s+/g, ' ').trim();
-            let b64 = btoa(unescape(encodeURIComponent(cleaned)));
-            return `--[[ Obfuscated by Universal Anti-Dump ]]\nlocal _ = loadstring((function()\nlocal t = "${b64}"\nreturn (function(s) return (s:gsub('..', function(c) return string.char(tonumber(c, 16)) end)) end)(t:gsub('..', function(c) return string.format('%02x', string.byte(c)) end))\nend)())()\n`;
+            // Convert to hex string (no stripping, preserves everything)
+            let hex = '';
+            for (let i = 0; i < code.length; i++) {
+                let charCode = code.charCodeAt(i);
+                let hexByte = charCode.toString(16);
+                if (hexByte.length < 2) hexByte = '0' + hexByte;
+                hex += hexByte;
+            }
+            // Lua decoder that converts hex back to original string
+            return `--[[ Obfuscated by Universal Anti-Dump (hex encoding) ]]\nlocal function _dec(s)\n    local t={}\n    for i=1,#s,2 do\n        t[#t+1]=string.char(tonumber(s:sub(i,i+1),16))\n    end\n    return table.concat(t)\nend\nloadstring(_dec("${hex}"))()\n`;
         }
 
         // ===== Obfuscate button =====
         obfuscateBtn.addEventListener('click', function() {
-            const inputCode = sourceCode.value.trim();
-            if (!inputCode) {
+            const inputCode = sourceCode.value;
+            if (!inputCode.trim()) {
                 statusMsg.textContent = '⚠️ Please paste or load some Luau code first.';
                 outputArea.classList.remove('active');
                 return;
@@ -421,7 +423,7 @@
                     const result = obfuscateLuau(inputCode);
                     obfuscatedOutput.value = result;
                     outputArea.classList.add('active');
-                    statusMsg.textContent = '✅ Obfuscation complete! Copy or download below.';
+                    statusMsg.textContent = '✅ Obfuscation complete! Hex encoding – runs in any Luau.';
                 } catch (err) {
                     statusMsg.textContent = '❌ Error: ' + err.message;
                     outputArea.classList.remove('active');
@@ -441,7 +443,6 @@
             navigator.clipboard?.writeText(text).then(() => {
                 statusMsg.textContent = '📋 Copied to clipboard!';
             }).catch(() => {
-                // Fallback
                 obfuscatedOutput.select();
                 document.execCommand('copy');
                 statusMsg.textContent = '📋 Copied!';
@@ -467,14 +468,14 @@
             statusMsg.textContent = '⬇️ Download started!';
         });
 
-        // ===== Auto-copy on click into textarea (optional) =====
+        // ===== Auto-select on click =====
         obfuscatedOutput.addEventListener('click', function() {
             this.select();
         });
 
         // ===== Init =====
         outputArea.classList.remove('active');
-        console.log('✅ Luau Obfuscator Interface ready.');
+        console.log('✅ Luau Obfuscator Interface ready (hex encoding).');
     </script>
 </body>
 </html>
