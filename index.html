@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Luau Obfuscator</title>
+    <title>skull.obf</title>
     <style>
         * {
             box-sizing: border-box;
@@ -31,21 +31,22 @@
             background-color: #111318;
             border-radius: 12px;
             padding: 20px;
-            border: 1px solid rgba(0, 119, 255, 0.2);
-            box-shadow: 0 0 20px rgba(0, 119, 255, 0.05);
+            border: 1px solid rgba(255, 50, 50, 0.25);
+            box-shadow: 0 0 25px rgba(255, 50, 50, 0.1);
             min-width: 0;
         }
 
         .panel-title {
             font-size: 18px;
-            font-weight: 600;
+            font-weight: 700;
             margin-bottom: 12px;
-            color: #0077ff;
-            text-shadow: 0 0 8px rgba(0, 119, 255, 0.3);
+            color: #ff4444;
+            text-shadow: 0 0 12px rgba(255, 68, 68, 0.3);
             display: flex;
             align-items: center;
             gap: 10px;
             flex-shrink: 0;
+            letter-spacing: 0.5px;
         }
 
         .panel-title .badge {
@@ -58,7 +59,7 @@
         }
 
         .upload-zone {
-            border: 2px dashed rgba(0, 119, 255, 0.2);
+            border: 2px dashed rgba(255, 68, 68, 0.2);
             border-radius: 8px;
             padding: 16px;
             text-align: center;
@@ -70,8 +71,8 @@
         }
 
         .upload-zone:hover {
-            border-color: #0077ff;
-            background: rgba(0, 119, 255, 0.05);
+            border-color: #ff4444;
+            background: rgba(255, 68, 68, 0.05);
         }
 
         .upload-zone .upload-text {
@@ -104,8 +105,8 @@
         }
 
         .text-zone:focus {
-            border-color: #0077ff;
-            box-shadow: 0 0 5px rgba(0, 119, 255, 0.2);
+            border-color: #ff4444;
+            box-shadow: 0 0 5px rgba(255, 68, 68, 0.2);
         }
 
         .text-zone.output {
@@ -145,9 +146,9 @@
         }
 
         .checkbox-group input[type="checkbox"]:checked {
-            background: #0077ff;
-            border-color: #0077ff;
-            box-shadow: 0 0 8px rgba(0, 119, 255, 0.4);
+            background: #ff4444;
+            border-color: #ff4444;
+            box-shadow: 0 0 8px rgba(255, 68, 68, 0.4);
         }
 
         .checkbox-group label {
@@ -175,14 +176,14 @@
         }
 
         .btn-primary {
-            background: #0077ff;
+            background: #ff4444;
             color: #fff;
-            box-shadow: 0 0 10px rgba(0, 119, 255, 0.3);
+            box-shadow: 0 0 10px rgba(255, 68, 68, 0.3);
         }
 
         .btn-primary:hover {
-            background: #0066dd;
-            box-shadow: 0 0 20px rgba(0, 119, 255, 0.5);
+            background: #cc3333;
+            box-shadow: 0 0 20px rgba(255, 68, 68, 0.5);
         }
 
         .btn-primary:disabled {
@@ -258,7 +259,7 @@
     <!-- LEFT PANEL: Input -->
     <div class="panel" id="inputPanel">
         <div class="panel-title">
-            📄 Source Code
+            💀 skull.obf
             <span class="badge">.lua / .txt</span>
         </div>
 
@@ -275,7 +276,7 @@
                 <input type="checkbox" id="antiTamperCheck" checked />
                 <label for="antiTamperCheck">
                     🔒 Anti‑Tamper
-                    <span class="hint">(checksum self‑verify)</span>
+                    <span class="hint">(custom error on tamper)</span>
                 </label>
             </div>
             <button class="btn btn-primary" id="obfuscateBtn">⚡ Obfuscate</button>
@@ -334,19 +335,19 @@
         // ===== Drag and drop =====
         dropZone.addEventListener('dragover', function(e) {
             e.preventDefault();
-            this.style.borderColor = '#0077ff';
-            this.style.background = 'rgba(0, 119, 255, 0.1)';
+            this.style.borderColor = '#ff4444';
+            this.style.background = 'rgba(255, 68, 68, 0.1)';
         });
 
         dropZone.addEventListener('dragleave', function(e) {
             e.preventDefault();
-            this.style.borderColor = 'rgba(0, 119, 255, 0.2)';
+            this.style.borderColor = 'rgba(255, 68, 68, 0.2)';
             this.style.background = 'rgba(0, 0, 0, 0.2)';
         });
 
         dropZone.addEventListener('drop', function(e) {
             e.preventDefault();
-            this.style.borderColor = 'rgba(0, 119, 255, 0.2)';
+            this.style.borderColor = 'rgba(255, 68, 68, 0.2)';
             this.style.background = 'rgba(0, 0, 0, 0.2)';
             const files = e.dataTransfer.files;
             if (files.length > 0) {
@@ -364,7 +365,7 @@
             return hash;
         }
 
-        // ===== Obfuscation (hex encoding with optional anti‑tamper) =====
+        // ===== Obfuscation (hex encoding with optional anti‑tamper + custom messages) =====
         function obfuscateLuau(code, includeAntiTamper) {
             // Convert to hex
             let hex = '';
@@ -375,13 +376,15 @@
                 hex += hexByte;
             }
 
-            // Build Lua loader
+            // Build Lua loader with custom header
+            let header = '-- What obfuscator is this? Ive never seen it before + it looks so weird!';
             let loader = '';
             if (includeAntiTamper) {
                 const checksum = generateChecksum(code);
-                loader = `--[[ Obfuscated with Anti‑Tamper ]]\nlocal function _d(s)\n    local t={}\n    for i=1,#s,2 do\n        t[#t+1]=string.char(tonumber(s:sub(i,i+1),16))\n    end\n    return table.concat(t)\nend\nlocal function _c(s)\n    local h=0\n    for i=1,#s do\n        h=(h*31+string.byte(s,i))%4294967296\n    end\n    return h\nend\nlocal src=_d("${hex}")\nif _c(src)~=${checksum} then\n    error("⛔ Tampered script detected.")\nend\nloadstring(src)()\n`;
+                const errorMsg = 'ts gng really thought he could steal my code skid of skids lol';
+                loader = `${header}\nlocal function _d(s)\n    local t={}\n    for i=1,#s,2 do\n        t[#t+1]=string.char(tonumber(s:sub(i,i+1),16))\n    end\n    return table.concat(t)\nend\nlocal function _c(s)\n    local h=0\n    for i=1,#s do\n        h=(h*31+string.byte(s,i))%4294967296\n    end\n    return h\nend\nlocal src=_d("${hex}")\nif _c(src)~=${checksum} then\n    error("${errorMsg}")\nend\nloadstring(src)()\n`;
             } else {
-                loader = `--[[ Obfuscated (no anti‑tamper) ]]\nlocal function _d(s)\n    local t={}\n    for i=1,#s,2 do\n        t[#t+1]=string.char(tonumber(s:sub(i,i+1),16))\n    end\n    return table.concat(t)\nend\nloadstring(_d("${hex}"))()\n`;
+                loader = `${header}\nlocal function _d(s)\n    local t={}\n    for i=1,#s,2 do\n        t[#t+1]=string.char(tonumber(s:sub(i,i+1),16))\n    end\n    return table.concat(t)\nend\nloadstring(_d("${hex}"))()\n`;
             }
             return loader;
         }
@@ -404,7 +407,7 @@
                     obfuscatedOutput.value = result;
                     outputSize.textContent = result.length + ' characters';
                     statusRight.textContent = '✅ Obfuscation complete!';
-                    statusLeft.textContent = includeAntiTamper ? '✅ Done (with Anti‑Tamper).' : '✅ Done (no Anti‑Tamper).';
+                    statusLeft.textContent = includeAntiTamper ? '✅ Done (Anti‑Tamper + custom error).' : '✅ Done (no Anti‑Tamper).';
                 } catch (err) {
                     statusLeft.textContent = '❌ Error: ' + err.message;
                     statusRight.textContent = '❌ Failed.';
@@ -468,7 +471,7 @@
         statusRight.textContent = 'Ready';
         outputSize.textContent = '0 characters';
 
-        console.log('✅ Luau Obfuscator ready (hex + anti‑tamper toggle).');
+        console.log('✅ skull.obf ready.');
     </script>
 </body>
 </html>
