@@ -45,6 +45,7 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            flex-shrink: 0;
         }
 
         .panel-title .badge {
@@ -59,7 +60,7 @@
         .upload-zone {
             border: 2px dashed rgba(0, 119, 255, 0.2);
             border-radius: 8px;
-            padding: 20px;
+            padding: 16px;
             text-align: center;
             background: rgba(0, 0, 0, 0.2);
             cursor: pointer;
@@ -112,23 +113,65 @@
             color: #8fff8f;
         }
 
-        .button-row {
+        .controls {
             display: flex;
-            gap: 10px;
+            flex-wrap: wrap;
+            gap: 12px;
             margin-top: 12px;
+            flex-shrink: 0;
+            align-items: center;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #1a1e26;
+            padding: 6px 14px;
+            border-radius: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            background: #0d0f14;
+            border: 2px solid #3a4050;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
             flex-shrink: 0;
         }
 
+        .checkbox-group input[type="checkbox"]:checked {
+            background: #0077ff;
+            border-color: #0077ff;
+            box-shadow: 0 0 8px rgba(0, 119, 255, 0.4);
+        }
+
+        .checkbox-group label {
+            font-size: 13px;
+            color: #ccd;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .checkbox-group .hint {
+            font-size: 11px;
+            color: #6c757d;
+            margin-left: 4px;
+        }
+
         .btn {
-            flex: 1;
-            padding: 10px;
+            padding: 8px 16px;
             border: none;
             border-radius: 6px;
             font-weight: 600;
-            font-size: 14px;
+            font-size: 13px;
             cursor: pointer;
             transition: all 0.2s;
-            text-align: center;
+            white-space: nowrap;
         }
 
         .btn-primary {
@@ -174,7 +217,6 @@
             height: 20px;
         }
 
-        /* Scrollbar styling */
         .text-zone::-webkit-scrollbar {
             width: 6px;
             height: 6px;
@@ -201,6 +243,13 @@
             .panel {
                 min-height: 45vh;
             }
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .checkbox-group {
+                justify-content: center;
+            }
         }
     </style>
 </head>
@@ -221,11 +270,18 @@
 
         <textarea class="text-zone" id="sourceCode" placeholder="-- Paste your Luau source code here..."></textarea>
 
-        <div class="button-row">
+        <div class="controls">
+            <div class="checkbox-group">
+                <input type="checkbox" id="antiTamperCheck" checked />
+                <label for="antiTamperCheck">
+                    🔒 Anti‑Tamper
+                    <span class="hint">(checksum self‑verify)</span>
+                </label>
+            </div>
             <button class="btn btn-primary" id="obfuscateBtn">⚡ Obfuscate</button>
             <button class="btn btn-secondary" id="clearBtn">🗑️ Clear</button>
         </div>
-        <div class="status" id="statusLeft">Ready</div>
+        <div class="status" id="statusLeft">Ready – paste or load a script.</div>
     </div>
 
     <!-- RIGHT PANEL: Output -->
@@ -237,7 +293,7 @@
 
         <textarea class="text-zone output" id="obfuscatedOutput" readonly placeholder="Obfuscated code will appear here..."></textarea>
 
-        <div class="button-row">
+        <div class="controls" style="justify-content: flex-end;">
             <button class="btn btn-success" id="copyBtn">📋 Copy</button>
             <button class="btn btn-secondary" id="downloadBtn">⬇️ Download</button>
         </div>
@@ -257,6 +313,7 @@
         const outputSize = document.getElementById('outputSize');
         const fileInput = document.getElementById('fileInput');
         const dropZone = document.getElementById('dropZone');
+        const antiTamperCheck = document.getElementById('antiTamperCheck');
 
         // ===== File upload =====
         fileInput.addEventListener('change', function(e) {
@@ -271,7 +328,7 @@
                 statusLeft.textContent = '❌ Failed to read file.';
             };
             reader.readAsText(file);
-            this.value = ''; // allow re-upload of same file
+            this.value = '';
         });
 
         // ===== Drag and drop =====
@@ -298,9 +355,18 @@
             }
         });
 
-        // ===== Obfuscation (hex encoding, fast & reliable) =====
-        function obfuscateLuau(code) {
-            // Convert entire code to hex string
+        // ===== Checksum function (for anti‑tamper) =====
+        function generateChecksum(code) {
+            let hash = 0;
+            for (let i = 0; i < code.length; i++) {
+                hash = (hash * 31 + code.charCodeAt(i)) >>> 0; // 32-bit unsigned
+            }
+            return hash;
+        }
+
+        // ===== Obfuscation (hex encoding with optional anti‑tamper) =====
+        function obfuscateLuau(code, includeAntiTamper) {
+            // Convert to hex
             let hex = '';
             for (let i = 0; i < code.length; i++) {
                 let charCode = code.charCodeAt(i);
@@ -308,8 +374,16 @@
                 if (hexByte.length < 2) hexByte = '0' + hexByte;
                 hex += hexByte;
             }
-            // Lua decoder with small footprint, handles large strings efficiently
-            return `--[[ Obfuscated by Universal Anti-Dump (hex) ]]\nlocal function _d(s)\n    local t={}\n    for i=1,#s,2 do\n        t[#t+1]=string.char(tonumber(s:sub(i,i+1),16))\n    end\n    return table.concat(t)\nend\nloadstring(_d("${hex}"))()\n`;
+
+            // Build Lua loader
+            let loader = '';
+            if (includeAntiTamper) {
+                const checksum = generateChecksum(code);
+                loader = `--[[ Obfuscated with Anti‑Tamper ]]\nlocal function _d(s)\n    local t={}\n    for i=1,#s,2 do\n        t[#t+1]=string.char(tonumber(s:sub(i,i+1),16))\n    end\n    return table.concat(t)\nend\nlocal function _c(s)\n    local h=0\n    for i=1,#s do\n        h=(h*31+string.byte(s,i))%4294967296\n    end\n    return h\nend\nlocal src=_d("${hex}")\nif _c(src)~=${checksum} then\n    error("⛔ Tampered script detected.")\nend\nloadstring(src)()\n`;
+            } else {
+                loader = `--[[ Obfuscated (no anti‑tamper) ]]\nlocal function _d(s)\n    local t={}\n    for i=1,#s,2 do\n        t[#t+1]=string.char(tonumber(s:sub(i,i+1),16))\n    end\n    return table.concat(t)\nend\nloadstring(_d("${hex}"))()\n`;
+            }
+            return loader;
         }
 
         // ===== Obfuscate =====
@@ -323,14 +397,14 @@
             statusLeft.textContent = '⏳ Obfuscating...';
             obfuscateBtn.disabled = true;
 
-            // Use setTimeout to avoid blocking UI
             setTimeout(() => {
                 try {
-                    const result = obfuscateLuau(input);
+                    const includeAntiTamper = antiTamperCheck.checked;
+                    const result = obfuscateLuau(input, includeAntiTamper);
                     obfuscatedOutput.value = result;
                     outputSize.textContent = result.length + ' characters';
                     statusRight.textContent = '✅ Obfuscation complete!';
-                    statusLeft.textContent = '✅ Done.';
+                    statusLeft.textContent = includeAntiTamper ? '✅ Done (with Anti‑Tamper).' : '✅ Done (no Anti‑Tamper).';
                 } catch (err) {
                     statusLeft.textContent = '❌ Error: ' + err.message;
                     statusRight.textContent = '❌ Failed.';
@@ -384,7 +458,7 @@
             statusRight.textContent = '⬇️ Download started!';
         });
 
-        // ===== Auto-select output on click (convenience) =====
+        // ===== Auto-select output on click =====
         obfuscatedOutput.addEventListener('click', function() {
             this.select();
         });
@@ -394,7 +468,7 @@
         statusRight.textContent = 'Ready';
         outputSize.textContent = '0 characters';
 
-        console.log('✅ Luau Obfuscator ready (hex encoder, supports large files).');
+        console.log('✅ Luau Obfuscator ready (hex + anti‑tamper toggle).');
     </script>
 </body>
 </html>
