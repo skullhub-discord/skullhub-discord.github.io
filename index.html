@@ -105,7 +105,7 @@
         .controls {
             display: flex;
             flex-wrap: wrap;
-            gap: 12px;
+            gap: 8px 16px;
             margin-top: 12px;
             flex-shrink: 0;
             align-items: center;
@@ -113,16 +113,16 @@
         .checkbox-group {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             background: #1a1e26;
-            padding: 6px 14px;
+            padding: 4px 12px;
             border-radius: 6px;
             border: 1px solid rgba(255, 255, 255, 0.06);
         }
         .checkbox-group input[type="checkbox"] {
             appearance: none;
-            width: 18px;
-            height: 18px;
+            width: 16px;
+            height: 16px;
             background: #0d0f14;
             border: 2px solid #3a4050;
             border-radius: 4px;
@@ -142,12 +142,12 @@
             user-select: none;
         }
         .checkbox-group .hint {
-            font-size: 11px;
+            font-size: 10px;
             color: #6c757d;
-            margin-left: 4px;
+            margin-left: 2px;
         }
         .btn {
-            padding: 8px 16px;
+            padding: 6px 14px;
             border: none;
             border-radius: 6px;
             font-weight: 600;
@@ -230,10 +230,7 @@
 
     <!-- LEFT PANEL: Input -->
     <div class="panel" id="inputPanel">
-        <div class="panel-title">
-            💀 skull.obf
-            <span class="badge">.lua / .txt</span>
-        </div>
+        <div class="panel-title">💀 skull.obf <span class="badge">.lua / .txt</span></div>
         <div class="upload-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
             <div class="upload-text">📁 Drag &amp; drop your Luau script here</div>
             <div class="upload-subtext">or click to browse</div>
@@ -242,11 +239,16 @@
         <textarea class="text-zone" id="sourceCode" placeholder="-- Paste your Luau source code here..."></textarea>
         <div class="controls">
             <div class="checkbox-group">
+                <input type="checkbox" id="minifyCheck" />
+                <label for="minifyCheck">⚡ Minify <span class="hint">(compress)</span></label>
+            </div>
+            <div class="checkbox-group">
+                <input type="checkbox" id="vmCheck" />
+                <label for="vmCheck">🧩 VM <span class="hint">(XOR encoding)</span></label>
+            </div>
+            <div class="checkbox-group">
                 <input type="checkbox" id="antiTamperCheck" checked />
-                <label for="antiTamperCheck">
-                    🔒 Anti‑Tamper
-                    <span class="hint">(Luraph‑grade protection)</span>
-                </label>
+                <label for="antiTamperCheck">🔒 Anti‑Tamper <span class="hint">(obfuscated)</span></label>
             </div>
             <button class="btn btn-primary" id="obfuscateBtn">⚡ Obfuscate</button>
             <button class="btn btn-secondary" id="clearBtn">🗑️ Clear</button>
@@ -256,10 +258,7 @@
 
     <!-- RIGHT PANEL: Output -->
     <div class="panel" id="outputPanel">
-        <div class="panel-title">
-            🔒 Obfuscated Code
-            <span class="badge" id="outputSize">0 characters</span>
-        </div>
+        <div class="panel-title">🔒 Obfuscated Code <span class="badge" id="outputSize">0 characters</span></div>
         <textarea class="text-zone output" id="obfuscatedOutput" readonly placeholder="Obfuscated code will appear here..."></textarea>
         <div class="controls" style="justify-content: flex-end;">
             <button class="btn btn-success" id="copyBtn">📋 Copy</button>
@@ -281,6 +280,8 @@
         const outputSize = document.getElementById('outputSize');
         const fileInput = document.getElementById('fileInput');
         const dropZone = document.getElementById('dropZone');
+        const minifyCheck = document.getElementById('minifyCheck');
+        const vmCheck = document.getElementById('vmCheck');
         const antiTamperCheck = document.getElementById('antiTamperCheck');
 
         // ===== File upload =====
@@ -321,8 +322,21 @@
             }
         });
 
-        // ===== Multi‑layer checksum (Luraph‑style) =====
-        function generateChecksum(code) {
+        // ===== Minify function =====
+        function minify(code) {
+            // Remove single-line comments (-- ...)
+            let cleaned = code.replace(/--[^\n]*/g, '');
+            // Remove multi-line comments (--[[ ... ]]) – simple version
+            cleaned = cleaned.replace(/--\[\[[\s\S]*?\]\]/g, '');
+            // Collapse whitespace: replace multiple spaces/tabs/newlines with a single space
+            cleaned = cleaned.replace(/\s+/g, ' ');
+            // Trim leading/trailing spaces
+            cleaned = cleaned.trim();
+            return cleaned;
+        }
+
+        // ===== Multi‑layer checksum (obfuscated) =====
+        function generateChecksums(code) {
             let h1 = 0, h2 = 0, h3 = 0;
             for (let i = 0; i < code.length; i++) {
                 const c = code.charCodeAt(i);
@@ -333,108 +347,90 @@
             return { h1, h2, h3 };
         }
 
-        // ===== Luraph‑grade obfuscation with multi‑layer anti‑tamper =====
-        function obfuscateLuau(code, includeAntiTamper) {
-            // Convert to hex
+        // ===== Generate random XOR key for VM =====
+        function randomKey() {
+            return Math.floor(Math.random() * 256);
+        }
+
+        // ===== Obfuscate function =====
+        function obfuscateLuau(code, options) {
+            const { minify, vm, antiTamper } = options;
+
+            // 1. Minify if enabled
+            let processed = code;
+            if (minify) processed = minify(processed);
+
+            // 2. Convert to hex (always)
             let hex = '';
-            for (let i = 0; i < code.length; i++) {
-                let charCode = code.charCodeAt(i);
+            for (let i = 0; i < processed.length; i++) {
+                let charCode = processed.charCodeAt(i);
                 let hexByte = charCode.toString(16);
                 if (hexByte.length < 2) hexByte = '0' + hexByte;
                 hex += hexByte;
             }
 
-            const header = '-- What obfuscator is this? Ive never seen it before + it looks so weird!';
-
-            if (!includeAntiTamper) {
-                return `${header}\nlocal function _d(s)\n    local t={}\n    for i=1,#s,2 do\n        t[#t+1]=string.char(tonumber(s:sub(i,i+1),16))\n    end\n    return table.concat(t)\nend\nloadstring(_d("${hex}"))()\n`;
+            // 3. If VM enabled: XOR the hex string with a random key
+            let key = 0;
+            let encodedHex = hex;
+            let decoder = '';
+            if (vm) {
+                key = randomKey();
+                let xorHex = '';
+                for (let i = 0; i < hex.length; i++) {
+                    let charCode = hex.charCodeAt(i);
+                    let xorCharCode = charCode ^ key;
+                    let xorByte = xorCharCode.toString(16);
+                    if (xorByte.length < 2) xorByte = '0' + xorByte;
+                    xorHex += xorByte;
+                }
+                encodedHex = xorHex;
+                decoder =
+                    `local function _x(s,k)\n    local t={}\n    for i=1,#s,2 do\n        t[#t+1]=string.char(tonumber(s:sub(i,i+1),16)^k)\n    end\n    return table.concat(t)\nend\nlocal enc = _x("${encodedHex}", ${key})\n`;
+            } else {
+                decoder = `local enc = "${hex}"\n`;
             }
 
-            const checksums = generateChecksum(code);
-            const errorMsg = 'ts gng really thought he could steal my code skid of skids lol';
+            // 4. Build the final loader with common header
+            let header = '-- What obfuscator is this? Ive never seen it before + it looks so weird!';
 
-            // Luraph‑grade anti‑tamper: 
-            // 1. Multi‑layer checksum (3 different hash algorithms)
-            // 2. __tostring trap (hijacks string metatable)
-            // 3. Self‑verifying code that checks itself
-            // 4. Sensitive opcode protection
-            // 5. Anti‑debugging via pcall unpack crash
-            return `${header}
-            local function _d(s)
-                local t={}
-                for i=1,#s,2 do
-                    t[#t+1]=string.char(tonumber(s:sub(i,i+1),16))
-                end
-                return table.concat(t)
-            end
+            // Base loader that decodes hex to string (with or without XOR)
+            let loader = header + '\n';
+            if (antiTamper) {
+                // Generate checksums (on the original minified code)
+                const checksums = generateChecksums(processed);
+                const errorMsg = 'ts gng really thought he could steal my code skid of skids lol';
 
-            -- ===== LAYER 1: Multi‑Layer Checksum =====
-            local function _c1(s)
-                local h=0
-                for i=1,#s do
-                    h=((h<<5)-h+string.byte(s,i))%4294967296
-                end
-                return h
-            end
-            local function _c2(s)
-                local h=0
-                for i=1,#s do
-                    h=((h*31+string.byte(s,i))*7)%4294967296
-                end
-                return h
-            end
-            local function _c3(s)
-                local h=0
-                for i=1,#s do
-                    h=((h*2654435761+string.byte(s,i)*17)%4294967296)~((h<<7)%4294967296)
-                end
-                return h
-            end
-
-            -- ===== LAYER 2: __tostring Anti‑Tamper Trap =====
-            local _old_tostring = tostring
-            local _trap_active = true
-            local _meta = getmetatable("") or {}
-            _meta.__tostring = function()
-                if _trap_active then
-                    error("${errorMsg}")
-                end
-                return _old_tostring(...)
-            end
-            debug.setmetatable("", _meta)
-
-            -- ===== LAYER 3: Self‑Verifying Code =====
-            local src = _d("${hex}")
-            local c1 = _c1(src)
-            local c2 = _c2(src)
-            local c3 = _c3(src)
-
-            if c1 ~= ${checksums.h1} or c2 ~= ${checksums.h2} or c3 ~= ${checksums.h3} then
-                error("${errorMsg}")
-            end
-
-            -- ===== LAYER 4: Anti‑Debugging (pcall unpack crash) =====
-            local _ok, _err = pcall(unpack, {}, 0, 2147483647)
-            if _ok then
-                error("${errorMsg}")
-            end
-
-            -- ===== LAYER 5: Sensitive Opcode Hook Detection =====
-            local _old_concat = table.concat
-            table.concat = function(...)
-                if _trap_active then
-                    error("${errorMsg}")
-                end
-                return _old_concat(...)
-            end
-
-            -- ===== Execute the protected code =====
-            _trap_active = false
-            loadstring(src)()
-            `;
+                // Obfuscated anti-tamper code (minified itself)
+                const tamperCode = `
+                    local function _d(s)local t={}for i=1,#s,2 do t[#t+1]=string.char(tonumber(s:sub(i,i+1),16))end return table.concat(t)end
+                    local function _c1(s)local h=0 for i=1,#s do h=((h<<5)-h+string.byte(s,i))%4294967296 end return h end
+                    local function _c2(s)local h=0 for i=1,#s do h=((h*31+string.byte(s,i))*7)%4294967296 end return h end
+                    local function _c3(s)local h=0 for i=1,#s do h=((h*2654435761+string.byte(s,i)*17)%4294967296)~((h<<7)%4294967296) end return h end
+                    local _m,_t=getmetatable("") or {}\n_m.__tostring=function()error("${errorMsg}")end
+                    debug.setmetatable("",_m)
+                    local src=_d(enc)
+                    local c1=_c1(src)local c2=_c2(src)local c3=_c3(src)
+                    if c1~=${checksums.h1} or c2~=${checksums.h2} or c3~=${checksums.h3} then error("${errorMsg}") end
+                    local _o=table.concat table.concat=function(...)error("${errorMsg}")end
+                    local _p,_e=pcall(unpack,{},0,2147483647) if _p then error("${errorMsg}") end
+                    loadstring(src)()
+                `;
+                // Minify the tamper code itself
+                const minifiedTamper = tamperCode.replace(/\s+/g, ' ').trim();
+                loader += `local enc=_d("${encodedHex}")\n` + minifiedTamper + '\n';
+            } else {
+                // No anti-tamper: just decode and run
+                if (vm) {
+                    loader +=
+                        `local function _x(s,k)local t={}for i=1,#s,2 do t[#t+1]=string.char(tonumber(s:sub(i,i+1),16)^k)end return table.concat(t)end\nlocal enc=_x("${encodedHex}",${key})\nloadstring(enc)()\n`;
+                } else {
+                    loader += `local function _d(s)local t={}for i=1,#s,2 do t[#t+1]=string.char(tonumber(s:sub(i,i+1),16))end return table.concat(t)end\nloadstring(_d("${hex}"))()\n`;
+                }
+            }
+            return loader;
         }
 
-        // ===== Obfuscate =====
+        // ===== Obfuscate button =====
         obfuscateBtn.addEventListener('click', function() {
             const input = sourceCode.value;
             if (!input.trim()) {
@@ -445,12 +441,20 @@
             obfuscateBtn.disabled = true;
             setTimeout(() => {
                 try {
-                    const includeAntiTamper = antiTamperCheck.checked;
-                    const result = obfuscateLuau(input, includeAntiTamper);
+                    const options = {
+                        minify: minifyCheck.checked,
+                        vm: vmCheck.checked,
+                        antiTamper: antiTamperCheck.checked
+                    };
+                    const result = obfuscateLuau(input, options);
                     obfuscatedOutput.value = result;
                     outputSize.textContent = result.length + ' characters';
                     statusRight.textContent = '✅ Obfuscation complete!';
-                    statusLeft.textContent = includeAntiTamper ? '✅ Done (Luraph‑grade Anti‑Tamper).' : '✅ Done (no Anti‑Tamper).';
+                    const parts = [];
+                    if (options.minify) parts.push('Minify');
+                    if (options.vm) parts.push('VM');
+                    if (options.antiTamper) parts.push('Anti‑Tamper');
+                    statusLeft.textContent = `✅ Done (${parts.join(' + ') || 'Plain'}).`;
                 } catch (err) {
                     statusLeft.textContent = '❌ Error: ' + err.message;
                     statusRight.textContent = '❌ Failed.';
@@ -513,7 +517,7 @@
         statusLeft.textContent = 'Ready – paste or load a script.';
         statusRight.textContent = 'Ready';
         outputSize.textContent = '0 characters';
-        console.log('✅ skull.obf ready (Luraph‑grade anti‑tamper).');
+        console.log('✅ skull.obf ready (Minify, VM, Anti‑Tamper).');
     </script>
 </body>
 </html>
