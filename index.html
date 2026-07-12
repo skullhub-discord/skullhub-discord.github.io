@@ -9,218 +9,278 @@
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
         }
+
         body {
-            background-color: #0a0b0d;
-            color: #ffffff;
+            background: #0b0e17;
+            color: #eef;
             height: 100vh;
             display: flex;
             justify-content: center;
-            align-items: stretch;
-            padding: 20px;
-            gap: 20px;
-            overflow: hidden;
+            align-items: center;
+            padding: 16px;
         }
+
+        .container {
+            display: flex;
+            gap: 20px;
+            width: 100%;
+            max-width: 1200px;
+            height: 90vh;
+            min-height: 500px;
+        }
+
         .panel {
             flex: 1;
+            background: rgba(18, 24, 36, 0.85);
+            backdrop-filter: blur(4px);
+            border-radius: 20px;
+            padding: 24px;
+            border: 1px solid rgba(0, 180, 255, 0.25);
+            box-shadow: 0 0 30px rgba(0, 150, 255, 0.15), inset 0 0 30px rgba(0, 150, 255, 0.02);
             display: flex;
             flex-direction: column;
-            background-color: #111318;
-            border-radius: 12px;
-            padding: 20px;
-            border: 1px solid rgba(255, 50, 50, 0.25);
-            box-shadow: 0 0 25px rgba(255, 50, 50, 0.1);
-            min-width: 0;
+            transition: box-shadow 0.3s;
         }
+
+        .panel:hover {
+            box-shadow: 0 0 50px rgba(0, 150, 255, 0.25), inset 0 0 30px rgba(0, 150, 255, 0.05);
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            flex-shrink: 0;
+        }
+
         .panel-title {
             font-size: 18px;
             font-weight: 700;
-            margin-bottom: 12px;
-            color: #ff4444;
-            text-shadow: 0 0 12px rgba(255, 68, 68, 0.3);
+            letter-spacing: 0.3px;
+            color: #8cf;
+            text-shadow: 0 0 12px rgba(0, 180, 255, 0.3);
             display: flex;
             align-items: center;
-            gap: 10px;
-            flex-shrink: 0;
-            letter-spacing: 0.5px;
+            gap: 8px;
         }
+
         .panel-title .badge {
-            font-size: 12px;
-            background: #1e2430;
+            font-size: 11px;
+            background: rgba(0, 180, 255, 0.15);
             padding: 2px 10px;
             border-radius: 20px;
-            color: #8a9bb5;
+            color: #6af;
             font-weight: 400;
+            border: 1px solid rgba(0, 180, 255, 0.1);
         }
+
         .upload-zone {
-            border: 2px dashed rgba(255, 68, 68, 0.2);
-            border-radius: 8px;
-            padding: 16px;
+            border: 2px dashed rgba(0, 180, 255, 0.2);
+            border-radius: 12px;
+            padding: 14px;
             text-align: center;
-            background: rgba(0, 0, 0, 0.2);
+            background: rgba(0, 20, 40, 0.3);
             cursor: pointer;
             transition: all 0.3s;
             margin-bottom: 12px;
             flex-shrink: 0;
         }
+
         .upload-zone:hover {
-            border-color: #ff4444;
-            background: rgba(255, 68, 68, 0.05);
+            border-color: #4af;
+            background: rgba(0, 100, 255, 0.08);
         }
+
         .upload-zone .upload-text {
             font-size: 14px;
-            color: #ccd;
+            color: #bcd;
         }
         .upload-zone .upload-subtext {
             font-size: 12px;
-            color: #6c757d;
+            color: #6a7a8a;
         }
+
         .text-zone {
             flex: 1;
             min-height: 0;
             width: 100%;
-            background-color: #161920;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 8px;
+            background: rgba(10, 14, 22, 0.8);
+            border: 1px solid rgba(0, 180, 255, 0.1);
+            border-radius: 12px;
             padding: 12px;
-            color: #e0e4f0;
-            font-family: 'Courier New', Courier, monospace;
+            color: #dce6f0;
+            font-family: 'Courier New', monospace;
             font-size: 13px;
-            line-height: 1.5;
+            line-height: 1.6;
             resize: none;
             outline: none;
-            transition: border-color 0.3s;
+            transition: border-color 0.3s, box-shadow 0.3s;
             tab-size: 4;
-            spellcheck: false;
         }
+
         .text-zone:focus {
-            border-color: #ff4444;
-            box-shadow: 0 0 5px rgba(255, 68, 68, 0.2);
+            border-color: #4af;
+            box-shadow: 0 0 20px rgba(0, 150, 255, 0.15);
         }
+
         .text-zone.output {
-            background-color: #0d0f14;
-            color: #8fff8f;
+            background: rgba(8, 12, 20, 0.9);
+            color: #9f9;
         }
+
         .controls {
             display: flex;
             flex-wrap: wrap;
-            gap: 8px 16px;
-            margin-top: 12px;
+            gap: 6px 12px;
+            margin-top: 14px;
             flex-shrink: 0;
             align-items: center;
+            justify-content: space-between;
         }
+
+        .controls-left {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px 12px;
+            align-items: center;
+        }
+
+        .controls-right {
+            display: flex;
+            gap: 8px;
+        }
+
         .checkbox-group {
             display: flex;
             align-items: center;
-            gap: 6px;
-            background: #1a1e26;
-            padding: 4px 12px;
-            border-radius: 6px;
-            border: 1px solid rgba(255, 255, 255, 0.06);
+            gap: 5px;
+            background: rgba(0, 40, 80, 0.25);
+            padding: 3px 10px 3px 6px;
+            border-radius: 20px;
+            border: 1px solid rgba(0, 180, 255, 0.08);
         }
+
         .checkbox-group input[type="checkbox"] {
             appearance: none;
             width: 16px;
             height: 16px;
-            background: #0d0f14;
-            border: 2px solid #3a4050;
+            background: rgba(0, 20, 40, 0.6);
+            border: 2px solid #3a5a7a;
             border-radius: 4px;
             cursor: pointer;
             transition: all 0.2s;
             flex-shrink: 0;
         }
+
         .checkbox-group input[type="checkbox"]:checked {
-            background: #ff4444;
-            border-color: #ff4444;
-            box-shadow: 0 0 8px rgba(255, 68, 68, 0.4);
+            background: #4af;
+            border-color: #4af;
+            box-shadow: 0 0 12px rgba(0, 180, 255, 0.4);
         }
+
         .checkbox-group label {
-            font-size: 13px;
-            color: #ccd;
+            font-size: 12px;
+            color: #bcd;
             cursor: pointer;
             user-select: none;
         }
+
         .checkbox-group .hint {
             font-size: 10px;
-            color: #6c757d;
+            color: #5a7a8a;
             margin-left: 2px;
         }
+
         .btn {
-            padding: 6px 14px;
+            padding: 6px 16px;
             border: none;
-            border-radius: 6px;
+            border-radius: 20px;
             font-weight: 600;
             font-size: 13px;
             cursor: pointer;
             transition: all 0.2s;
             white-space: nowrap;
+            background: rgba(30, 50, 70, 0.6);
+            color: #bcd;
         }
-        .btn-primary {
-            background: #ff4444;
+
+        .btn:hover {
+            background: rgba(50, 80, 120, 0.7);
             color: #fff;
-            box-shadow: 0 0 10px rgba(255, 68, 68, 0.3);
         }
+
+        .btn-primary {
+            background: #1a7af0;
+            color: #fff;
+            box-shadow: 0 0 20px rgba(0, 120, 255, 0.3);
+        }
+
         .btn-primary:hover {
-            background: #cc3333;
-            box-shadow: 0 0 20px rgba(255, 68, 68, 0.5);
+            background: #2a8aff;
+            box-shadow: 0 0 30px rgba(0, 150, 255, 0.5);
+            transform: translateY(-1px);
         }
+
         .btn-primary:disabled {
             opacity: 0.5;
             cursor: not-allowed;
+            transform: none;
         }
-        .btn-secondary {
-            background: #2a2f3a;
-            color: #ccd;
-        }
-        .btn-secondary:hover {
-            background: #3a4050;
-        }
+
         .btn-success {
-            background: #28a745;
+            background: #1a9a4a;
             color: #fff;
+            box-shadow: 0 0 15px rgba(0, 200, 80, 0.2);
         }
+
         .btn-success:hover {
-            background: #218838;
+            background: #2aaa5a;
+            box-shadow: 0 0 25px rgba(0, 200, 80, 0.4);
         }
+
         .status {
             margin-top: 8px;
-            font-size: 13px;
-            color: #8a9bb5;
+            font-size: 12px;
+            color: #6a8aaa;
             text-align: center;
             flex-shrink: 0;
-            height: 20px;
+            height: 18px;
         }
+
         .text-zone::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
+            width: 5px;
+            height: 5px;
         }
         .text-zone::-webkit-scrollbar-track {
-            background: #1a1e26;
+            background: rgba(0, 20, 40, 0.3);
             border-radius: 4px;
         }
         .text-zone::-webkit-scrollbar-thumb {
-            background: #2a3040;
+            background: rgba(0, 180, 255, 0.25);
             border-radius: 4px;
         }
         .text-zone::-webkit-scrollbar-thumb:hover {
-            background: #3a4a60;
+            background: rgba(0, 180, 255, 0.4);
         }
+
         @media (max-width: 768px) {
-            body {
+            .container {
                 flex-direction: column;
-                padding: 10px;
-                gap: 10px;
-                height: 100vh;
+                height: 95vh;
+                gap: 12px;
             }
             .panel {
-                min-height: 45vh;
+                min-height: 40vh;
             }
             .controls {
                 flex-direction: column;
                 align-items: stretch;
             }
-            .checkbox-group {
+            .controls-left,
+            .controls-right {
                 justify-content: center;
             }
         }
@@ -228,47 +288,59 @@
 </head>
 <body>
 
-    <!-- LEFT PANEL: Input -->
-    <div class="panel" id="inputPanel">
-        <div class="panel-title">💀 skull.obf <span class="badge">.lua / .txt</span></div>
-        <div class="upload-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
-            <div class="upload-text">📁 Drag &amp; drop your Luau script here</div>
-            <div class="upload-subtext">or click to browse</div>
-            <input type="file" id="fileInput" style="display: none;" accept=".lua,.txt" />
+    <div class="container">
+        <!-- LEFT PANEL -->
+        <div class="panel">
+            <div class="panel-header">
+                <div class="panel-title">💀 skull.obf <span class="badge">input</span></div>
+            </div>
+            <div class="upload-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
+                <div class="upload-text">📁 Drop or click to load</div>
+                <div class="upload-subtext">.lua / .txt</div>
+                <input type="file" id="fileInput" style="display: none;" accept=".lua,.txt" />
+            </div>
+            <textarea class="text-zone" id="sourceCode" placeholder="-- Paste your Luau source code here..."></textarea>
+            <div class="controls">
+                <div class="controls-left">
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="minifyCheck" />
+                        <label for="minifyCheck">⚡ Minify</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="vmCheck" />
+                        <label for="vmCheck">🧩 VM</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="antiTamperCheck" checked />
+                        <label for="antiTamperCheck">🔒 Anti‑Tamper</label>
+                    </div>
+                </div>
+                <div class="controls-right">
+                    <button class="btn btn-primary" id="obfuscateBtn">⚡ Obfuscate</button>
+                    <button class="btn" id="clearBtn">🗑️ Clear</button>
+                </div>
+            </div>
+            <div class="status" id="statusLeft">Ready</div>
         </div>
-        <textarea class="text-zone" id="sourceCode" placeholder="-- Paste your Luau source code here..."></textarea>
-        <div class="controls">
-            <div class="checkbox-group">
-                <input type="checkbox" id="minifyCheck" />
-                <label for="minifyCheck">⚡ Minify <span class="hint">(compress)</span></label>
-            </div>
-            <div class="checkbox-group">
-                <input type="checkbox" id="vmCheck" />
-                <label for="vmCheck">🧩 VM <span class="hint">(XOR encoding)</span></label>
-            </div>
-            <div class="checkbox-group">
-                <input type="checkbox" id="antiTamperCheck" checked />
-                <label for="antiTamperCheck">🔒 Anti‑Tamper <span class="hint">(obfuscated)</span></label>
-            </div>
-            <button class="btn btn-primary" id="obfuscateBtn">⚡ Obfuscate</button>
-            <button class="btn btn-secondary" id="clearBtn">🗑️ Clear</button>
-        </div>
-        <div class="status" id="statusLeft">Ready – paste or load a script.</div>
-    </div>
 
-    <!-- RIGHT PANEL: Output -->
-    <div class="panel" id="outputPanel">
-        <div class="panel-title">🔒 Obfuscated Code <span class="badge" id="outputSize">0 characters</span></div>
-        <textarea class="text-zone output" id="obfuscatedOutput" readonly placeholder="Obfuscated code will appear here..."></textarea>
-        <div class="controls" style="justify-content: flex-end;">
-            <button class="btn btn-success" id="copyBtn">📋 Copy</button>
-            <button class="btn btn-secondary" id="downloadBtn">⬇️ Download</button>
+        <!-- RIGHT PANEL -->
+        <div class="panel">
+            <div class="panel-header">
+                <div class="panel-title">🔒 Output <span class="badge" id="outputSize">0 chars</span></div>
+            </div>
+            <textarea class="text-zone output" id="obfuscatedOutput" readonly placeholder="Obfuscated code will appear here..."></textarea>
+            <div class="controls">
+                <div class="controls-right" style="width:100%; justify-content: flex-end;">
+                    <button class="btn btn-success" id="copyBtn">📋 Copy</button>
+                    <button class="btn" id="downloadBtn">⬇️ Download</button>
+                </div>
+            </div>
+            <div class="status" id="statusRight">Ready</div>
         </div>
-        <div class="status" id="statusRight">Ready</div>
     </div>
 
     <script>
-        // ===== DOM references =====
+        // ===== DOM refs =====
         const sourceCode = document.getElementById('sourceCode');
         const obfuscatedOutput = document.getElementById('obfuscatedOutput');
         const obfuscateBtn = document.getElementById('obfuscateBtn');
@@ -291,10 +363,10 @@
             const reader = new FileReader();
             reader.onload = function(ev) {
                 sourceCode.value = ev.target.result;
-                statusLeft.textContent = `✅ Loaded: ${file.name} (${file.size} bytes)`;
+                statusLeft.textContent = `✅ Loaded: ${file.name} (${file.size} B)`;
             };
             reader.onerror = function() {
-                statusLeft.textContent = '❌ Failed to read file.';
+                statusLeft.textContent = '❌ Read error';
             };
             reader.readAsText(file);
             this.value = '';
@@ -303,18 +375,18 @@
         // ===== Drag and drop =====
         dropZone.addEventListener('dragover', function(e) {
             e.preventDefault();
-            this.style.borderColor = '#ff4444';
-            this.style.background = 'rgba(255, 68, 68, 0.1)';
+            this.style.borderColor = '#4af';
+            this.style.background = 'rgba(0,100,255,0.08)';
         });
         dropZone.addEventListener('dragleave', function(e) {
             e.preventDefault();
-            this.style.borderColor = 'rgba(255, 68, 68, 0.2)';
-            this.style.background = 'rgba(0, 0, 0, 0.2)';
+            this.style.borderColor = 'rgba(0,180,255,0.2)';
+            this.style.background = 'rgba(0,20,40,0.3)';
         });
         dropZone.addEventListener('drop', function(e) {
             e.preventDefault();
-            this.style.borderColor = 'rgba(255, 68, 68, 0.2)';
-            this.style.background = 'rgba(0, 0, 0, 0.2)';
+            this.style.borderColor = 'rgba(0,180,255,0.2)';
+            this.style.background = 'rgba(0,20,40,0.3)';
             const files = e.dataTransfer.files;
             if (files.length > 0) {
                 fileInput.files = files;
@@ -322,22 +394,19 @@
             }
         });
 
-        // ===== Minify function =====
+        // ===== Minify =====
         function minify(code) {
-            // Remove single-line comments (-- ...)
-            let cleaned = code.replace(/--[^\n]*/g, '');
-            // Remove multi-line comments (--[[ ... ]]) – simple version
-            cleaned = cleaned.replace(/--\[\[[\s\S]*?\]\]/g, '');
-            // Collapse whitespace: replace multiple spaces/tabs/newlines with a single space
-            cleaned = cleaned.replace(/\s+/g, ' ');
-            // Trim leading/trailing spaces
-            cleaned = cleaned.trim();
-            return cleaned;
+            let c = code.replace(/--[^\n]*/g, '');
+            c = c.replace(/--\[\[[\s\S]*?\]\]/g, '');
+            c = c.replace(/\s+/g, ' ');
+            return c.trim();
         }
 
-        // ===== Multi‑layer checksum (obfuscated) =====
+        // ===== Checksums =====
         function generateChecksums(code) {
-            let h1 = 0, h2 = 0, h3 = 0;
+            let h1 = 0,
+                h2 = 0,
+                h3 = 0;
             for (let i = 0; i < code.length; i++) {
                 const c = code.charCodeAt(i);
                 h1 = ((h1 << 5) - h1 + c) >>> 0;
@@ -347,84 +416,67 @@
             return { h1, h2, h3 };
         }
 
-        // ===== Generate random XOR key for VM =====
-        function randomKey() {
-            return Math.floor(Math.random() * 256);
-        }
+        function randomKey() { return Math.floor(Math.random() * 256); }
 
-        // ===== Obfuscate function =====
+        // ===== Obfuscate =====
         function obfuscateLuau(code, options) {
-            const { minify, vm, antiTamper } = options;
+            const { minify: doMinify, vm, antiTamper } = options;
+            let processed = doMinify ? minify(code) : code;
 
-            // 1. Minify if enabled
-            let processed = code;
-            if (minify) processed = minify(processed);
-
-            // 2. Convert to hex (always)
             let hex = '';
             for (let i = 0; i < processed.length; i++) {
-                let charCode = processed.charCodeAt(i);
-                let hexByte = charCode.toString(16);
-                if (hexByte.length < 2) hexByte = '0' + hexByte;
-                hex += hexByte;
+                let h = processed.charCodeAt(i).toString(16);
+                if (h.length < 2) h = '0' + h;
+                hex += h;
             }
 
-            // 3. If VM enabled: XOR the hex string with a random key
-            let key = 0;
-            let encodedHex = hex;
-            let decoder = '';
+            let key = 0,
+                encodedHex = hex,
+                decoder = '';
             if (vm) {
                 key = randomKey();
                 let xorHex = '';
                 for (let i = 0; i < hex.length; i++) {
-                    let charCode = hex.charCodeAt(i);
-                    let xorCharCode = charCode ^ key;
-                    let xorByte = xorCharCode.toString(16);
-                    if (xorByte.length < 2) xorByte = '0' + xorByte;
-                    xorHex += xorByte;
+                    let x = (hex.charCodeAt(i) ^ key).toString(16);
+                    if (x.length < 2) x = '0' + x;
+                    xorHex += x;
                 }
                 encodedHex = xorHex;
                 decoder =
-                    `local function _x(s,k)\n    local t={}\n    for i=1,#s,2 do\n        t[#t+1]=string.char(tonumber(s:sub(i,i+1),16)^k)\n    end\n    return table.concat(t)\nend\nlocal enc = _x("${encodedHex}", ${key})\n`;
+                    `local function _x(s,k)local t={}for i=1,#s,2 do t[#t+1]=string.char(tonumber(s:sub(i,i+1),16)^k)end return table.concat(t)end\nlocal enc=_x("${encodedHex}",${key})\n`;
             } else {
-                decoder = `local enc = "${hex}"\n`;
+                decoder = `local enc="${hex}"\n`;
             }
 
-            // 4. Build the final loader with common header
             let header = '-- What obfuscator is this? Ive never seen it before + it looks so weird!';
 
-            // Base loader that decodes hex to string (with or without XOR)
             let loader = header + '\n';
             if (antiTamper) {
-                // Generate checksums (on the original minified code)
-                const checksums = generateChecksums(processed);
-                const errorMsg = 'ts gng really thought he could steal my code skid of skids lol';
-
-                // Obfuscated anti-tamper code (minified itself)
-                const tamperCode = `
+                const sums = generateChecksums(processed);
+                const err = 'ts gng really thought he could steal my code skid of skids lol';
+                // Minify the tamper code inline (already minified in template)
+                const tamper = `
                     local function _d(s)local t={}for i=1,#s,2 do t[#t+1]=string.char(tonumber(s:sub(i,i+1),16))end return table.concat(t)end
                     local function _c1(s)local h=0 for i=1,#s do h=((h<<5)-h+string.byte(s,i))%4294967296 end return h end
                     local function _c2(s)local h=0 for i=1,#s do h=((h*31+string.byte(s,i))*7)%4294967296 end return h end
                     local function _c3(s)local h=0 for i=1,#s do h=((h*2654435761+string.byte(s,i)*17)%4294967296)~((h<<7)%4294967296) end return h end
-                    local _m,_t=getmetatable("") or {}\n_m.__tostring=function()error("${errorMsg}")end
+                    local _m,_t=getmetatable("") or {}\n_m.__tostring=function()error("${err}")end
                     debug.setmetatable("",_m)
                     local src=_d(enc)
                     local c1=_c1(src)local c2=_c2(src)local c3=_c3(src)
-                    if c1~=${checksums.h1} or c2~=${checksums.h2} or c3~=${checksums.h3} then error("${errorMsg}") end
-                    local _o=table.concat table.concat=function(...)error("${errorMsg}")end
-                    local _p,_e=pcall(unpack,{},0,2147483647) if _p then error("${errorMsg}") end
+                    if c1~=${sums.h1} or c2~=${sums.h2} or c3~=${sums.h3} then error("${err}") end
+                    local _o=table.concat table.concat=function(...)error("${err}")end
+                    local _p,_e=pcall(unpack,{},0,2147483647) if _p then error("${err}") end
                     loadstring(src)()
-                `;
-                // Minify the tamper code itself
-                const minifiedTamper = tamperCode.replace(/\s+/g, ' ').trim();
-                loader += `local enc=_d("${encodedHex}")\n` + minifiedTamper + '\n';
+                `.replace(/\s+/g, ' ').trim();
+                loader += `local enc=_d("${encodedHex}")\n` + tamper + '\n';
             } else {
-                // No anti-tamper: just decode and run
                 if (vm) {
                     loader +=
                         `local function _x(s,k)local t={}for i=1,#s,2 do t[#t+1]=string.char(tonumber(s:sub(i,i+1),16)^k)end return table.concat(t)end\nlocal enc=_x("${encodedHex}",${key})\nloadstring(enc)()\n`;
                 } else {
-                    loader += `local function _d(s)local t={}for i=1,#s,2 do t[#t+1]=string.char(tonumber(s:sub(i,i+1),16))end return table.concat(t)end\nloadstring(_d("${hex}"))()\n`;
+                    loader +=
+                        `local function _d(s)local t={}for i=1,#s,2 do t[#t+1]=string.char(tonumber(s:sub(i,i+1),16))end return table.concat(t)end\nloadstring(_d("${hex}"))()\n`;
                 }
             }
             return loader;
@@ -434,30 +486,30 @@
         obfuscateBtn.addEventListener('click', function() {
             const input = sourceCode.value;
             if (!input.trim()) {
-                statusLeft.textContent = '⚠️ Please paste or load some Luau code.';
+                statusLeft.textContent = '⚠️ Paste some code first';
                 return;
             }
             statusLeft.textContent = '⏳ Obfuscating...';
             obfuscateBtn.disabled = true;
             setTimeout(() => {
                 try {
-                    const options = {
+                    const opts = {
                         minify: minifyCheck.checked,
                         vm: vmCheck.checked,
                         antiTamper: antiTamperCheck.checked
                     };
-                    const result = obfuscateLuau(input, options);
+                    const result = obfuscateLuau(input, opts);
                     obfuscatedOutput.value = result;
-                    outputSize.textContent = result.length + ' characters';
-                    statusRight.textContent = '✅ Obfuscation complete!';
+                    outputSize.textContent = result.length + ' chars';
+                    statusRight.textContent = '✅ Done';
                     const parts = [];
-                    if (options.minify) parts.push('Minify');
-                    if (options.vm) parts.push('VM');
-                    if (options.antiTamper) parts.push('Anti‑Tamper');
-                    statusLeft.textContent = `✅ Done (${parts.join(' + ') || 'Plain'}).`;
-                } catch (err) {
-                    statusLeft.textContent = '❌ Error: ' + err.message;
-                    statusRight.textContent = '❌ Failed.';
+                    if (opts.minify) parts.push('Minify');
+                    if (opts.vm) parts.push('VM');
+                    if (opts.antiTamper) parts.push('Anti‑Tamper');
+                    statusLeft.textContent = `✅ ${parts.join(' + ') || 'Plain'}`;
+                } catch (e) {
+                    statusLeft.textContent = '❌ Error: ' + e.message;
+                    statusRight.textContent = '❌ Failed';
                 } finally {
                     obfuscateBtn.disabled = false;
                 }
@@ -468,18 +520,15 @@
         clearBtn.addEventListener('click', function() {
             sourceCode.value = '';
             obfuscatedOutput.value = '';
-            outputSize.textContent = '0 characters';
-            statusLeft.textContent = 'Cleared.';
+            outputSize.textContent = '0 chars';
+            statusLeft.textContent = 'Cleared';
             statusRight.textContent = 'Ready';
         });
 
         // ===== Copy =====
         copyBtn.addEventListener('click', function() {
             const text = obfuscatedOutput.value;
-            if (!text) {
-                statusRight.textContent = '⚠️ Nothing to copy – obfuscate first.';
-                return;
-            }
+            if (!text) { statusRight.textContent = '⚠️ Nothing to copy'; return; }
             navigator.clipboard?.writeText(text).then(() => {
                 statusRight.textContent = '📋 Copied!';
             }).catch(() => {
@@ -492,10 +541,7 @@
         // ===== Download =====
         downloadBtn.addEventListener('click', function() {
             const text = obfuscatedOutput.value;
-            if (!text) {
-                statusRight.textContent = '⚠️ Nothing to download – obfuscate first.';
-                return;
-            }
+            if (!text) { statusRight.textContent = '⚠️ Nothing to download'; return; }
             const blob = new Blob([text], { type: 'text/plain' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -505,19 +551,17 @@
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
-            statusRight.textContent = '⬇️ Download started!';
+            statusRight.textContent = '⬇️ Download started';
         });
 
         // ===== Auto-select output on click =====
-        obfuscatedOutput.addEventListener('click', function() {
-            this.select();
-        });
+        obfuscatedOutput.addEventListener('click', function() { this.select(); });
 
-        // ===== Initial state =====
-        statusLeft.textContent = 'Ready – paste or load a script.';
+        // ===== Init =====
+        statusLeft.textContent = 'Ready';
         statusRight.textContent = 'Ready';
-        outputSize.textContent = '0 characters';
-        console.log('✅ skull.obf ready (Minify, VM, Anti‑Tamper).');
+        outputSize.textContent = '0 chars';
+        console.log('✅ skull.obf (simple blue glow) loaded.');
     </script>
 </body>
 </html>
