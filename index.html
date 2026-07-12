@@ -3,18 +3,8 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Luau Obfuscator Interface</title>
+    <title>Luau Obfuscator</title>
     <style>
-        :root {
-            --bg-color: #0a0b0d;
-            --panel-color: #111318;
-            --accent-color: #0077ff;
-            --accent-glow: rgba(0, 119, 255, 0.4);
-            --text-main: #ffffff;
-            --text-muted: #6c757d;
-            --input-bg: #161920;
-        }
-
         * {
             box-sizing: border-box;
             margin: 0;
@@ -23,335 +13,250 @@
         }
 
         body {
-            background-color: var(--bg-color);
+            background-color: #0a0b0d;
+            color: #ffffff;
             height: 100vh;
-            overflow: hidden;
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: stretch;
+            padding: 20px;
+            gap: 20px;
+            overflow: hidden;
         }
 
-        .open-btn {
-            background: transparent;
-            color: var(--text-main);
-            border: 2px solid var(--accent-color);
-            padding: 12px 24px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            border-radius: 6px;
-            box-shadow: 0 0 10px var(--accent-glow);
-            transition: all 0.3s ease;
-        }
-
-        .open-btn:hover {
-            background: var(--accent-color);
-            box-shadow: 0 0 20px var(--accent-color);
-            transform: translateY(-2px);
-        }
-
-        .panel-container {
-            position: fixed;
-            bottom: 0;
-            left: 50%;
-            transform: translate(-50%, 100%);
-            width: 100%;
-            max-width: 800px;
-            background-color: var(--panel-color);
-            border-top-left-radius: 16px;
-            border-top-right-radius: 16px;
-            border: 1px solid rgba(0, 119, 255, 0.3);
-            border-bottom: none;
-            box-shadow: 0 -10px 35px var(--accent-glow);
-            padding: 24px;
-            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-            z-index: 100;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-
-        .panel-container.active {
-            transform: translate(-50%, 0);
-        }
-
-        .panel-handle {
-            width: 50px;
-            height: 4px;
-            background-color: var(--accent-color);
-            box-shadow: 0 0 8px var(--accent-color);
-            border-radius: 2px;
-            margin: 0 auto 20px auto;
-            cursor: pointer;
-        }
-
-        .panel-header {
+        .panel {
+            flex: 1;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
+            flex-direction: column;
+            background-color: #111318;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid rgba(0, 119, 255, 0.2);
+            box-shadow: 0 0 20px rgba(0, 119, 255, 0.05);
+            min-width: 0;
         }
 
         .panel-title {
-            color: var(--text-main);
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 600;
-            letter-spacing: 0.5px;
-            text-shadow: 0 0 10px var(--accent-glow);
-        }
-
-        .close-btn {
-            background: none;
-            border: none;
-            color: var(--text-muted);
-            font-size: 24px;
-            cursor: pointer;
-            transition: color 0.2s;
-        }
-
-        .close-btn:hover {
-            color: #ff4444;
-        }
-
-        .tab-menu {
+            margin-bottom: 12px;
+            color: #0077ff;
+            text-shadow: 0 0 8px rgba(0, 119, 255, 0.3);
             display: flex;
+            align-items: center;
             gap: 10px;
-            margin-bottom: 15px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            padding-bottom: 10px;
         }
 
-        .tab-btn {
-            background: none;
-            border: none;
-            color: var(--text-muted);
-            padding: 6px 12px;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: color 0.2s;
-            position: relative;
-        }
-
-        .tab-btn.active {
-            color: var(--accent-color);
-            text-shadow: 0 0 8px var(--accent-glow);
-        }
-
-        .tab-btn.active::after {
-            content: '';
-            position: absolute;
-            bottom: -11px;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background-color: var(--accent-color);
-            box-shadow: 0 0 8px var(--accent-color);
-        }
-
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
+        .panel-title .badge {
+            font-size: 12px;
+            background: #1e2430;
+            padding: 2px 10px;
+            border-radius: 20px;
+            color: #8a9bb5;
+            font-weight: 400;
         }
 
         .upload-zone {
             border: 2px dashed rgba(0, 119, 255, 0.2);
             border-radius: 8px;
-            padding: 40px 20px;
+            padding: 20px;
             text-align: center;
             background: rgba(0, 0, 0, 0.2);
             cursor: pointer;
-            transition: border-color 0.3s, background-color 0.3s;
+            transition: all 0.3s;
+            margin-bottom: 12px;
+            flex-shrink: 0;
         }
 
         .upload-zone:hover {
-            border-color: var(--accent-color);
+            border-color: #0077ff;
             background: rgba(0, 119, 255, 0.05);
         }
 
-        .upload-text {
-            color: var(--text-main);
-            font-size: 15px;
-            margin-bottom: 8px;
+        .upload-zone .upload-text {
+            font-size: 14px;
+            color: #ccd;
         }
 
-        .upload-subtext {
-            color: var(--text-muted);
-            font-size: 13px;
+        .upload-zone .upload-subtext {
+            font-size: 12px;
+            color: #6c757d;
         }
 
         .text-zone {
+            flex: 1;
+            min-height: 0;
             width: 100%;
-            height: 150px;
-            background-color: var(--input-bg);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            background-color: #161920;
+            border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: 8px;
             padding: 12px;
-            color: var(--text-main);
+            color: #e0e4f0;
             font-family: 'Courier New', Courier, monospace;
             font-size: 13px;
-            resize: vertical;
+            line-height: 1.5;
+            resize: none;
             outline: none;
             transition: border-color 0.3s;
+            tab-size: 4;
+            spellcheck: false;
         }
 
         .text-zone:focus {
-            border-color: var(--accent-color);
+            border-color: #0077ff;
             box-shadow: 0 0 5px rgba(0, 119, 255, 0.2);
         }
 
-        .output-area {
-            margin-top: 12px;
-            display: none;
-        }
-
-        .output-area.active {
-            display: block;
-        }
-
-        .output-area .text-zone {
-            height: 120px;
+        .text-zone.output {
             background-color: #0d0f14;
             color: #8fff8f;
         }
 
-        .action-btn {
-            width: 100%;
-            background: var(--accent-color);
-            color: var(--text-main);
+        .button-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 12px;
+            flex-shrink: 0;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 10px;
             border: none;
-            padding: 12px;
-            margin-top: 15px;
-            font-weight: 600;
             border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
             cursor: pointer;
-            box-shadow: 0 0 10px var(--accent-glow);
-            transition: background 0.2s, box-shadow 0.2s;
+            transition: all 0.2s;
+            text-align: center;
         }
 
-        .action-btn:hover {
+        .btn-primary {
+            background: #0077ff;
+            color: #fff;
+            box-shadow: 0 0 10px rgba(0, 119, 255, 0.3);
+        }
+
+        .btn-primary:hover {
             background: #0066dd;
-            box-shadow: 0 0 15px var(--accent-color);
+            box-shadow: 0 0 20px rgba(0, 119, 255, 0.5);
         }
 
-        .action-btn:disabled {
+        .btn-primary:disabled {
             opacity: 0.5;
             cursor: not-allowed;
         }
 
-        .btn-group {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
-        }
-
-        .btn-group .action-btn {
-            flex: 1;
-            margin-top: 0;
-            padding: 10px;
-            font-size: 14px;
-        }
-
-        .btn-group .action-btn.secondary {
+        .btn-secondary {
             background: #2a2f3a;
-            box-shadow: none;
+            color: #ccd;
         }
 
-        .btn-group .action-btn.secondary:hover {
+        .btn-secondary:hover {
             background: #3a4050;
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: #fff;
+        }
+
+        .btn-success:hover {
+            background: #218838;
         }
 
         .status {
-            margin-top: 10px;
-            font-size: 14px;
-            color: var(--text-muted);
+            margin-top: 8px;
+            font-size: 13px;
+            color: #8a9bb5;
             text-align: center;
+            flex-shrink: 0;
+            height: 20px;
+        }
+
+        /* Scrollbar styling */
+        .text-zone::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .text-zone::-webkit-scrollbar-track {
+            background: #1a1e26;
+            border-radius: 4px;
+        }
+        .text-zone::-webkit-scrollbar-thumb {
+            background: #2a3040;
+            border-radius: 4px;
+        }
+        .text-zone::-webkit-scrollbar-thumb:hover {
+            background: #3a4a60;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+                padding: 10px;
+                gap: 10px;
+                height: 100vh;
+            }
+            .panel {
+                min-height: 45vh;
+            }
         }
     </style>
 </head>
 <body>
 
-    <button class="open-btn" onclick="togglePanel()">Launch Obfuscator UI</button>
-
-    <div class="panel-container" id="obfuscatorPanel">
-        <div class="panel-handle" onclick="togglePanel()"></div>
-
-        <div class="panel-header">
-            <div class="panel-title">Universal Anti-Dump Obfuscator</div>
-            <button class="close-btn" onclick="togglePanel()">&times;</button>
+    <!-- LEFT PANEL: Input -->
+    <div class="panel" id="inputPanel">
+        <div class="panel-title">
+            📄 Source Code
+            <span class="badge">.lua / .txt</span>
         </div>
 
-        <!-- Navigation Tabs -->
-        <div class="tab-menu">
-            <button class="tab-btn active" id="fileTabBtn" onclick="switchTab('file-tab', this)">File Upload</button>
-            <button class="tab-btn" id="textTabBtn" onclick="switchTab('text-tab', this)">Raw Code</button>
+        <div class="upload-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
+            <div class="upload-text">📁 Drag &amp; drop your Luau script here</div>
+            <div class="upload-subtext">or click to browse</div>
+            <input type="file" id="fileInput" style="display: none;" accept=".lua,.txt" />
         </div>
 
-        <!-- Tab: File Upload -->
-        <div id="file-tab" class="tab-content active">
-            <div class="upload-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
-                <div class="upload-text">Drag &amp; Drop your Luau script here</div>
-                <div class="upload-subtext">Supports .lua or .txt files</div>
-                <input type="file" id="fileInput" style="display: none;" accept=".lua,.txt" />
-            </div>
-            <div id="fileStatus" class="status" style="margin-top: 8px;"></div>
+        <textarea class="text-zone" id="sourceCode" placeholder="-- Paste your Luau source code here..."></textarea>
+
+        <div class="button-row">
+            <button class="btn btn-primary" id="obfuscateBtn">⚡ Obfuscate</button>
+            <button class="btn btn-secondary" id="clearBtn">🗑️ Clear</button>
+        </div>
+        <div class="status" id="statusLeft">Ready</div>
+    </div>
+
+    <!-- RIGHT PANEL: Output -->
+    <div class="panel" id="outputPanel">
+        <div class="panel-title">
+            🔒 Obfuscated Code
+            <span class="badge" id="outputSize">0 characters</span>
         </div>
 
-        <!-- Tab: Raw Code Input -->
-        <div id="text-tab" class="tab-content">
-            <textarea class="text-zone" id="sourceCode" placeholder="-- Paste your Luau source code directly here..."></textarea>
+        <textarea class="text-zone output" id="obfuscatedOutput" readonly placeholder="Obfuscated code will appear here..."></textarea>
+
+        <div class="button-row">
+            <button class="btn btn-success" id="copyBtn">📋 Copy</button>
+            <button class="btn btn-secondary" id="downloadBtn">⬇️ Download</button>
         </div>
-
-        <!-- Obfuscate Button -->
-        <button class="action-btn" id="obfuscateBtn">Obfuscate Script</button>
-
-        <!-- Output Area with Copy & Download -->
-        <div class="output-area" id="outputArea">
-            <textarea class="text-zone" id="obfuscatedOutput" readonly></textarea>
-            <div class="btn-group">
-                <button class="action-btn secondary" id="copyBtn">📋 Copy All</button>
-                <button class="action-btn secondary" id="downloadBtn">⬇️ Download</button>
-            </div>
-        </div>
-
-        <div class="status" id="statusMessage">Ready</div>
+        <div class="status" id="statusRight">Ready</div>
     </div>
 
     <script>
         // ===== DOM references =====
-        const panel = document.getElementById('obfuscatorPanel');
-        const fileInput = document.getElementById('fileInput');
-        const dropZone = document.getElementById('dropZone');
         const sourceCode = document.getElementById('sourceCode');
-        const obfuscateBtn = document.getElementById('obfuscateBtn');
-        const outputArea = document.getElementById('outputArea');
         const obfuscatedOutput = document.getElementById('obfuscatedOutput');
-        const statusMsg = document.getElementById('statusMessage');
-        const fileStatus = document.getElementById('fileStatus');
+        const obfuscateBtn = document.getElementById('obfuscateBtn');
+        const clearBtn = document.getElementById('clearBtn');
         const copyBtn = document.getElementById('copyBtn');
         const downloadBtn = document.getElementById('downloadBtn');
-
-        // ===== Panel toggle =====
-        function togglePanel() {
-            panel.classList.toggle('active');
-            if (!panel.classList.contains('active')) {
-                outputArea.classList.remove('active');
-                statusMsg.textContent = 'Ready';
-            }
-        }
-
-        // ===== Tab switching =====
-        function switchTab(tabId, btn) {
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            btn.classList.add('active');
-            document.getElementById(tabId).classList.add('active');
-            outputArea.classList.remove('active');
-            statusMsg.textContent = 'Ready';
-        }
+        const statusLeft = document.getElementById('statusLeft');
+        const statusRight = document.getElementById('statusRight');
+        const outputSize = document.getElementById('outputSize');
+        const fileInput = document.getElementById('fileInput');
+        const dropZone = document.getElementById('dropZone');
 
         // ===== File upload =====
         fileInput.addEventListener('change', function(e) {
@@ -360,20 +265,19 @@
             const reader = new FileReader();
             reader.onload = function(ev) {
                 sourceCode.value = ev.target.result;
-                fileStatus.textContent = `✅ Loaded: ${file.name} (${file.size} bytes)`;
-                const textTabBtn = document.getElementById('textTabBtn');
-                switchTab('text-tab', textTabBtn);
+                statusLeft.textContent = `✅ Loaded: ${file.name} (${file.size} bytes)`;
             };
             reader.onerror = function() {
-                fileStatus.textContent = '❌ Failed to read file.';
+                statusLeft.textContent = '❌ Failed to read file.';
             };
             reader.readAsText(file);
+            this.value = ''; // allow re-upload of same file
         });
 
         // ===== Drag and drop =====
         dropZone.addEventListener('dragover', function(e) {
             e.preventDefault();
-            this.style.borderColor = 'var(--accent-color)';
+            this.style.borderColor = '#0077ff';
             this.style.background = 'rgba(0, 119, 255, 0.1)';
         });
 
@@ -394,9 +298,9 @@
             }
         });
 
-        // ===== RELIABLE OBFUSCATION (hex encoding) =====
+        // ===== Obfuscation (hex encoding, fast & reliable) =====
         function obfuscateLuau(code) {
-            // Convert to hex string (no stripping, preserves everything)
+            // Convert entire code to hex string
             let hex = '';
             for (let i = 0; i < code.length; i++) {
                 let charCode = code.charCodeAt(i);
@@ -404,48 +308,60 @@
                 if (hexByte.length < 2) hexByte = '0' + hexByte;
                 hex += hexByte;
             }
-            // Lua decoder that converts hex back to original string
-            return `--[[ Obfuscated by Universal Anti-Dump (hex encoding) ]]\nlocal function _dec(s)\n    local t={}\n    for i=1,#s,2 do\n        t[#t+1]=string.char(tonumber(s:sub(i,i+1),16))\n    end\n    return table.concat(t)\nend\nloadstring(_dec("${hex}"))()\n`;
+            // Lua decoder with small footprint, handles large strings efficiently
+            return `--[[ Obfuscated by Universal Anti-Dump (hex) ]]\nlocal function _d(s)\n    local t={}\n    for i=1,#s,2 do\n        t[#t+1]=string.char(tonumber(s:sub(i,i+1),16))\n    end\n    return table.concat(t)\nend\nloadstring(_d("${hex}"))()\n`;
         }
 
-        // ===== Obfuscate button =====
+        // ===== Obfuscate =====
         obfuscateBtn.addEventListener('click', function() {
-            const inputCode = sourceCode.value;
-            if (!inputCode.trim()) {
-                statusMsg.textContent = '⚠️ Please paste or load some Luau code first.';
-                outputArea.classList.remove('active');
+            const input = sourceCode.value;
+            if (!input.trim()) {
+                statusLeft.textContent = '⚠️ Please paste or load some Luau code.';
                 return;
             }
-            statusMsg.textContent = '⏳ Obfuscating...';
+
+            statusLeft.textContent = '⏳ Obfuscating...';
             obfuscateBtn.disabled = true;
+
+            // Use setTimeout to avoid blocking UI
             setTimeout(() => {
                 try {
-                    const result = obfuscateLuau(inputCode);
+                    const result = obfuscateLuau(input);
                     obfuscatedOutput.value = result;
-                    outputArea.classList.add('active');
-                    statusMsg.textContent = '✅ Obfuscation complete! Hex encoding – runs in any Luau.';
+                    outputSize.textContent = result.length + ' characters';
+                    statusRight.textContent = '✅ Obfuscation complete!';
+                    statusLeft.textContent = '✅ Done.';
                 } catch (err) {
-                    statusMsg.textContent = '❌ Error: ' + err.message;
-                    outputArea.classList.remove('active');
+                    statusLeft.textContent = '❌ Error: ' + err.message;
+                    statusRight.textContent = '❌ Failed.';
                 } finally {
                     obfuscateBtn.disabled = false;
                 }
-            }, 300);
+            }, 50);
         });
 
-        // ===== Copy All =====
+        // ===== Clear =====
+        clearBtn.addEventListener('click', function() {
+            sourceCode.value = '';
+            obfuscatedOutput.value = '';
+            outputSize.textContent = '0 characters';
+            statusLeft.textContent = 'Cleared.';
+            statusRight.textContent = 'Ready';
+        });
+
+        // ===== Copy =====
         copyBtn.addEventListener('click', function() {
             const text = obfuscatedOutput.value;
             if (!text) {
-                statusMsg.textContent = '⚠️ Nothing to copy – obfuscate first.';
+                statusRight.textContent = '⚠️ Nothing to copy – obfuscate first.';
                 return;
             }
             navigator.clipboard?.writeText(text).then(() => {
-                statusMsg.textContent = '📋 Copied to clipboard!';
+                statusRight.textContent = '📋 Copied!';
             }).catch(() => {
                 obfuscatedOutput.select();
                 document.execCommand('copy');
-                statusMsg.textContent = '📋 Copied!';
+                statusRight.textContent = '📋 Copied!';
             });
         });
 
@@ -453,7 +369,7 @@
         downloadBtn.addEventListener('click', function() {
             const text = obfuscatedOutput.value;
             if (!text) {
-                statusMsg.textContent = '⚠️ Nothing to download – obfuscate first.';
+                statusRight.textContent = '⚠️ Nothing to download – obfuscate first.';
                 return;
             }
             const blob = new Blob([text], { type: 'text/plain' });
@@ -465,17 +381,20 @@
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
-            statusMsg.textContent = '⬇️ Download started!';
+            statusRight.textContent = '⬇️ Download started!';
         });
 
-        // ===== Auto-select on click =====
+        // ===== Auto-select output on click (convenience) =====
         obfuscatedOutput.addEventListener('click', function() {
             this.select();
         });
 
-        // ===== Init =====
-        outputArea.classList.remove('active');
-        console.log('✅ Luau Obfuscator Interface ready (hex encoding).');
+        // ===== Initial state =====
+        statusLeft.textContent = 'Ready – paste or load a script.';
+        statusRight.textContent = 'Ready';
+        outputSize.textContent = '0 characters';
+
+        console.log('✅ Luau Obfuscator ready (hex encoder, supports large files).');
     </script>
 </body>
 </html>
