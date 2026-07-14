@@ -6,21 +6,22 @@
   <title>finny.obf – Hercules Style</title>
   <style>
     :root {
-      --bg-body: #0f1117;
-      --bg-app: #1a1d27;
-      --bg-surface: #232734;
-      --bg-elevated: #2a2f3e;
-      --bg-input: #141720;
-      --bg-panel: #141720;
-      --bg-log: #0d0f15;
-      --text-primary: #e2e8f0;
-      --text-secondary: #94a3b8;
-      --text-muted: #64748b;
-      --text-log: #cbd5e1;
-      --border-color: #2d3344;
-      --shadow-sm: 0 1px 3px rgba(0,0,0,0.4);
-      --shadow-md: 0 4px 12px rgba(0,0,0,0.5);
-      --shadow-lg: 0 8px 30px rgba(0,0,0,0.6);
+      /* ─── Light theme ─── */
+      --bg-body: #f1f5f9;
+      --bg-app: #ffffff;
+      --bg-surface: #f8fafc;
+      --bg-elevated: #f1f5f9;
+      --bg-input: #ffffff;
+      --bg-panel: #ffffff;
+      --bg-log: #fafcff;
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #94a3b8;
+      --text-log: #1e293b;
+      --border-color: #e2e8f0;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+      --shadow-lg: 0 8px 30px rgba(0,0,0,0.10);
       --radius-sm: 6px;
       --radius-md: 10px;
       --radius-lg: 16px;
@@ -58,8 +59,8 @@
     }
     ::-webkit-scrollbar { width: 5px; height: 5px; }
     ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: #2d3344; border-radius: var(--radius-full); }
-    ::-webkit-scrollbar-thumb:hover { background: #3d4356; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: var(--radius-full); }
+    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
     .header {
       display: flex;
@@ -317,7 +318,7 @@
       position: absolute;
       cursor: pointer;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: #2d3344;
+      background: #cbd5e1;
       transition: 0.25s;
       border-radius: var(--radius-full);
     }
@@ -329,7 +330,7 @@
       background: white;
       transition: 0.25s;
       border-radius: 50%;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.15);
     }
     .switch input:checked + .slider { background: var(--accent-gradient); }
     .switch input:checked + .slider::before { transform: translateX(12px); }
@@ -352,7 +353,7 @@
       gap: 5px;
       box-shadow: var(--shadow-sm);
     }
-    .btn:hover { background: #2d3344; color: var(--text-primary); transform: translateY(-1px); box-shadow: var(--shadow-md); }
+    .btn:hover { background: #e2e8f0; color: var(--text-primary); transform: translateY(-1px); box-shadow: var(--shadow-md); }
     .btn:active { transform: translateY(0); }
     .btn-primary {
       background: var(--accent-gradient);
@@ -656,12 +657,12 @@
       font-size: 12px;
       font-weight: 400;
     }
-    .panel.output textarea { color: #6ee7b7; }
+    .panel.output textarea { color: #065f46; }
 
     .panel.drag-over {
       border-color: var(--accent-1);
       box-shadow: 0 0 0 3px rgba(139,92,246,0.15);
-      background: rgba(139,92,246,0.05);
+      background: rgba(139,92,246,0.03);
     }
     .drop-hint {
       display: none;
@@ -745,10 +746,10 @@
       border-bottom: 1px solid var(--border-color);
     }
     .log-body .log-entry:last-child { border-bottom: none; }
-    .log-body .log-entry.info { color: #60a5fa; }
-    .log-body .log-entry.success { color: #34d399; }
-    .log-body .log-entry.error { color: #f87171; }
-    .log-body .log-entry.warn { color: #fbbf24; }
+    .log-body .log-entry.info { color: #2563eb; }
+    .log-body .log-entry.success { color: #059669; }
+    .log-body .log-entry.error { color: #dc2626; }
+    .log-body .log-entry.warn { color: #d97706; }
     .log-body .log-entry .time {
       color: var(--text-muted);
       opacity: 0.6;
@@ -798,12 +799,12 @@
       width: 8px;
       height: 8px;
       border-radius: 50%;
-      background: #64748b;
+      background: #94a3b8;
     }
-    .status-bar .status .dot.green { background: #34d399; }
-    .status-bar .status .dot.red { background: #f87171; }
+    .status-bar .status .dot.green { background: #10b981; }
+    .status-bar .status .dot.red { background: #ef4444; }
     .status-bar .status .dot.yellow { background: #fbbf24; }
-    .status-bar .status .dot.blue { background: #60a5fa; }
+    .status-bar .status .dot.blue { background: #3b82f6; }
     #perfDisplay {
       color: var(--text-muted);
       font-feature-settings: "tnum";
@@ -860,7 +861,7 @@
     <div class="stat-group">
       <div class="stat-item">
         <span class="label">Monthly Usage</span>
-        <span class="value"><span id="monthlyUsed">0</span>/1 <span class="sub">used</span></span>
+        <span class="value"><span id="monthlyUsed">0</span>/10 <span class="sub">used</span></span>
       </div>
       <div class="stat-divider"></div>
       <div class="stat-item">
@@ -1025,7 +1026,7 @@
       </div>
     </div>
     <div class="log-body" id="logBody">
-      <div class="log-entry info"><span class="time">[init]</span> finny.obf – Hercules‑style pipeline loaded</div>
+      <div class="log-entry info"><span class="time">[init]</span> finny.obf – Hercules‑style pipeline loaded (light theme)</div>
       <div class="log-entry info"><span class="time">[init]</span> Preset: Balanced | 10 modules enabled</div>
     </div>
   </div>
@@ -1043,7 +1044,7 @@
 (function() {
   // ─── State ───
   let monthlyUsed = 0, totalJobs = 0, activeJobs = 0;
-  const MAX_MONTHLY = 1;
+  const MAX_MONTHLY = 10;
   let recentJobs = [];
   let isProcessing = false;
   let logEntries = 0;
@@ -1133,7 +1134,8 @@
   function updateDashboard() {
     monthlyUsedEl.textContent = monthlyUsed;
     totalJobsEl.textContent = totalJobs;
-    remainingCountEl.textContent = Math.max(0, MAX_MONTHLY - monthlyUsed);
+    const remaining = Math.max(0, MAX_MONTHLY - monthlyUsed);
+    remainingCountEl.textContent = remaining;
     processingCountEl.textContent = 0;
     activeJobsEl.textContent = activeJobs;
     if (recentJobs.length === 0) {
@@ -1142,7 +1144,7 @@
       let html = '';
       const show = recentJobs.slice(-3).reverse();
       for (const job of show) {
-        const st = job.status === 'COMPLETED' ? '#34d399' : '#fbbf24';
+        const st = job.status === 'COMPLETED' ? '#10b981' : '#fbbf24';
         html += `<div class="job">
           <span class="status" style="background:${st}"></span>
           <span class="name">${job.name}</span>
@@ -1164,6 +1166,7 @@
     updateDashboard();
   }
 
+  // ─── Log panel toggle ───
   function toggleLogPanel(show) {
     logVisible = (show !== undefined) ? show : !logVisible;
     logPanel.classList.toggle('hidden', !logVisible);
@@ -1328,7 +1331,6 @@
   // ─── Module: Variable Renaming ───
   function moduleVariableRenaming(code) {
     const tokens = tokenizeLua(code);
-    // Collect all identifiers that are not keywords
     const keywords = new Set([
       'and', 'break', 'do', 'else', 'elseif', 'end', 'false', 'for', 'function',
       'goto', 'if', 'in', 'local', 'nil', 'not', 'or', 'repeat', 'return', 'then',
@@ -1341,21 +1343,14 @@
       'unpack', 'rawget', 'rawset', 'rawequal', 'next'
     ]);
     const varMap = new Map();
-    let nameCounter = 0;
     const result = [];
     for (const tok of tokens) {
       if (tok.type === 'ident') {
         const name = tok.value;
-        // Skip keywords and globals
         if (keywords.has(name) || globalNames.has(name)) {
           result.push(name);
           continue;
         }
-        // Skip if it's a field access like obj.field - we only rename standalone variables
-        // Check if previous token was '.'
-        // We'll check the previous token in the token list
-        // This is a simplification; for a full implementation we'd need scope analysis.
-        // For now, we'll rename all identifiers that are not keywords or known globals.
         if (!varMap.has(name)) {
           const newName = randomVar(8 + Math.floor(rand() * 5));
           varMap.set(name, newName);
@@ -1370,13 +1365,10 @@
 
   // ─── Module: Control Flow ───
   function moduleControlFlow(code) {
-    // Simplified: add fake branches around existing code
     const lines = code.split('\n');
     let result = [];
-    let depth = 0;
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i];
-      // Insert fake branches at random points
       if (i > 0 && i % 5 === 0 && rand() > 0.5) {
         const cond = rand() > 0.5 ? 'true' : 'false';
         result.push(`if ${cond} then`);
@@ -1399,13 +1391,11 @@
 
   // ─── Module: Opaque Predicates ───
   function moduleOpaquePredicates(code) {
-    // Insert opaque predicates that always evaluate to true/false
     const lines = code.split('\n');
     let result = [];
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i];
       if (line.match(/^if\s+/) && rand() > 0.6) {
-        // Wrap the condition with an opaque predicate
         const cond = line.replace(/^if\s+/, '').replace(/\s+then\s*$/, '');
         const op = rand() > 0.5 ? 'true' : 'false';
         result.push(`if ${op} and (${cond}) then`);
@@ -1418,12 +1408,10 @@
 
   // ─── Module: String to Expressions ───
   function moduleStringToExpressions(code) {
-    // Convert string literals to complex expressions
     const tokens = tokenizeLua(code);
     const strProc = function(str) {
       const content = str.slice(1, -1);
       if (content.length < 3 || content.includes('\\')) return str;
-      // Build an expression that reconstructs the string using character codes
       let parts = [];
       for (let i = 0; i < content.length; i++) {
         const ch = content.charCodeAt(i);
@@ -1437,7 +1425,6 @@
 
   // ─── Module: Function Inlining ───
   function moduleFunctionInlining(code) {
-    // Simple: find local functions and inline simple ones
     const lines = code.split('\n');
     let result = [];
     let inFunction = false;
@@ -1458,17 +1445,14 @@
         funcBody.push(line);
         if (line.trim() === 'end') {
           inFunction = false;
-          // If function is simple (just a return), inline it
           const body = funcBody.join('\n');
           if (body.includes('return') && !body.includes('for') && !body.includes('while')) {
-            // Replace calls to this function
             const callPattern = new RegExp(funcName + '\\s*\\(([^)]*)\\)', 'g');
             const lastLine = result[result.length - 1];
             if (lastLine && lastLine.includes(funcName)) {
               result[result.length - 1] = lastLine.replace(callPattern, '($1)');
             }
           } else {
-            // Keep the function
             result.push(body);
           }
           funcBody = [];
@@ -1486,7 +1470,6 @@
 
   // ─── Module: Dynamic Code ───
   function moduleDynamicCode(code) {
-    // Wrap code in loadstring with some obfuscation
     const escaped = code.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\\n');
     return `loadstring("${escaped}")()`;
   }
@@ -1507,7 +1490,6 @@
 
   // ─── Module: Virtual Machine ───
   function moduleVirtualMachine(code) {
-    // Encode code into a VM loader
     const hex = [];
     for (let i = 0; i < code.length; i++) {
       let h = code.charCodeAt(i).toString(16);
@@ -1534,8 +1516,6 @@
 
   // ─── Module: Bytecode Encoding ───
   function moduleBytecodeEncoding(code) {
-    // Encode as bytecode using string.dump (if available)
-    // We'll simulate by wrapping in a function and encoding
     return `loadstring(string.dump(function()\n${code}\nend))()`;
   }
 
@@ -1616,7 +1596,6 @@
     let p = code;
     const target = document.getElementById('luaVersion').value;
 
-    // Pre‑processing: dead code & anti‑debug (Hercules‑style extras)
     if (deadCode && protection > 20) {
       const count = Math.max(1, Math.min(Math.floor(protection / 12), 8));
       p = moduleGarbageCode(p, count);
@@ -1627,7 +1606,6 @@
       log('🛡️ Added anti‑debugging checks', 'info');
     }
 
-    // Pipeline order matches Hercules: Dynamic Code → Opaque Predicates → String Encoding → String→Expr → Function Inlining → Var Renaming → Virtual Machine → Control Flow → Garbage Code → Wrap In Function → Anti‑Tamper → Bytecode Encoding
     const moduleMap = {
       'layer_string_encoding': moduleStringEncoding,
       'layer_variable_renaming': moduleVariableRenaming,
@@ -1643,32 +1621,29 @@
       'layer_bytecode_encoding': moduleBytecodeEncoding,
     };
 
-    // Order from Hercules manifest (pipeline_order)[reference:4]
     const order = [
-      'layer_dynamic_code',       // pipeline_order 10
-      'layer_opaque_predicates',  // pipeline_order 20
-      'layer_string_encoding',    // pipeline_order 30
-      'layer_string_to_expr',     // pipeline_order 40
-      'layer_function_inlining',  // pipeline_order 50
-      'layer_variable_renaming',  // pipeline_order 60
-      'layer_virtual_machine',    // pipeline_order 70 (skipped for luau)
-      'layer_control_flow',       // pipeline_order 90
-      'layer_garbage_code',       // pipeline_order 100
-      'layer_wrap_in_function',   // pipeline_order 120
-      'layer_antitamper',         // pipeline_order 80
-      'layer_bytecode_encoding',  // pipeline_order 130 (skipped for luau)
+      'layer_dynamic_code',
+      'layer_opaque_predicates',
+      'layer_string_encoding',
+      'layer_string_to_expr',
+      'layer_function_inlining',
+      'layer_variable_renaming',
+      'layer_virtual_machine',
+      'layer_control_flow',
+      'layer_garbage_code',
+      'layer_wrap_in_function',
+      'layer_antitamper',
+      'layer_bytecode_encoding',
     ];
 
     for (const key of order) {
       const idx = layerCheckboxes.findIndex(cb => cb.id === key);
       if (idx === -1) continue;
       if (!layers[idx]) continue;
-      // Skip VM and Bytecode for Luau (incompatible)[reference:5]
       if (target === 'luau' && (key === 'layer_virtual_machine' || key === 'layer_bytecode_encoding')) {
         log(`⚠️ Skipping ${key} (incompatible with Luau)`, 'warn');
         continue;
       }
-      // Skip anti‑tamper if safe mode
       if (safe && (key === 'layer_antitamper' || key === 'layer_virtual_machine' || key === 'layer_bytecode_encoding')) {
         log(`⚠️ Skipping ${key} (safe mode)`, 'warn');
         continue;
@@ -1681,10 +1656,8 @@
       }
     }
 
-    // Watermark (Hercules‑style)[reference:6]
     const watermark = `--[Obfuscated by finny.obf | hercules-style]\n`;
     p = watermark + p;
-
     return p;
   }
 
@@ -1852,7 +1825,6 @@
     cb.addEventListener('change', function() {
       if (!this.checked) allLayers.checked = false;
       else if (layerCheckboxes.every(c => c.checked)) allLayers.checked = true;
-      // Detect if current selection matches a preset
       const current = layerCheckboxes.map(c => c.id).filter((_, i) => layerCheckboxes[i].checked);
       let found = false;
       for (const [name, methods] of Object.entries(PRESETS)) {
@@ -2061,8 +2033,8 @@
   sourceCode.value = 'print("hello world")';
   setPreset('balanced');
   updateCounts();
-  setStatus('Ready – Hercules‑style pipeline', 'ready');
-  log('🚀 finny.obf – Hercules‑style pipeline loaded', 'info');
+  setStatus('Ready – Hercules‑style pipeline (light theme)', 'ready');
+  log('🚀 finny.obf – Hercules‑style pipeline loaded (light theme)', 'info');
   log(`📋 Preset: Balanced (${PRESETS.balanced.length} modules)`, 'info');
   toggleLogPanel(true);
   updateDashboard();
