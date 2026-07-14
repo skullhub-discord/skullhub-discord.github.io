@@ -1,702 +1,1992 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>skull.obf</title>
-    <style>
-        /* ─── RESET & BASE ─── */
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>finny.obf – Obfuscator</title>
+  <style>
+    :root {
+      --bg-body: #f1f5f9;
+      --bg-app: #ffffff;
+      --bg-surface: #f8fafc;
+      --bg-elevated: #f1f5f9;
+      --bg-input: #ffffff;
+      --bg-panel: #ffffff;
+      --bg-log: #ffffff;
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #94a3b8;
+      --text-log: #1e293b;
+      --border-color: #e2e8f0;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+      --shadow-lg: 0 8px 30px rgba(0,0,0,0.10);
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+      --radius-full: 9999px;
+      --accent-1: #3b82f6;
+      --accent-2: #8b5cf6;
+      --accent-gradient: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      --transition: 0.2s ease;
+      --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      min-height: 100vh;
+      background: var(--bg-body);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+      color: var(--text-primary);
+    }
+    .app {
+      width: 100%;
+      max-width: 1480px;
+      height: 98vh;
+      max-height: 1080px;
+      background: var(--bg-app);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-lg);
+      display: flex;
+      flex-direction: column;
+      padding: 16px 20px 12px;
+      border: 1px solid var(--border-color);
+      overflow: hidden;
+    }
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: var(--radius-full); }
+    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
-        body {
-            background: #0c0e14;
-            color: #c8d0dc;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            overflow: hidden;
-        }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      flex-shrink: 0;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .header-left { display: flex; align-items: center; gap: 16px; }
+    .header h1 {
+      font-size: 20px;
+      font-weight: 700;
+      background: var(--accent-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: -0.3px;
+    }
+    .header .links {
+      display: flex;
+      gap: 14px;
+      font-size: 12px;
+      color: var(--text-secondary);
+      align-items: center;
+    }
+    .header .links a { color: var(--text-secondary); text-decoration: none; border-bottom: 1px dotted transparent; transition: 0.2s; }
+    .header .links a:hover { color: var(--text-primary); border-color: var(--text-secondary); }
+    .header .badge {
+      background: var(--accent-gradient);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 600;
+      padding: 2px 10px;
+      border-radius: var(--radius-full);
+      letter-spacing: 0.3px;
+      -webkit-text-fill-color: #fff;
+    }
+    .header .user-avatar {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: var(--accent-gradient);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: 700;
+      font-size: 12px;
+      text-transform: uppercase;
+    }
 
-        ::-webkit-scrollbar {
-            width: 4px;
-            height: 4px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #141820;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #2a3a50;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #3a5a7a;
-        }
+    .dashboard {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px 20px;
+      background: var(--bg-surface);
+      padding: 10px 16px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-color);
+      margin-bottom: 12px;
+      flex-shrink: 0;
+      align-items: center;
+    }
+    .stat-group {
+      display: flex;
+      align-items: center;
+      gap: 12px 24px;
+      flex-wrap: wrap;
+      flex: 1;
+    }
+    .stat-item {
+      display: flex;
+      flex-direction: column;
+    }
+    .stat-item .label {
+      font-size: 10px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      font-weight: 600;
+      letter-spacing: 0.4px;
+    }
+    .stat-item .value {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1.2;
+    }
+    .stat-item .value .sub {
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--text-secondary);
+      margin-left: 4px;
+    }
+    .stat-divider { width: 1px; height: 32px; background: var(--border-color); }
+    .quick-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-left: auto;
+    }
+    .quick-actions .btn-sm {
+      font-size: 11px;
+      padding: 4px 12px;
+      height: 28px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      color: var(--text-secondary);
+      transition: 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-weight: 500;
+    }
+    .quick-actions .btn-sm:hover { background: var(--bg-input); color: var(--text-primary); border-color: var(--text-muted); }
+    .quick-actions .btn-sm.primary {
+      background: var(--accent-gradient);
+      color: #fff;
+      border-color: transparent;
+    }
+    .quick-actions .btn-sm.primary:hover { box-shadow: 0 4px 12px rgba(59,130,246,0.3); }
 
-        /* ─── LAYOUT ─── */
-        .app {
-            display: flex;
-            gap: 16px;
-            width: 100%;
-            max-width: 1300px;
-            height: calc(100vh - 40px);
-            min-height: 500px;
-        }
+    .recent-jobs {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-left: 8px;
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-bottom: 10px;
+    }
+    .recent-jobs .job {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--bg-input);
+      padding: 2px 10px 2px 6px;
+      border-radius: var(--radius-full);
+      border: 1px solid var(--border-color);
+    }
+    .recent-jobs .job .status {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #10b981;
+      flex-shrink: 0;
+    }
+    .recent-jobs .job .name {
+      font-weight: 500;
+      max-width: 120px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .recent-jobs .job .meta {
+      color: var(--text-muted);
+      font-size: 10px;
+    }
+    .recent-jobs .view-all {
+      color: var(--accent-1);
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 12px;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+    .recent-jobs .view-all:hover { text-decoration: underline; }
+    .recent-jobs .empty { color: var(--text-muted); font-style: italic; font-size: 12px; }
 
-        .panel {
-            flex: 1;
-            background: #12161e;
-            border-radius: 14px;
-            border: 1px solid #1e2632;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
-            display: flex;
-            flex-direction: column;
-            padding: 18px 20px 16px;
-            position: relative;
-            overflow: hidden;
-            min-width: 0;
-        }
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px 12px;
+      align-items: center;
+      background: var(--bg-surface);
+      padding: 6px 14px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-color);
+      margin-bottom: 10px;
+      flex-shrink: 0;
+    }
+    .toolbar-group {
+      display: flex;
+      align-items: center;
+      gap: 4px 10px;
+      flex-wrap: wrap;
+    }
+    .toolbar-group:not(:last-child)::after {
+      content: '';
+      width: 1px;
+      height: 24px;
+      background: var(--border-color);
+      margin-left: 4px;
+      flex-shrink: 0;
+    }
+    .toolbar label {
+      font-size: 11px;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-weight: 500;
+    }
+    .toolbar select,
+    .toolbar input[type="number"] {
+      background: var(--bg-input);
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+      padding: 3px 8px;
+      border-radius: var(--radius-sm);
+      font-size: 11px;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      min-width: 56px;
+      height: 26px;
+    }
+    .toolbar select:focus,
+    .toolbar input:focus {
+      border-color: var(--accent-1);
+      box-shadow: 0 0 0 3px rgba(59,130,246,0.12);
+    }
+    .toolbar .log-toggle-btn {
+      background: none;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-full);
+      padding: 2px 12px;
+      font-size: 11px;
+      cursor: pointer;
+      color: var(--text-secondary);
+      transition: 0.2s;
+      height: 26px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .toolbar .log-toggle-btn:hover { background: var(--bg-elevated); color: var(--text-primary); }
+    .toolbar .log-toggle-btn.active {
+      background: var(--accent-gradient);
+      color: #fff;
+      border-color: transparent;
+    }
 
-        .panel::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, rgba(80, 160, 255, 0.3), transparent);
-            opacity: 0.6;
-        }
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 30px;
+      height: 18px;
+      flex-shrink: 0;
+    }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: #cbd5e1;
+      transition: 0.25s;
+      border-radius: var(--radius-full);
+    }
+    .slider::before {
+      content: '';
+      position: absolute;
+      height: 12px; width: 12px;
+      left: 3px; bottom: 3px;
+      background: white;
+      transition: 0.25s;
+      border-radius: 50%;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+    }
+    .switch input:checked + .slider { background: var(--accent-gradient); }
+    .switch input:checked + .slider::before { transform: translateX(12px); }
 
-        .panel-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 14px;
-            flex-shrink: 0;
-        }
+    .btn {
+      padding: 4px 14px;
+      border: none;
+      border-radius: var(--radius-full);
+      font-weight: 600;
+      font-size: 11px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      background: var(--bg-elevated);
+      color: var(--text-secondary);
+      font-family: 'Inter', sans-serif;
+      white-space: nowrap;
+      height: 28px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      box-shadow: var(--shadow-sm);
+    }
+    .btn:hover { background: #e2e8f0; color: var(--text-primary); transform: translateY(-1px); box-shadow: var(--shadow-md); }
+    .btn:active { transform: translateY(0); }
+    .btn-primary {
+      background: var(--accent-gradient);
+      color: #fff;
+      box-shadow: 0 3px 10px rgba(59,130,246,0.25);
+    }
+    .btn-primary:hover { box-shadow: 0 4px 16px rgba(59,130,246,0.35); color: #fff; transform: translateY(-1px); }
+    .btn-success {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: #fff;
+    }
+    .btn-success:hover { box-shadow: 0 4px 16px rgba(16,185,129,0.3); color: #fff; transform: translateY(-1px); }
+    .btn-danger {
+      background: linear-gradient(135deg, #ef4444, #dc2626);
+      color: #fff;
+    }
+    .btn-danger:hover { box-shadow: 0 4px 16px rgba(239,68,68,0.3); color: #fff; transform: translateY(-1px); }
+    .btn-ghost {
+      background: transparent;
+      color: var(--text-secondary);
+      box-shadow: none;
+    }
+    .btn-ghost:hover { background: var(--bg-elevated); color: var(--text-primary); transform: none; }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
+    .file-actions .btn { font-size: 10px; padding: 2px 10px; height: 24px; }
 
-        .panel-title {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 15px;
-            font-weight: 600;
-            letter-spacing: 0.3px;
-            color: #b0c8e0;
-            user-select: none;
-        }
+    .controls-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 16px;
+      align-items: center;
+      background: var(--bg-surface);
+      padding: 6px 14px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-color);
+      margin-bottom: 10px;
+      flex-shrink: 0;
+    }
+    .control-group {
+      display: flex;
+      align-items: center;
+      gap: 6px 12px;
+      flex-wrap: wrap;
+    }
+    .control-group:not(:last-child)::after {
+      content: '';
+      width: 1px;
+      height: 24px;
+      background: var(--border-color);
+      margin-left: 4px;
+      flex-shrink: 0;
+    }
+    .control-label {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    .control-toggle {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      color: var(--text-secondary);
+      cursor: pointer;
+    }
+    .control-toggle input[type="checkbox"] {
+      appearance: none;
+      width: 14px;
+      height: 14px;
+      background: var(--bg-input);
+      border: 1.5px solid var(--text-muted);
+      border-radius: 3px;
+      cursor: pointer;
+      position: relative;
+      transition: 0.2s;
+      flex-shrink: 0;
+    }
+    .control-toggle input:checked {
+      background: var(--accent-1);
+      border-color: var(--accent-1);
+    }
+    .control-toggle input:checked::after {
+      content: '';
+      position: absolute;
+      top: 1px;
+      left: 4px;
+      width: 4px;
+      height: 8px;
+      border: solid white;
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+    }
 
-        .panel-title .icon {
-            font-size: 18px;
-            line-height: 1;
-        }
+    .slider-container {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .slider-container input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 120px;
+      height: 4px;
+      border-radius: 2px;
+      background: var(--border-color);
+      outline: none;
+      transition: background 0.2s;
+    }
+    .slider-container input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--accent-gradient);
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(59,130,246,0.3);
+      transition: transform 0.2s;
+    }
+    .slider-container input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.1); }
+    .slider-container input[type="range"]::-moz-range-thumb {
+      width: 14px; height: 14px; border-radius: 50%;
+      background: var(--accent-gradient); cursor: pointer; border: none;
+      box-shadow: 0 2px 6px rgba(59,130,246,0.3);
+    }
+    .slider-value {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent-1);
+      min-width: 36px;
+      text-align: center;
+    }
 
-        .panel-title .badge {
-            font-size: 10px;
-            background: #1a2230;
-            padding: 2px 10px;
-            border-radius: 12px;
-            color: #5a7a9a;
-            font-weight: 500;
-            letter-spacing: 0.2px;
-            border: 1px solid #1e2632;
-        }
+    .format-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .format-group .radio-label {
+      font-size: 11px;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+    }
+    .format-group input[type="radio"] {
+      appearance: none;
+      width: 13px;
+      height: 13px;
+      border: 2px solid var(--text-muted);
+      border-radius: 50%;
+      cursor: pointer;
+      position: relative;
+      transition: 0.2s;
+      flex-shrink: 0;
+    }
+    .format-group input[type="radio"]:checked {
+      border-color: var(--accent-1);
+    }
+    .format-group input[type="radio"]:checked::after {
+      content: '';
+      position: absolute;
+      top: 1.5px;
+      left: 1.5px;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent-gradient);
+    }
 
-        /* ─── UPLOAD ZONE ─── */
-        .upload-zone {
-            border: 1.5px dashed #1e2a3a;
-            border-radius: 10px;
-            padding: 12px 16px;
-            text-align: center;
-            background: #0e121a;
-            cursor: pointer;
-            transition: all 0.25s ease;
-            margin-bottom: 12px;
-            flex-shrink: 0;
-            position: relative;
-        }
+    .advanced-toggle {
+      cursor: pointer;
+      font-size: 11px;
+      color: var(--text-secondary);
+      user-select: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 10px;
+      border-radius: var(--radius-full);
+      background: var(--bg-surface);
+      transition: background 0.2s, color 0.2s;
+      border: 1px solid transparent;
+    }
+    .advanced-toggle:hover {
+      background: var(--bg-elevated);
+      color: var(--text-primary);
+      border-color: var(--border-color);
+    }
 
-        .upload-zone:hover {
-            border-color: #2a4a6a;
-            background: #11181f;
-        }
+    .layer-toggles {
+      display: none;
+      flex-wrap: wrap;
+      gap: 4px 10px;
+      margin-top: 6px;
+      padding: 6px 12px;
+      background: var(--bg-surface);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-color);
+    }
+    .layer-toggles.open { display: flex; }
+    .layer-toggles .toggle {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+    .layer-toggles .toggle input[type="checkbox"] {
+      appearance: none;
+      width: 14px;
+      height: 14px;
+      background: var(--bg-input);
+      border: 1.5px solid var(--text-muted);
+      border-radius: 3px;
+      cursor: pointer;
+      position: relative;
+      transition: 0.2s;
+      flex-shrink: 0;
+    }
+    .layer-toggles .toggle input:checked {
+      background: var(--accent-1);
+      border-color: var(--accent-1);
+    }
+    .layer-toggles .toggle input:checked::after {
+      content: '';
+      position: absolute;
+      top: 1px;
+      left: 4px;
+      width: 4px;
+      height: 8px;
+      border: solid white;
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+    }
 
-        .upload-zone .upload-text {
-            font-size: 13px;
-            color: #7a8a9a;
-            font-weight: 450;
-        }
+    .panels-wrapper {
+      display: flex;
+      gap: 12px;
+      flex: 1;
+      min-height: 0;
+    }
+    .panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: var(--bg-panel);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-color);
+      overflow: hidden;
+      min-width: 0;
+      box-shadow: var(--shadow-sm);
+      transition: box-shadow var(--transition);
+      position: relative;
+    }
+    .panel:hover { box-shadow: var(--shadow-md); }
+    .panel-header {
+      padding: 6px 14px;
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border-color);
+      font-size: 10px;
+      color: var(--text-secondary);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
+      font-weight: 600;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+    }
+    .panel-header .count {
+      font-size: 10px;
+      color: var(--text-muted);
+      font-weight: 400;
+      background: var(--bg-input);
+      padding: 1px 8px;
+      border-radius: var(--radius-full);
+      border: 1px solid var(--border-color);
+    }
+    .panel textarea {
+      flex: 1;
+      width: 100%;
+      background: transparent;
+      border: none;
+      color: var(--text-primary);
+      font-family: var(--font-mono);
+      font-size: 12.5px;
+      line-height: 1.8;
+      padding: 10px 14px;
+      resize: none;
+      outline: none;
+      tab-size: 4;
+    }
+    .panel textarea::placeholder {
+      color: var(--text-muted);
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      font-weight: 400;
+    }
+    .panel.output textarea { color: #065f46; }
 
-        .upload-zone .upload-subtext {
-            font-size: 11px;
-            color: #3a4a5a;
-            margin-top: 2px;
-        }
+    .panel.drag-over {
+      border-color: var(--accent-1);
+      box-shadow: 0 0 0 3px rgba(59,130,246,0.15);
+      background: rgba(59,130,246,0.03);
+    }
+    .drop-hint {
+      display: none;
+      position: absolute;
+      inset: 0;
+      background: rgba(59,130,246,0.05);
+      border-radius: var(--radius-md);
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--accent-1);
+      pointer-events: none;
+      backdrop-filter: blur(2px);
+      z-index: 2;
+    }
+    .panel.drag-over .drop-hint { display: flex; }
 
-        /* ─── TEXT AREAS ─── */
-        .text-zone {
-            flex: 1;
-            min-height: 0;
-            width: 100%;
-            background: #0a0e14;
-            border: 1px solid #181e28;
-            border-radius: 10px;
-            padding: 12px 14px;
-            color: #c8d4e0;
-            font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
-            font-size: 12.5px;
-            line-height: 1.7;
-            resize: none;
-            outline: none;
-            transition: border-color 0.2s;
-            tab-size: 4;
-            letter-spacing: -0.1px;
-        }
+    .log-panel {
+      flex-shrink: 0;
+      height: 120px;
+      background: var(--bg-log);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-color);
+      margin-top: 8px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: height 0.3s ease, opacity 0.2s ease;
+      box-shadow: var(--shadow-sm);
+    }
+    .log-panel.hidden {
+      height: 0;
+      opacity: 0;
+      margin-top: 0;
+      border: none;
+      pointer-events: none;
+    }
+    .log-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 4px 14px;
+      background: var(--bg-surface);
+      border-bottom: 1px solid var(--border-color);
+      flex-shrink: 0;
+      cursor: pointer;
+      user-select: none;
+    }
+    .log-header span {
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .log-header .log-badge {
+      background: var(--accent-gradient);
+      color: #fff;
+      font-size: 9px;
+      padding: 0 8px;
+      border-radius: var(--radius-full);
+      -webkit-text-fill-color: #fff;
+    }
+    .log-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 4px 14px;
+      font-family: var(--font-mono);
+      font-size: 11.5px;
+      line-height: 1.7;
+      color: var(--text-log);
+      background: var(--bg-log);
+    }
+    .log-body .log-entry {
+      opacity: 0.85;
+      padding: 1px 0;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .log-body .log-entry:last-child { border-bottom: none; }
+    .log-body .log-entry.info { color: #2563eb; }
+    .log-body .log-entry.success { color: #059669; }
+    .log-body .log-entry.error { color: #dc2626; }
+    .log-body .log-entry.warn { color: #d97706; }
+    .log-body .log-entry .time {
+      color: var(--text-muted);
+      opacity: 0.6;
+      margin-right: 10px;
+      font-size: 10px;
+    }
+    .log-clear {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: var(--radius-full);
+      transition: 0.2s;
+    }
+    .log-clear:hover { background: var(--bg-elevated); color: var(--text-primary); }
+    .log-toggle-btn-small {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 12px;
+      padding: 0 4px;
+    }
+    .log-toggle-btn-small:hover { color: var(--text-primary); }
 
-        .text-zone:focus {
-            border-color: #2a4a6a;
-        }
+    .status-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 6px;
+      flex-shrink: 0;
+      font-size: 11px;
+      color: var(--text-muted);
+      padding: 0 4px;
+    }
+    .status-bar .status {
+      color: var(--text-secondary);
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .status-bar .status .dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #94a3b8;
+    }
+    .status-bar .status .dot.green { background: #10b981; }
+    .status-bar .status .dot.red { background: #ef4444; }
+    .status-bar .status .dot.yellow { background: #fbbf24; }
+    .status-bar .status .dot.blue { background: #3b82f6; }
+    #perfDisplay {
+      color: var(--text-muted);
+      font-feature-settings: "tnum";
+      font-size: 11px;
+    }
 
-        .text-zone.output {
-            background: #090c12;
-            color: #8fc8a0;
-        }
+    @media (max-width: 1100px) {
+      .dashboard { flex-direction: column; align-items: stretch; gap: 8px; }
+      .stat-group { justify-content: center; }
+      .quick-actions { margin-left: 0; justify-content: center; }
+      .recent-jobs { margin-left: 0; justify-content: center; }
+      .controls-row { flex-direction: column; align-items: stretch; gap: 6px; }
+      .control-group:not(:last-child)::after { display: none; }
+      .control-group { justify-content: center; }
+      .panels-wrapper { flex-direction: column; gap: 10px; }
+      .log-panel { height: 100px; }
+      .app { padding: 12px; height: 99vh; max-height: none; border-radius: var(--radius-md); }
+    }
+    @media (max-width: 600px) {
+      .header { flex-direction: column; align-items: flex-start; gap: 4px; }
+      .header .links { font-size: 11px; gap: 10px; flex-wrap: wrap; }
+      .toolbar { flex-direction: column; align-items: stretch; }
+      .toolbar-group { justify-content: center; }
+      .toolbar-group:not(:last-child)::after { display: none; }
+      .btn { font-size: 10px; padding: 3px 10px; height: 24px; }
+      .slider-container input[type="range"] { width: 80px; }
+      .log-panel { height: 80px; }
+      .panel textarea { font-size: 11px; padding: 8px 10px; }
+    }
 
-        .text-zone::placeholder {
-            color: #2a3a4a;
-            font-family: 'Inter', sans-serif;
-            font-size: 12px;
-        }
-
-        /* ─── CONTROLS ─── */
-        .controls {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px 10px;
-            margin-top: 12px;
-            flex-shrink: 0;
-            align-items: center;
-            justify-content: space-between;
-            padding-top: 2px;
-        }
-
-        .controls-left {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 4px 8px;
-            align-items: center;
-        }
-
-        .controls-right {
-            display: flex;
-            gap: 6px;
-            align-items: center;
-        }
-
-        .toggle {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            background: #0e121a;
-            padding: 2px 10px 2px 6px;
-            border-radius: 16px;
-            border: 1px solid #181e28;
-            transition: border-color 0.2s;
-            cursor: pointer;
-            user-select: none;
-        }
-
-        .toggle:hover {
-            border-color: #2a3a4a;
-        }
-
-        .toggle input[type="checkbox"] {
-            appearance: none;
-            width: 14px;
-            height: 14px;
-            background: #161c26;
-            border: 1.5px solid #2a3a4a;
-            border-radius: 3px;
-            cursor: pointer;
-            transition: all 0.2s;
-            flex-shrink: 0;
-            position: relative;
-        }
-
-        .toggle input[type="checkbox"]:checked {
-            background: #1a6a9a;
-            border-color: #2a7aba;
-            box-shadow: 0 0 12px rgba(40, 120, 200, 0.25);
-        }
-
-        .toggle input[type="checkbox"]:checked::after {
-            content: '';
-            position: absolute;
-            top: 1px;
-            left: 4px;
-            width: 3px;
-            height: 7px;
-            border: solid #d0e8ff;
-            border-width: 0 2px 2px 0;
-            transform: rotate(45deg);
-        }
-
-        .toggle label {
-            font-size: 11.5px;
-            color: #7a8a9a;
-            cursor: pointer;
-            font-weight: 450;
-            letter-spacing: 0.2px;
-        }
-
-        .toggle label .hint {
-            font-size: 9.5px;
-            color: #2a3a4a;
-            margin-left: 1px;
-        }
-
-        /* ─── BUTTONS ─── */
-        .btn {
-            padding: 5px 14px;
-            border: none;
-            border-radius: 16px;
-            font-weight: 500;
-            font-size: 12px;
-            cursor: pointer;
-            transition: all 0.2s;
-            white-space: nowrap;
-            background: #1a2230;
-            color: #7a8a9a;
-            letter-spacing: 0.2px;
-            font-family: 'Inter', sans-serif;
-        }
-
-        .btn:hover {
-            background: #222e40;
-            color: #b0c8e0;
-        }
-
-        .btn-primary {
-            background: #1a5a8a;
-            color: #d0e8ff;
-            box-shadow: 0 0 20px rgba(30, 100, 180, 0.15);
-        }
-
-        .btn-primary:hover {
-            background: #2a6a9a;
-            box-shadow: 0 0 30px rgba(40, 120, 200, 0.25);
-        }
-
-        .btn-primary:disabled {
-            opacity: 0.4;
-            cursor: not-allowed;
-            box-shadow: none;
-        }
-
-        .btn-success {
-            background: #1a6a3a;
-            color: #b0e8c0;
-        }
-
-        .btn-success:hover {
-            background: #2a7a4a;
-        }
-
-        .btn-danger {
-            background: #6a2a2a;
-            color: #e8b0b0;
-        }
-
-        .btn-danger:hover {
-            background: #8a3a3a;
-        }
-
-        /* ─── STATUS ─── */
-        .status {
-            margin-top: 8px;
-            font-size: 11.5px;
-            color: #3a4a5a;
-            text-align: center;
-            flex-shrink: 0;
-            height: 18px;
-            letter-spacing: 0.1px;
-            font-weight: 400;
-        }
-
-        .status.success {
-            color: #5aaa7a;
-        }
-        .status.error {
-            color: #aa5a5a;
-        }
-        .status.info {
-            color: #5a8aaa;
-        }
-
-        /* ─── RESPONSIVE ─── */
-        @media (max-width: 820px) {
-            .app {
-                flex-direction: column;
-                height: calc(100vh - 32px);
-                gap: 12px;
-            }
-            .panel {
-                min-height: 38vh;
-            }
-            .controls {
-                flex-direction: column;
-                align-items: stretch;
-                gap: 6px;
-            }
-            .controls-left,
-            .controls-right {
-                justify-content: center;
-            }
-        }
-
-        @media (max-width: 500px) {
-            body {
-                padding: 10px;
-            }
-            .panel {
-                padding: 14px 14px 12px;
-                border-radius: 10px;
-            }
-            .text-zone {
-                font-size: 11px;
-                padding: 10px 12px;
-            }
-            .toggle label {
-                font-size: 10.5px;
-            }
-            .btn {
-                font-size: 11px;
-                padding: 4px 12px;
-            }
-        }
-    </style>
+    @keyframes fadeSlide {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .app { animation: fadeSlide 0.3s ease-out; }
+  </style>
 </head>
 <body>
-
-    <div class="app">
-        <!-- ─── LEFT PANEL ─── -->
-        <div class="panel">
-            <div class="panel-header">
-                <div class="panel-title">
-                    <span class="icon">💀</span> skull.obf
-                    <span class="badge">input</span>
-                </div>
-            </div>
-
-            <div class="upload-zone" id="dropZone" onclick="document.getElementById('fileInput').click()">
-                <div class="upload-text">⤓ drop or click to load</div>
-                <div class="upload-subtext">.lua / .txt</div>
-                <input type="file" id="fileInput" style="display: none;" accept=".lua,.txt" />
-            </div>
-
-            <textarea class="text-zone" id="sourceCode" placeholder="-- paste your Luau source here"></textarea>
-
-            <div class="controls">
-                <div class="controls-left">
-                    <div class="toggle">
-                        <input type="checkbox" id="minifyCheck" />
-                        <label for="minifyCheck">minify <span class="hint">· compress</span></label>
-                    </div>
-                    <div class="toggle">
-                        <input type="checkbox" id="vmCheck" />
-                        <label for="vmCheck">vm <span class="hint">· xor</span></label>
-                    </div>
-                    <div class="toggle">
-                        <input type="checkbox" id="antiTamperCheck" checked />
-                        <label for="antiTamperCheck">lock <span class="hint">· anti‑tamper</span></label>
-                    </div>
-                </div>
-                <div class="controls-right">
-                    <button class="btn btn-primary" id="obfuscateBtn">▶ obfuscate</button>
-                    <button class="btn" id="clearBtn">✕ clear</button>
-                </div>
-            </div>
-
-            <div class="status" id="statusLeft">· ready</div>
-        </div>
-
-        <!-- ─── RIGHT PANEL ─── -->
-        <div class="panel">
-            <div class="panel-header">
-                <div class="panel-title">
-                    <span class="icon">🔒</span> output
-                    <span class="badge" id="outputSize">0 chars</span>
-                </div>
-            </div>
-
-            <textarea class="text-zone output" id="obfuscatedOutput" readonly placeholder="· obfuscated code will appear here"></textarea>
-
-            <div class="controls">
-                <div class="controls-right" style="width:100%; justify-content: flex-end;">
-                    <button class="btn btn-success" id="copyBtn">📋 copy</button>
-                    <button class="btn" id="downloadBtn">⬇ download</button>
-                </div>
-            </div>
-
-            <div class="status" id="statusRight">· ready</div>
-        </div>
+<div class="app" id="app">
+  <div class="header">
+    <div class="header-left">
+      <h1>finny.obf</h1>
+      <span class="badge">v2.0</span>
     </div>
+    <div class="links">
+      <span>⚡ Decimal‑escape loader</span>
+      <a href="#">Docs</a>
+      <a href="#">GitHub</a>
+      <div class="user-avatar">JD</div>
+    </div>
+  </div>
 
-    <script>
-        // ─── DOM refs ───
-        const sourceCode = document.getElementById('sourceCode');
-        const obfuscatedOutput = document.getElementById('obfuscatedOutput');
-        const obfuscateBtn = document.getElementById('obfuscateBtn');
-        const clearBtn = document.getElementById('clearBtn');
-        const copyBtn = document.getElementById('copyBtn');
-        const downloadBtn = document.getElementById('downloadBtn');
-        const statusLeft = document.getElementById('statusLeft');
-        const statusRight = document.getElementById('statusRight');
-        const outputSize = document.getElementById('outputSize');
-        const fileInput = document.getElementById('fileInput');
-        const dropZone = document.getElementById('dropZone');
-        const minifyCheck = document.getElementById('minifyCheck');
-        const vmCheck = document.getElementById('vmCheck');
-        const antiTamperCheck = document.getElementById('antiTamperCheck');
+  <div class="dashboard">
+    <div class="stat-group">
+      <div class="stat-item">
+        <span class="label">Monthly Usage</span>
+        <span class="value"><span id="monthlyUsed">0</span>/1 <span class="sub">used</span></span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <span class="label">Processing</span>
+        <span class="value" id="processingCount">0</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <span class="label">Total Jobs</span>
+        <span class="value" id="totalJobs">0</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <span class="label">Plan</span>
+        <span class="value" style="font-size:16px;">FREE <span class="sub"><span id="remainingCount">0</span> remaining</span></span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat-item">
+        <span class="label">Active jobs</span>
+        <span class="value" id="activeJobs">0</span>
+      </div>
+    </div>
+    <div class="quick-actions">
+      <button class="btn-sm primary" id="uploadQuickBtn">📤 Upload New File</button>
+      <button class="btn-sm" id="historyQuickBtn">📋 View History</button>
+    </div>
+  </div>
 
-        // ─── File upload ───
-        fileInput.addEventListener('change', function() {
-            const file = this.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                sourceCode.value = e.target.result;
-                statusLeft.textContent = '✓ loaded: ' + file.name + ' (' + file.size + ' B)';
-                statusLeft.className = 'status success';
-            };
-            reader.onerror = function() {
-                statusLeft.textContent = '✗ read error';
-                statusLeft.className = 'status error';
-            };
-            reader.readAsText(file);
-            this.value = '';
-        });
+  <div class="recent-jobs" style="margin-bottom:10px;">
+    <span style="font-weight:600; font-size:11px; color:var(--text-secondary);">Recent Jobs</span>
+    <div id="recentJobsContainer">
+      <span class="empty">No jobs yet</span>
+    </div>
+    <a href="#" class="view-all" id="viewAllLink">View All →</a>
+  </div>
 
-        // ─── Drag & drop ───
-        dropZone.addEventListener('dragover', function(e) {
-            e.preventDefault();
-            this.style.borderColor = '#2a4a6a';
-            this.style.background = '#11181f';
-        });
-        dropZone.addEventListener('dragleave', function(e) {
-            e.preventDefault();
-            this.style.borderColor = '#1e2a3a';
-            this.style.background = '#0e121a';
-        });
-        dropZone.addEventListener('drop', function(e) {
-            e.preventDefault();
-            this.style.borderColor = '#1e2a3a';
-            this.style.background = '#0e121a';
-            const files = e.dataTransfer.files;
-            if (files.length > 0) {
-                fileInput.files = files;
-                fileInput.dispatchEvent(new Event('change'));
-            }
-        });
+  <div class="toolbar">
+    <div class="toolbar-group">
+      <label>Preset
+        <select id="presetSelect">
+          <option value="minify">Minify</option>
+          <option value="weak" selected>Weak</option>
+          <option value="medium">Medium</option>
+          <option value="strong">Strong</option>
+          <option value="custom">Custom</option>
+        </select>
+      </label>
+      <label>Lua
+        <select id="luaVersion">
+          <option value="5.1">Lua 5.1</option>
+          <option value="5.2">Lua 5.2</option>
+          <option value="luau" selected>Luau</option>
+        </select>
+      </label>
+      <label>Seed
+        <input type="number" id="seedInput" value="0" step="1" style="width:60px;" />
+      </label>
+    </div>
+    <div class="toolbar-group">
+      <label class="switch">
+        <input type="checkbox" id="prettyPrint" checked />
+        <span class="slider"></span>
+      </label>
+      <label>Pretty</label>
+      <label class="switch">
+        <input type="checkbox" id="safeMode" checked />
+        <span class="slider"></span>
+      </label>
+      <label>Safe</label>
+    </div>
+    <div class="toolbar-group" style="flex:1; justify-content:flex-end;">
+      <button class="btn btn-primary" id="obfuscateBtn">▶ Run</button>
+      <button class="btn btn-danger" id="deobfuscateBtn">◀ Deobf</button>
+      <button class="btn btn-ghost" id="clearBtn">✕ Clear</button>
+      <span class="file-actions">
+        <button class="btn" id="loadBtn">📂 Load</button>
+        <input type="file" id="fileInput" style="display:none;" accept=".lua,.txt" />
+        <button class="btn btn-success" id="copyBtn">📋 Copy</button>
+        <button class="btn" id="downloadBtn">⬇ Dwn</button>
+      </span>
+      <button class="log-toggle-btn" id="logToggleBtn">📋 Log</button>
+    </div>
+  </div>
 
-        // ─── Minify ───
-        function minify(code) {
-            let c = code.replace(/--[^\n]*/g, '');
-            c = c.replace(/--\[\[[\s\S]*?\]\]/g, '');
-            c = c.replace(/\s+/g, ' ');
-            return c.trim();
+  <div class="controls-row">
+    <div class="control-group">
+      <span class="control-label">Protection</span>
+      <div class="slider-container">
+        <input type="range" id="protectionLevel" min="0" max="100" value="80" />
+        <span class="slider-value" id="protectionValue">80%</span>
+      </div>
+    </div>
+    <div class="control-group">
+      <label class="control-toggle">
+        <input type="checkbox" id="deadCodeToggle" checked />
+        Dead Code
+      </label>
+      <label class="control-toggle">
+        <input type="checkbox" id="antiDebugToggle" checked />
+        Anti-Debug
+      </label>
+    </div>
+    <div class="control-group">
+      <span class="control-label">Format</span>
+      <div class="format-group">
+        <label class="radio-label">
+          <input type="radio" name="outputFormat" value="minified" />
+          Minified
+        </label>
+        <label class="radio-label">
+          <input type="radio" name="outputFormat" value="pretty" checked />
+          Pretty
+        </label>
+      </div>
+    </div>
+    <div class="control-group" style="flex:1; justify-content:flex-end;">
+      <span class="advanced-toggle" id="advancedToggle">▸ Advanced layers</span>
+    </div>
+  </div>
+
+  <div class="layer-toggles" id="layerToggles">
+    <div class="toggle"><input type="checkbox" id="allLayers" checked /><label for="allLayers">ALL</label></div>
+    <div class="toggle"><input type="checkbox" id="layer1" checked /><label>L1</label></div>
+    <div class="toggle"><input type="checkbox" id="layer2" checked /><label>L2</label></div>
+    <div class="toggle"><input type="checkbox" id="layer3" checked /><label>L3</label></div>
+    <div class="toggle"><input type="checkbox" id="layer4" checked /><label>L4</label></div>
+    <div class="toggle"><input type="checkbox" id="layer5" checked /><label>L5</label></div>
+    <div class="toggle"><input type="checkbox" id="layer6" checked /><label>L6</label></div>
+    <div class="toggle"><input type="checkbox" id="layer7" checked /><label>L7</label></div>
+    <div class="toggle"><input type="checkbox" id="layer8" checked /><label>L8</label></div>
+    <div class="toggle"><input type="checkbox" id="layer9" checked /><label>L9</label></div>
+    <div class="toggle"><input type="checkbox" id="layer10" checked /><label>L10</label></div>
+  </div>
+
+  <div class="panels-wrapper">
+    <div class="panel" id="inputPanel">
+      <div class="drop-hint">📂 Drop your .lua file here</div>
+      <div class="panel-header">
+        <span>📄 Input</span>
+        <span class="count" id="inputCount">0 lines</span>
+      </div>
+      <textarea id="sourceCode" placeholder="Paste your Luau source here or drag & drop a file"></textarea>
+    </div>
+    <div class="panel output">
+      <div class="panel-header">
+        <span>📦 Output</span>
+        <span class="count" id="outputCount">0 lines</span>
+      </div>
+      <textarea id="obfuscatedOutput" readonly placeholder="Obfuscated code will appear here"></textarea>
+    </div>
+  </div>
+
+  <div class="log-panel" id="logPanel">
+    <div class="log-header" id="logHeader">
+      <span>📋 Log <span class="log-badge" id="logCount">0</span></span>
+      <div style="display:flex; gap:4px; align-items:center;">
+        <button class="log-clear" id="logClear">Clear</button>
+        <button class="log-toggle-btn-small" id="logToggleSmall">▾</button>
+      </div>
+    </div>
+    <div class="log-body" id="logBody">
+      <div class="log-entry info"><span class="time">[init]</span> finny.obf v2.0 ready</div>
+      <div class="log-entry info"><span class="time">[init]</span> Dashboard stats reset to zero</div>
+    </div>
+  </div>
+
+  <div class="status-bar">
+    <span class="status" id="status">
+      <span class="dot green" id="statusDot"></span>
+      <span id="statusText">Ready</span>
+    </span>
+    <span id="perfDisplay"></span>
+  </div>
+</div>
+
+<script>
+(function() {
+  // ─── State ───
+  let monthlyUsed = 0;
+  let totalJobs = 0;
+  let activeJobs = 0;
+  const MAX_MONTHLY = 1;
+  let recentJobs = [];
+
+  const sourceCode = document.getElementById('sourceCode');
+  const obfuscatedOutput = document.getElementById('obfuscatedOutput');
+  const obfuscateBtn = document.getElementById('obfuscateBtn');
+  const deobfuscateBtn = document.getElementById('deobfuscateBtn');
+  const clearBtn = document.getElementById('clearBtn');
+  const copyBtn = document.getElementById('copyBtn');
+  const downloadBtn = document.getElementById('downloadBtn');
+  const loadBtn = document.getElementById('loadBtn');
+  const fileInput = document.getElementById('fileInput');
+  const statusText = document.getElementById('statusText');
+  const statusDot = document.getElementById('statusDot');
+  const perfDisplay = document.getElementById('perfDisplay');
+  const presetSelect = document.getElementById('presetSelect');
+  const seedInput = document.getElementById('seedInput');
+  const prettyPrint = document.getElementById('prettyPrint');
+  const safeMode = document.getElementById('safeMode');
+  const allLayers = document.getElementById('allLayers');
+  const layerCheckboxes = [
+    document.getElementById('layer1'), document.getElementById('layer2'),
+    document.getElementById('layer3'), document.getElementById('layer4'),
+    document.getElementById('layer5'), document.getElementById('layer6'),
+    document.getElementById('layer7'), document.getElementById('layer8'),
+    document.getElementById('layer9'), document.getElementById('layer10')
+  ];
+  const advancedToggle = document.getElementById('advancedToggle');
+  const layerToggles = document.getElementById('layerToggles');
+  const inputCount = document.getElementById('inputCount');
+  const outputCount = document.getElementById('outputCount');
+  const logBody = document.getElementById('logBody');
+  const logCount = document.getElementById('logCount');
+  const logClear = document.getElementById('logClear');
+  const logToggleSmall = document.getElementById('logToggleSmall');
+  const logPanel = document.getElementById('logPanel');
+  const logHeader = document.getElementById('logHeader');
+  const logToggleBtn = document.getElementById('logToggleBtn');
+  const inputPanel = document.getElementById('inputPanel');
+  const protectionLevel = document.getElementById('protectionLevel');
+  const protectionValue = document.getElementById('protectionValue');
+  const deadCodeToggle = document.getElementById('deadCodeToggle');
+  const antiDebugToggle = document.getElementById('antiDebugToggle');
+  const formatRadios = document.querySelectorAll('input[name="outputFormat"]');
+  const uploadQuickBtn = document.getElementById('uploadQuickBtn');
+  const historyQuickBtn = document.getElementById('historyQuickBtn');
+  const monthlyUsedEl = document.getElementById('monthlyUsed');
+  const totalJobsEl = document.getElementById('totalJobs');
+  const remainingCountEl = document.getElementById('remainingCount');
+  const processingCountEl = document.getElementById('processingCount');
+  const activeJobsEl = document.getElementById('activeJobs');
+  const recentJobsContainer = document.getElementById('recentJobsContainer');
+  const viewAllLink = document.getElementById('viewAllLink');
+
+  let isProcessing = false;
+  let logEntries = 0;
+  let logVisible = true;
+
+  // ─── Logger ───
+  function log(message, type = 'info') {
+    const time = new Date().toLocaleTimeString();
+    const entry = document.createElement('div');
+    entry.className = `log-entry ${type}`;
+    entry.innerHTML = `<span class="time">[${time}]</span>${message}`;
+    logBody.appendChild(entry);
+    logBody.scrollTop = logBody.scrollHeight;
+    logEntries++;
+    logCount.textContent = logEntries;
+    if (logEntries > 500) {
+      logBody.removeChild(logBody.firstChild);
+      logEntries--;
+    }
+  }
+
+  function setStatus(text, state = 'ready') {
+    statusText.textContent = text;
+    statusDot.className = 'dot';
+    if (state === 'ready') statusDot.classList.add('green');
+    else if (state === 'error') statusDot.classList.add('red');
+    else if (state === 'warn') statusDot.classList.add('yellow');
+    else if (state === 'info') statusDot.classList.add('blue');
+  }
+
+  function updateDashboard() {
+    monthlyUsedEl.textContent = monthlyUsed;
+    totalJobsEl.textContent = totalJobs;
+    const remaining = Math.max(0, MAX_MONTHLY - monthlyUsed);
+    remainingCountEl.textContent = remaining;
+    processingCountEl.textContent = 0;
+    activeJobsEl.textContent = activeJobs;
+    if (recentJobs.length === 0) {
+      recentJobsContainer.innerHTML = '<span class="empty">No jobs yet</span>';
+    } else {
+      let html = '';
+      const show = recentJobs.slice(-3).reverse();
+      for (const job of show) {
+        const st = job.status === 'COMPLETED' ? '#10b981' : '#fbbf24';
+        html += `<div class="job">
+          <span class="status" style="background:${st}"></span>
+          <span class="name">${job.name}</span>
+          <span class="meta">${job.status} · ${job.size} · ${job.time}</span>
+          <a href="#" style="color:var(--accent-1); text-decoration:none; font-size:11px;">View</a>
+        </div>`;
+      }
+      recentJobsContainer.innerHTML = html;
+    }
+  }
+
+  function addJob(name, status = 'COMPLETED') {
+    const size = (sourceCode.value.length / 1024).toFixed(0) + 'KB';
+    const time = new Date().toLocaleString('en-US', { month: 'short', day: 'numeric' });
+    recentJobs.push({ name, status, size, time });
+    if (recentJobs.length > 10) recentJobs.shift();
+    totalJobs++;
+    if (monthlyUsed < MAX_MONTHLY) monthlyUsed++;
+    updateDashboard();
+  }
+
+  function toggleLogPanel(show) {
+    logVisible = (show !== undefined) ? show : !logVisible;
+    logPanel.classList.toggle('hidden', !logVisible);
+    logToggleBtn.classList.toggle('active', logVisible);
+    logToggleSmall.textContent = logVisible ? '▾' : '▸';
+  }
+
+  logToggleBtn.addEventListener('click', function(e) {
+    e.stopPropagation();
+    toggleLogPanel();
+  });
+  logHeader.addEventListener('click', function(e) {
+    if (e.target.closest('.log-clear') || e.target.closest('.log-toggle-btn-small')) return;
+    toggleLogPanel();
+  });
+  logToggleSmall.addEventListener('click', function(e) {
+    e.stopPropagation();
+    toggleLogPanel();
+  });
+  logClear.addEventListener('click', function(e) {
+    e.stopPropagation();
+    logBody.innerHTML = '';
+    logEntries = 0;
+    logCount.textContent = '0';
+    log('Log cleared', 'info');
+  });
+
+  protectionLevel.addEventListener('input', function() {
+    protectionValue.textContent = this.value + '%';
+  });
+
+  uploadQuickBtn.addEventListener('click', function() { loadBtn.click(); });
+  historyQuickBtn.addEventListener('click', function() {
+    log('📋 Opening history...', 'info');
+    setStatus('History viewed', 'info');
+    if (recentJobs.length === 0) log('No jobs in history yet', 'warn');
+    else log(`📋 History: ${recentJobs.length} jobs total`, 'info');
+  });
+  viewAllLink.addEventListener('click', function(e) {
+    e.preventDefault();
+    historyQuickBtn.click();
+  });
+
+  // ─── Seedable random ───
+  function mulberry32(a) {
+    return function() {
+      a |= 0; a = a + 0x6D2B79F5 | 0;
+      let t = Math.imul(a ^ a >>> 15, 1 | a);
+      t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+  let rand = mulberry32(0);
+  function reseed(seed) { rand = mulberry32(seed || 0); }
+
+  // ─── Tokenizer ───
+  function tokenizeLua(code) {
+    const tokens = [];
+    let i = 0, len = code.length;
+    function push(type, value, start, end) { tokens.push({ type, value, start, end }); }
+    while (i < len) {
+      const ch = code[i];
+      if (ch === ' ' || ch === '\t' || ch === '\r' || ch === '\n') {
+        let start = i;
+        while (i < len && (code[i] === ' ' || code[i] === '\t' || code[i] === '\r' || code[i] === '\n')) i++;
+        push('whitespace', code.substring(start, i), start, i);
+        continue;
+      }
+      if (ch === '-' && i + 1 < len && code[i + 1] === '-') {
+        let start = i;
+        let end = code.indexOf('\n', i);
+        if (end === -1) end = len;
+        push('comment', code.substring(start, end), start, end);
+        i = end;
+        continue;
+      }
+      if (ch === '[' && i + 1 < len && code[i + 1] === '[') {
+        let start = i;
+        let level = 0, pos = i + 1;
+        while (pos < len && code[pos] === '=') { level++; pos++; }
+        if (pos < len && code[pos] === '[') {
+          let close = ']' + '='.repeat(level) + ']';
+          let endPos = code.indexOf(close, pos + 1);
+          if (endPos !== -1) {
+            endPos += close.length;
+            push('longstring', code.substring(start, endPos), start, endPos);
+            i = endPos;
+            continue;
+          }
         }
-
-        // ─── Checksums ───
-        function generateChecksums(code) {
-            let h1 = 0,
-                h2 = 0,
-                h3 = 0;
-            for (let i = 0; i < code.length; i++) {
-                const c = code.charCodeAt(i);
-                h1 = ((h1 << 5) - h1 + c) >>> 0;
-                h2 = ((h2 * 31 + c) * 7) >>> 0;
-                h3 = ((h3 * 2654435761 + c * 17) >>> 0) ^ (h3 << 7);
-            }
-            return { h1, h2, h3 };
+      }
+      if (ch === "'" || ch === '"') {
+        let start = i, quote = ch;
+        i++;
+        while (i < len) {
+          if (code[i] === '\\') i += 2;
+          else if (code[i] === quote) { i++; break; }
+          else i++;
         }
-
-        function randomKey() { return Math.floor(Math.random() * 256); }
-
-        // ─── Obfuscate ───
-        function obfuscateLuau(code, options) {
-            const { minify: doMinify, vm, antiTamper } = options;
-            let processed = doMinify ? minify(code) : code;
-
-            let hex = '';
-            for (let i = 0; i < processed.length; i++) {
-                let h = processed.charCodeAt(i).toString(16);
-                if (h.length < 2) h = '0' + h;
-                hex += h;
-            }
-
-            let key = 0,
-                encodedHex = hex,
-                decoder = '';
-            if (vm) {
-                key = randomKey();
-                let xorHex = '';
-                for (let i = 0; i < hex.length; i++) {
-                    let x = (hex.charCodeAt(i) ^ key).toString(16);
-                    if (x.length < 2) x = '0' + x;
-                    xorHex += x;
-                }
-                encodedHex = xorHex;
-                decoder =
-                    `local function _x(s,k)local t={}for i=1,#s,2 do t[#t+1]=string.char(tonumber(s:sub(i,i+1),16)^k)end return table.concat(t)end\nlocal enc=_x("${encodedHex}",${key})\n`;
-            } else {
-                decoder = `local enc="${hex}"\n`;
-            }
-
-            let header = '-- What obfuscator is this? Ive never seen it before + it looks so weird!';
-
-            let loader = header + '\n';
-            if (antiTamper) {
-                const sums = generateChecksums(processed);
-                const err = 'ts gng really thought he could steal my code skid of skids lol';
-                const tamper =
-                    `
-                    local function _d(s)local t={}for i=1,#s,2 do t[#t+1]=string.char(tonumber(s:sub(i,i+1),16))end return table.concat(t)end
-                    local function _c1(s)local h=0 for i=1,#s do h=((h<<5)-h+string.byte(s,i))%4294967296 end return h end
-                    local function _c2(s)local h=0 for i=1,#s do h=((h*31+string.byte(s,i))*7)%4294967296 end return h end
-                    local function _c3(s)local h=0 for i=1,#s do h=((h*2654435761+string.byte(s,i)*17)%4294967296)~((h<<7)%4294967296) end return h end
-                    local _m,_t=getmetatable("") or {}\n_m.__tostring=function()error("${err}")end
-                    debug.setmetatable("",_m)
-                    local src=_d(enc)
-                    local c1=_c1(src)local c2=_c2(src)local c3=_c3(src)
-                    if c1~=${sums.h1} or c2~=${sums.h2} or c3~=${sums.h3} then error("${err}") end
-                    local _o=table.concat table.concat=function(...)error("${err}")end
-                    local _p,_e=pcall(unpack,{},0,2147483647) if _p then error("${err}") end
-                    loadstring(src)()
-                `.replace(/\s+/g, ' ').trim();
-                loader += `local enc=_d("${encodedHex}")\n` + tamper + '\n';
-            } else {
-                if (vm) {
-                    loader +=
-                        `local function _x(s,k)local t={}for i=1,#s,2 do t[#t+1]=string.char(tonumber(s:sub(i,i+1),16)^k)end return table.concat(t)end\nlocal enc=_x("${encodedHex}",${key})\nloadstring(enc)()\n`;
-                } else {
-                    loader +=
-                        `local function _d(s)local t={}for i=1,#s,2 do t[#t+1]=string.char(tonumber(s:sub(i,i+1),16))end return table.concat(t)end\nloadstring(_d("${hex}"))()\n`;
-                }
-            }
-            return loader;
+        push('string', code.substring(start, i), start, i);
+        continue;
+      }
+      if (/[0-9]/.test(ch) || (ch === '.' && i + 1 < len && /[0-9]/.test(code[i + 1]))) {
+        let start = i;
+        if (ch === '0' && i + 1 < len && (code[i + 1] === 'x' || code[i + 1] === 'X')) {
+          i += 2;
+          while (i < len && /[0-9a-fA-F]/.test(code[i])) i++;
+        } else {
+          while (i < len && /[0-9]/.test(code[i])) i++;
+          if (i < len && code[i] === '.') { i++; while (i < len && /[0-9]/.test(code[i])) i++; }
+          if (i < len && (code[i] === 'e' || code[i] === 'E')) {
+            i++;
+            if (i < len && (code[i] === '+' || code[i] === '-')) i++;
+            while (i < len && /[0-9]/.test(code[i])) i++;
+          }
         }
+        push('number', code.substring(start, i), start, i);
+        continue;
+      }
+      if (/[a-zA-Z_]/.test(ch)) {
+        let start = i;
+        while (i < len && /[a-zA-Z0-9_]/.test(code[i])) i++;
+        push('ident', code.substring(start, i), start, i);
+        continue;
+      }
+      let start = i;
+      i++;
+      push('other', code.substring(start, i), start, i);
+    }
+    return tokens;
+  }
 
-        // ─── Obfuscate button ───
-        obfuscateBtn.addEventListener('click', function() {
-            const input = sourceCode.value;
-            if (!input.trim()) {
-                statusLeft.textContent = '⚠ paste some code first';
-                statusLeft.className = 'status error';
-                return;
+  function safeMinify(code) {
+    const tokens = tokenizeLua(code);
+    let result = '', lastWasWhitespace = false;
+    for (const tok of tokens) {
+      if (tok.type === 'whitespace') {
+        if (result.length > 0 && !lastWasWhitespace) { result += ' '; lastWasWhitespace = true; }
+      } else if (tok.type === 'comment') {
+        continue;
+      } else {
+        result += tok.value;
+        lastWasWhitespace = false;
+      }
+    }
+    return result;
+  }
+
+  function encodeNumberComplex(n, depth) {
+    depth = depth || 0;
+    if (depth > 4) return String(n);
+    if (typeof n !== 'number' || !isFinite(n) || n < -100000 || n > 100000 || n % 1 !== 0) return String(n);
+    if (rand() > 0.55) return String(n);
+    const ops = [
+      (a,b) => `(${a}+${b})`, (a,b) => `(${a}-${b})`, (a,b) => `(${a}*${b})`,
+      (a,b) => `(${a}/${b})`, (a,b) => `(${a}^${b})`,
+      (a,b) => `(${a}+${b})*${Math.floor(rand()*5)+1}`,
+      (a,b) => `(${a}*${b})-${Math.floor(rand()*10)}`,
+      (a,b) => `(${a}+${b})/2`,
+      (a,b) => `(${a}*${b})+${Math.floor(rand()*5)}`,
+    ];
+    const op = ops[Math.floor(rand() * ops.length)];
+    let a, b;
+    if (n === 0) { a = 0; b = 0; }
+    else if (rand() > 0.5) { a = Math.floor(rand() * Math.abs(n) + 1); b = n - a; }
+    else { a = Math.floor(n / 2); b = n - a; }
+    if (a === n || b === n) { a = Math.floor(n / 3); b = n - a; }
+    try {
+      const expr = op(encodeNumberComplex(a, depth + 1), encodeNumberComplex(b, depth + 1));
+      return `(${expr})`;
+    } catch (e) { return String(n); }
+  }
+
+  function transformTokens(tokens, numberProcessor, stringProcessor) {
+    let result = '';
+    for (const tok of tokens) {
+      if (tok.type === 'number' && numberProcessor) {
+        const num = parseFloat(tok.value);
+        if (!isNaN(num) && isFinite(num) && Number.isInteger(num) && num >= -100000 && num <= 100000) {
+          result += numberProcessor(num);
+        } else { result += tok.value; }
+      } else if (tok.type === 'string' && stringProcessor) {
+        result += stringProcessor(tok.value);
+      } else {
+        result += tok.value;
+      }
+    }
+    return result;
+  }
+
+  function randomVar(len) {
+    const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    let result = '';
+    for (let i = 0; i < (len || 8); i++) result += chars[Math.floor(rand() * chars.length)];
+    return result;
+  }
+  function randomKey() { return Math.floor(rand() * 256); }
+  function randomInt(min, max) { return Math.floor(rand() * (max - min + 1)) + min; }
+
+  function generateContextJunk() {
+    const junk = [
+      `if ${rand()>0.5?'true':'false'} then local _=0 end;`,
+      `local ${randomVar()}=function()return ${Math.floor(rand()*1000)} end;`,
+      `local ${randomVar()}=${randomVar()} or {};`,
+      `local ${randomVar()}=string.char(${Math.floor(rand()*256)});`,
+      `local ${randomVar()}=Vector3.new(${(rand()*100).toFixed(2)},${(rand()*100).toFixed(2)},${(rand()*100).toFixed(2)});`,
+      `local ${randomVar()}=CFrame.new(${(rand()*100).toFixed(2)},${(rand()*100).toFixed(2)},${(rand()*100).toFixed(2)});`,
+      `for ${randomVar()}=1,0 do break end;`,
+      `local ${randomVar()}={${Math.floor(rand()*100)},${Math.floor(rand()*100)}};`,
+    ];
+    return junk[Math.floor(rand() * junk.length)];
+  }
+
+  function injectAntiPattern(code) {
+    const patterns = [
+      `local _ = function(...) return ... end;`,
+      `local __ = debug and debug.getinfo or function() return {} end;`,
+      `local ___ = (function() local t={} for i=1,10 do t[i]=i end return t end)();`,
+      `local ____ = setmetatable({}, {__index=function(t,k) return k end});`,
+    ];
+    return patterns[Math.floor(rand() * patterns.length)] + '\n' + code;
+  }
+
+  function generateSelfModifying() {
+    return `
+      local _s = {}
+      _s[1] = function() return 1 end
+      _s[2] = function() return 2 end
+      local _r = _s[math.random(1,2)]
+      local _val = _r()
+      if _val == 1 then _s[1] = function() return 3 end end
+    `;
+  }
+
+  function flattenControlFlow(code) {
+    const lines = code.split('\n');
+    const chunks = [];
+    let current = [];
+    let depth = 0;
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      if (depth === 0 && line.trim() === 'end') {
+        // This is a top-level end, but we need to handle it properly
+      }
+      current.push(line);
+      // Count opening keywords
+      const trimmed = line.trim();
+      if (trimmed.match(/^if\s+.*\s+then\s*$/) ||
+          trimmed.match(/^for\s+.*\s+do\s*$/) ||
+          trimmed.match(/^while\s+.*\s+do\s*$/) ||
+          trimmed.match(/^repeat\s*$/)) {
+        depth++;
+      } else if (trimmed === 'end' || trimmed.match(/^end\s*--/)) {
+        depth--;
+        if (depth === 0 && current.length > 0) {
+          // We have a complete block
+          chunks.push(current.slice());
+          current = [];
+        }
+      }
+    }
+    if (current.length > 0) chunks.push(current);
+    if (chunks.length < 2) return code;
+
+    const tbl = randomVar();
+    let result = `local ${tbl}={}\n`;
+    for (let i = 0; i < chunks.length; i++) {
+      const chunk = chunks[i];
+      const idx = randomVar();
+      result += `local ${idx}=function()\n`;
+      for (let j = 0; j < chunk.length; j++) result += chunk[j] + '\n';
+      result += `end\n`;
+      result += `${tbl}[${i+1}]=${idx}\n`;
+    }
+    const dispatcher = randomVar(), state = randomVar(), fn = randomVar();
+    result += `local ${dispatcher}=function()\n`;
+    result += `  local ${state}=1\n`;
+    result += `  while ${state}<=#${tbl} do\n`;
+    result += `    local ${fn}=${tbl}[${state}]\n`;
+    result += `    if type(${fn})=='function' then ${fn}() end\n`;
+    result += `    ${state}=${state}+1\n`;
+    result += `  end\n`;
+    result += `end\n`;
+    result += `${dispatcher}()\n`;
+    return result;
+  }
+
+  function generateVM(code) {
+    const hex = [];
+    for (let i = 0; i < code.length; i++) {
+      let h = code.charCodeAt(i).toString(16);
+      if (h.length < 2) h = '0' + h;
+      hex.push(h);
+    }
+    const key = randomKey();
+    const xorHex = hex.map(h => {
+      const x = parseInt(h, 16) ^ key;
+      return x.toString(16).padStart(2, '0');
+    }).join('');
+    const d = randomVar(), s = randomVar(), t = randomVar(), i = randomVar(), l = randomVar(), x = randomVar();
+    return `
+      local ${d}=function(${s})
+        local ${t}={}
+        local ${l}=#${s}
+        for ${i}=1,${l},2 do
+          local ${x}=tonumber(${s}:sub(${i},${i}+1),16)^${key}
+          ${t}[#${t}+1]=string.char(${x})
+        end
+        return table.concat(${t})
+      end
+      local ${randomVar()}=${d}("${xorHex}")
+      loadstring(${randomVar()})()
+    `;
+  }
+
+  function generateStringTable() {
+    return 'local function _g(s,k)local t={}for i=1,#s,2 do t[#t+1]=string.char(tonumber(s:sub(i,i+1),16)^k)end return table.concat(t)end\n';
+  }
+
+  function generateChecksums(code) {
+    let h1 = 0, h2 = 0, h3 = 0;
+    for (let i = 0; i < code.length; i++) {
+      const c = code.charCodeAt(i);
+      h1 = ((h1 << 5) - h1 + c) >>> 0;
+      h2 = ((h2 * 31 + c) * 7) >>> 0;
+      h3 = ((h3 * 2654435761 + c * 17) >>> 0) ^ (h3 << 7);
+    }
+    return { h1, h2, h3 };
+  }
+
+  function generateAntiTamper(code) {
+    const sums = generateChecksums(code);
+    const errMsg = 'skid detected';
+    return `
+      local function _c1(s)local h=0 for i=1,#s do h=((h<<5)-h+string.byte(s,i))%4294967296 end return h end
+      local function _c2(s)local h=0 for i=1,#s do h=((h*31+string.byte(s,i))*7)%4294967296 end return h end
+      local function _c3(s)local h=0 for i=1,#s do h=((h*2654435761+string.byte(s,i)*17)%4294967296)~((h<<7)%4294967296) end return h end
+      local _m,_t=getmetatable("") or {}
+      _m.__tostring=function()error("${errMsg}")end
+      debug.setmetatable("",_m)
+      local _s=...
+      local c1=_c1(_s)local c2=_c2(_s)local c3=_c3(_s)
+      if c1~=${sums.h1} or c2~=${sums.h2} or c3~=${sums.h3} then error("${errMsg}") end
+      local _o=table.concat table.concat=function(...)error("${errMsg}")end
+      local _p,_e=pcall(unpack,{},0,2147483647) if _p then error("${errMsg}") end
+    `;
+  }
+
+  function injectDeadCode(code, amount) {
+    const lines = code.split('\n');
+    const numBlocks = Math.max(1, Math.min(Math.floor(amount / 12), 8));
+    let result = [];
+    let insertPos = Math.max(1, Math.floor(lines.length / 3));
+    for (let i = 0; i < lines.length; i++) {
+      result.push(lines[i]);
+      if (i > 0 && i % insertPos === 0 && i < lines.length - 1) {
+        result.push(generateDeadBlock());
+      }
+    }
+    for (let i = 0; i < numBlocks; i++) {
+      result.push(generateDeadBlock());
+    }
+    return result.join('\n');
+  }
+
+  function generateDeadBlock() {
+    const blocks = [
+      `if false then\n  local ${randomVar()} = ${Math.floor(rand()*1000)}\n  ${randomVar()} = ${randomVar()} + ${Math.floor(rand()*100)}\n  print(${randomVar()})\nend`,
+      `do\n  local ${randomVar()} = ${Math.floor(rand()*1000)}\n  local ${randomVar()} = function() return ${randomVar()} + ${Math.floor(rand()*100)} end\n  ${randomVar()}()\nend`,
+      `while false do\n  local ${randomVar()} = ${Math.floor(rand()*1000)}\n  ${randomVar()} = ${randomVar()} * ${Math.floor(rand()*10)}\n  break\nend`,
+      `if ${rand() > 0.5 ? 'true' : 'false'} then\n  local ${randomVar()} = {}\n  for ${randomVar()}=1,${Math.floor(rand()*10)+1} do\n    ${randomVar()}[${randomVar()}] = ${randomVar()} * ${Math.floor(rand()*10)}\n  end\nend`,
+      `local ${randomVar()} = ${Math.floor(rand()*1000)}\nlocal ${randomVar()} = ${Math.floor(rand()*1000)}\nif ${randomVar()} > ${randomVar()} then\n  ${randomVar()} = ${randomVar()}\nelse\n  ${randomVar()} = ${randomVar()}\nend`,
+    ];
+    return blocks[Math.floor(rand() * blocks.length)];
+  }
+
+  function injectAntiDebug(code) {
+    const checks = [
+      `if debug and debug.getinfo then\n  local info = debug.getinfo(1)\n  if info and info.source and string.find(info.source, "debug") then\n    error("debugger detected")\n  end\nend`,
+      `if pcall(function() return debug.getinfo(1) end) then\n  local fn, err = pcall(function()\n    local info = debug.getinfo(1, "S")\n    if info and info.what == "C" then error("debug") end\n  end)\n  if not fn then error("debugger detected") end\nend`,
+      `local function _check()\n  local fn, err = pcall(function()\n    local t = {}\n    for i=1,10 do t[i] = i end\n    return table.concat(t)\n  end)\n  if not fn then error("environment modified") end\nend\n_check()`,
+    ];
+    return checks[Math.floor(rand() * checks.length)] + '\n' + code;
+  }
+
+  // ─── Apply layers ───
+  function applyLayers(code, layers, safe, protection, deadCode, antiDebug) {
+    let p = code;
+    if (deadCode && protection > 20) {
+      p = injectDeadCode(p, protection);
+      log(`💀 Injected dead code blocks (${Math.round(protection/10)} blocks)`, 'info');
+    }
+    if (antiDebug && protection > 30) {
+      p = injectAntiDebug(p);
+      log('🛡️ Added anti-debugging checks', 'info');
+    }
+    if (layers[0]) p = safeMinify(p);
+    if (layers[1]) {
+      const tokens = tokenizeLua(p);
+      const numProc = function(num) {
+        if (Number.isInteger(num) && num >= -100000 && num <= 100000) return encodeNumberComplex(num, 0);
+        return String(num);
+      };
+      p = transformTokens(tokens, numProc, null);
+    }
+    if (layers[2]) {
+      const tokens = tokenizeLua(p);
+      const numEncoder = function(num) {
+        if (Number.isInteger(num) && num >= -100000 && num <= 100000) return encodeNumberComplex(num, 0);
+        return String(num);
+      };
+      const strProc = function(str) {
+        const content = str.slice(1, -1);
+        if (content.includes('\\')) return str;
+        let canEncode = true;
+        for (let i = 0; i < content.length; i++) {
+          if (content.charCodeAt(i) > 255) { canEncode = false; break; }
+        }
+        if (!canEncode || content.length === 0) return str;
+        let parts = [];
+        for (let i = 0; i < content.length; i++) {
+          const ch = content.charCodeAt(i);
+          parts.push(`string.char(${numEncoder(ch)})`);
+        }
+        if (parts.length === 1) return parts[0];
+        return parts.join('..');
+      };
+      p = transformTokens(tokens, null, strProc);
+    }
+    if (layers[3]) {
+      let junk = '';
+      const count = Math.floor(protection / 10) + 2;
+      for (let i = 0; i < Math.min(count, 15); i++) junk += generateContextJunk() + '\n';
+      p = junk + p;
+    }
+    if (layers[4]) p = injectAntiPattern(p);
+    if (layers[5]) p = generateSelfModifying() + '\n' + p;
+    if (layers[6] && !safe) p = flattenControlFlow(p);
+    if (layers[7] && !safe) p = generateVM(p);
+    if (layers[8]) p = generateStringTable() + '\n' + p;
+    if (layers[9] && !safe) p = generateAntiTamper(p) + '\n' + p;
+    return p;
+  }
+
+  // ─── Classic loader style ───
+  function base64Encode(str) {
+    const bytes = new TextEncoder().encode(str);
+    let binary = '';
+    for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
+    return btoa(binary);
+  }
+
+  function toDecimalEscapes(str) {
+    let out = '';
+    for (let i = 0; i < str.length; i++) {
+      const code = str.charCodeAt(i);
+      out += '\\' + code.toString().padStart(3, '0');
+    }
+    return out;
+  }
+
+  function generateClassicLoader(processed, seed) {
+    // Encode as Base64 and split into chunks
+    const b64 = base64Encode(processed);
+    const chunkSize = 60;
+    const chunks = [];
+    for (let i = 0; i < b64.length; i += chunkSize) {
+      chunks.push(b64.substring(i, Math.min(i + chunkSize, b64.length)));
+    }
+    const literals = chunks.map(c => '"' + toDecimalEscapes(c) + '"');
+
+    // Build the table
+    let tableStr = '{';
+    for (let i = 0; i < literals.length; i++) {
+      tableStr += literals[i];
+      if (i < literals.length - 1) tableStr += ',';
+    }
+    tableStr += '}';
+
+    // Shuffle order using seed
+    const order = [];
+    for (let i = 0; i < literals.length; i++) order.push(i);
+    reseed(seed);
+    for (let i = order.length - 1; i > 0; i--) {
+      const j = Math.floor(rand() * (i + 1));
+      [order[i], order[j]] = [order[j], order[i]];
+    }
+    let orderStr = '{';
+    for (let i = 0; i < order.length; i++) {
+      orderStr += (order[i] + 1);
+      if (i < order.length - 1) orderStr += ',';
+    }
+    orderStr += '}';
+
+    const decodeFn = randomVar();
+    const resultVar = randomVar();
+
+    let loader = '--obfuscated with finny.obf skid\n';
+    loader += `return(function(...)local b=${tableStr}\n`;
+    loader += `local o=${orderStr}\n`;
+    loader += `local t={}\n`;
+    loader += `for i=1,#o do t[i]=b[o[i]] end\n`;
+    loader += `b=t\n`;
+    loader += `local function ${decodeFn}(s)local t={}for i=1,#s,3 do local n=tonumber(s:sub(i,i+2))if n then t[#t+1]=string.char(n)end end return table.concat(t)end\n`;
+    loader += `local ${resultVar}='';\n`;
+    for (let i = 1; i <= literals.length; i++) {
+      loader += `${resultVar}=${resultVar}..${decodeFn}(b[${i}]);\n`;
+    }
+    loader += `loadstring(${resultVar})()\n`;
+    loader += `end)(...)`;
+    return loader;
+  }
+
+  // ─── Main obfuscate ───
+  function obfuscate(code, layers, seed, safe, protection, deadCode, antiDebug, format) {
+    reseed(seed || 0);
+    const processed = applyLayers(code, layers, safe, protection, deadCode, antiDebug);
+    let loader = generateClassicLoader(processed, seed);
+    if (format === 'pretty') {
+      loader = loader.replace(/;/g, ';\n');
+    }
+    return loader;
+  }
+
+  // ─── Deobfuscator ───
+  function deobfuscateOutput(code) {
+    try {
+      // Find the decode function and the table
+      const tableMatch = code.match(/local b=({[^}]+})/);
+      if (!tableMatch) return 'Could not find encoded table';
+      const tableStr = tableMatch[1];
+      // Parse the table to extract the encoded strings
+      const stringLiterals = [];
+      const regex = /"((?:\\\d{3})+?)"/g;
+      let m;
+      while ((m = regex.exec(tableStr)) !== null) {
+        stringLiterals.push(m[1]);
+      }
+      if (stringLiterals.length === 0) return 'No encoded strings found';
+
+      // Decode each string
+      let decoded = '';
+      for (const enc of stringLiterals) {
+        let str = '';
+        let i = 0;
+        while (i < enc.length) {
+          if (enc[i] === '\\') {
+            const num = parseInt(enc.substr(i + 1, 3), 10);
+            if (!isNaN(num) && num > 0) {
+              str += String.fromCharCode(num);
+              i += 4;
+              continue;
             }
-            statusLeft.textContent = '⏳ obfuscating...';
-            statusLeft.className = 'status info';
-            obfuscateBtn.disabled = true;
+          }
+          str += enc[i];
+          i++;
+        }
+        decoded += str;
+      }
+      // Base64 decode
+      try {
+        const binary = atob(decoded);
+        const bytes = new Uint8Array(binary.length);
+        for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+        const result = new TextDecoder().decode(bytes);
+        return result;
+      } catch (e) {
+        return 'Failed to decode Base64: ' + e.message;
+      }
+    } catch (e) {
+      return 'Deobfuscation error: ' + e.message;
+    }
+  }
 
-            setTimeout(() => {
-                try {
-                    const opts = {
-                        minify: minifyCheck.checked,
-                        vm: vmCheck.checked,
-                        antiTamper: antiTamperCheck.checked
-                    };
-                    const result = obfuscateLuau(input, opts);
-                    obfuscatedOutput.value = result;
-                    outputSize.textContent = result.length + ' chars';
-                    statusRight.textContent = '✓ done';
-                    statusRight.className = 'status success';
-                    const parts = [];
-                    if (opts.minify) parts.push('minify');
-                    if (opts.vm) parts.push('vm');
-                    if (opts.antiTamper) parts.push('lock');
-                    statusLeft.textContent = '✓ ' + (parts.join(' + ') || 'plain');
-                    statusLeft.className = 'status success';
-                } catch (e) {
-                    statusLeft.textContent = '✗ ' + e.message;
-                    statusLeft.className = 'status error';
-                    statusRight.textContent = '✗ failed';
-                    statusRight.className = 'status error';
-                } finally {
-                    obfuscateBtn.disabled = false;
-                }
-            }, 50);
-        });
+  // ─── UI helpers ───
+  function updateCounts() {
+    inputCount.textContent = sourceCode.value.split('\n').length + ' lines';
+    outputCount.textContent = obfuscatedOutput.value.split('\n').length + ' lines';
+  }
+  sourceCode.addEventListener('input', updateCounts);
+  obfuscatedOutput.addEventListener('input', updateCounts);
 
-        // ─── Clear ───
-        clearBtn.addEventListener('click', function() {
-            sourceCode.value = '';
-            obfuscatedOutput.value = '';
-            outputSize.textContent = '0 chars';
-            statusLeft.textContent = '· cleared';
-            statusLeft.className = 'status';
-            statusRight.textContent = '· ready';
-            statusRight.className = 'status';
-        });
+  function setPreset(mode) {
+    let indices = [];
+    if (mode === 'minify') indices = [0];
+    else if (mode === 'weak') indices = [0, 1, 2];
+    else if (mode === 'medium') indices = [0, 1, 2, 3, 4, 5];
+    else if (mode === 'strong') indices = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+    else return;
+    layerCheckboxes.forEach((cb, i) => cb.checked = indices.includes(i));
+    allLayers.checked = indices.length === 10;
+  }
 
-        // ─── Copy ───
-        copyBtn.addEventListener('click', function() {
-            const text = obfuscatedOutput.value;
-            if (!text) {
-                statusRight.textContent = '⚠ nothing to copy';
-                statusRight.className = 'status error';
-                return;
-            }
-            navigator.clipboard?.writeText(text).then(() => {
-                statusRight.textContent = '✓ copied';
-                statusRight.className = 'status success';
-            }).catch(() => {
-                obfuscatedOutput.select();
-                document.execCommand('copy');
-                statusRight.textContent = '✓ copied';
-                statusRight.className = 'status success';
-            });
-        });
+  presetSelect.addEventListener('change', function() {
+    if (this.value === 'custom') return;
+    setPreset(this.value);
+    log(`Preset changed to: ${this.value}`, 'info');
+  });
 
-        // ─── Download ───
-        downloadBtn.addEventListener('click', function() {
-            const text = obfuscatedOutput.value;
-            if (!text) {
-                statusRight.textContent = '⚠ nothing to download';
-                statusRight.className = 'status error';
-                return;
-            }
-            const blob = new Blob([text], { type: 'text/plain' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'obfuscated.lua';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-            statusRight.textContent = '✓ downloaded';
-            statusRight.className = 'status success';
-        });
+  allLayers.addEventListener('change', function() {
+    layerCheckboxes.forEach(cb => cb.checked = this.checked);
+  });
+  layerCheckboxes.forEach(cb => {
+    cb.addEventListener('change', function() {
+      if (!this.checked) allLayers.checked = false;
+      else if (layerCheckboxes.every(c => c.checked)) allLayers.checked = true;
+      const current = layerCheckboxes.map(c => c.checked);
+      const presets = {
+        minify: [true, false, false, false, false, false, false, false, false, false],
+        weak: [true, true, true, false, false, false, false, false, false, false],
+        medium: [true, true, true, true, true, true, false, false, false, false],
+        strong: [true, true, true, true, true, true, true, true, true, true]
+      };
+      let found = false;
+      for (const [key, arr] of Object.entries(presets)) {
+        if (arr.every((v, i) => v === current[i])) {
+          presetSelect.value = key;
+          found = true;
+          break;
+        }
+      }
+      if (!found) presetSelect.value = 'custom';
+    });
+  });
 
-        // ─── Select output on click ───
-        obfuscatedOutput.addEventListener('click', function() { this.select(); });
+  let advancedOpen = false;
+  advancedToggle.addEventListener('click', function() {
+    advancedOpen = !advancedOpen;
+    layerToggles.classList.toggle('open', advancedOpen);
+    this.textContent = advancedOpen ? '▾ Advanced layers' : '▸ Advanced layers';
+  });
 
-        // ─── Init ───
-        statusLeft.textContent = '· ready';
-        statusLeft.className = 'status';
-        statusRight.textContent = '· ready';
-        statusRight.className = 'status';
-        outputSize.textContent = '0 chars';
-        console.log('🔒 skull.obf loaded — handcrafted, not AI-generated.');
-    </script>
+  // ─── Drag & Drop ───
+  let dragCounter = 0;
+  inputPanel.addEventListener('dragover', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    this.classList.add('drag-over');
+  });
+  inputPanel.addEventListener('dragleave', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    dragCounter--;
+    if (dragCounter <= 0) { this.classList.remove('drag-over'); dragCounter = 0; }
+  });
+  inputPanel.addEventListener('drop', function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    this.classList.remove('drag-over');
+    dragCounter = 0;
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+      const file = files[0];
+      if (file.name.endsWith('.lua') || file.name.endsWith('.txt')) {
+        const reader = new FileReader();
+        reader.onload = function(ev) {
+          sourceCode.value = ev.target.result;
+          updateCounts();
+          log(`📂 Loaded: ${file.name} (${file.size} bytes)`, 'success');
+          setStatus(`Loaded ${file.name}`, 'ready');
+        };
+        reader.onerror = function() { log(`❌ Failed to read: ${file.name}`, 'error'); setStatus('Read error', 'error'); };
+        reader.readAsText(file);
+      } else {
+        log(`⚠️ Skipped: ${file.name} (only .lua and .txt supported)`, 'warn');
+        setStatus('Unsupported file type', 'warn');
+      }
+    }
+  });
+  document.addEventListener('dragover', function(e) { e.preventDefault(); });
+  document.addEventListener('drop', function(e) { e.preventDefault(); });
+
+  // ─── File load ───
+  loadBtn.addEventListener('click', function() { fileInput.click(); });
+  fileInput.addEventListener('change', function() {
+    const file = this.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      sourceCode.value = e.target.result;
+      updateCounts();
+      log(`📂 Loaded: ${file.name} (${file.size} bytes)`, 'success');
+      setStatus(`Loaded ${file.name}`, 'ready');
+    };
+    reader.onerror = function() { log(`❌ Failed to read: ${file.name}`, 'error'); setStatus('Read error', 'error'); };
+    reader.readAsText(file);
+    this.value = '';
+  });
+
+  // ─── Copy ───
+  copyBtn.addEventListener('click', function() {
+    const text = obfuscatedOutput.value;
+    if (!text) { log('⚠️ Nothing to copy', 'warn'); setStatus('Nothing to copy', 'warn'); return; }
+    navigator.clipboard?.writeText(text).then(() => {
+      log('📋 Copied to clipboard', 'success');
+      setStatus('Copied', 'ready');
+    }).catch(() => {
+      obfuscatedOutput.select();
+      document.execCommand('copy');
+      log('📋 Copied (fallback)', 'success');
+      setStatus('Copied', 'ready');
+    });
+  });
+
+  // ─── Download ───
+  downloadBtn.addEventListener('click', function() {
+    const text = obfuscatedOutput.value;
+    if (!text) { log('⚠️ Nothing to download', 'warn'); setStatus('Nothing to download', 'warn'); return; }
+    const blob = new Blob([text], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'finny_output.lua';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    log('⬇️ Downloaded as finny_output.lua', 'success');
+    setStatus('Downloaded', 'ready');
+  });
+
+  // ─── Clear ───
+  clearBtn.addEventListener('click', function() {
+    sourceCode.value = '';
+    obfuscatedOutput.value = '';
+    updateCounts();
+    log('🗑️ Cleared all panels', 'info');
+    setStatus('Cleared', 'ready');
+  });
+
+  function getOutputFormat() {
+    for (const radio of formatRadios) {
+      if (radio.checked) return radio.value;
+    }
+    return 'pretty';
+  }
+
+  // ─── Obfuscate ───
+  obfuscateBtn.addEventListener('click', function() {
+    const input = sourceCode.value;
+    if (!input.trim()) { log('⚠️ Paste some code first', 'warn'); setStatus('Paste some code first', 'warn'); return; }
+    if (isProcessing) return;
+    isProcessing = true;
+    obfuscateBtn.disabled = true;
+    deobfuscateBtn.disabled = true;
+    setStatus('Obfuscating...', 'info');
+    log('⚙️ Starting obfuscation...', 'info');
+
+    const seed = parseInt(seedInput.value) || 0;
+    const layers = layerCheckboxes.map(cb => cb.checked);
+    const safe = safeMode.checked;
+    const protection = parseInt(protectionLevel.value) || 50;
+    const deadCode = deadCodeToggle.checked;
+    const antiDebug = antiDebugToggle.checked;
+    const format = getOutputFormat();
+
+    // Pretty override
+    const wasPretty = prettyPrint.checked;
+    if (format === 'minified') prettyPrint.checked = false;
+    else prettyPrint.checked = true;
+
+    let jobName = 'Untitled';
+    const firstLine = sourceCode.value.split('\n')[0];
+    const match = firstLine.match(/--\s*(\S+\.lua)/);
+    if (match) jobName = match[1];
+    else jobName = 'script.lua';
+
+    setTimeout(() => {
+      try {
+        const start = Date.now();
+        const result = obfuscate(input, layers, seed, safe, protection, deadCode, antiDebug, format);
+        const end = Date.now();
+        const elapsed = end - start;
+        obfuscatedOutput.value = result;
+        updateCounts();
+        prettyPrint.checked = wasPretty;
+        log(`✅ Obfuscation completed in ${elapsed}ms (protection: ${protection}%, ${layers.filter(Boolean).length} layers)`, 'success');
+        setStatus(`Done in ${elapsed}ms`, 'ready');
+        perfDisplay.textContent = `${elapsed}ms`;
+        addJob(jobName, 'COMPLETED');
+        log(`📊 Job added to history: ${jobName}`, 'info');
+      } catch (e) {
+        log(`❌ Error: ${e.message}`, 'error');
+        setStatus('Error: ' + e.message, 'error');
+        console.error(e);
+        perfDisplay.textContent = 'error';
+      } finally {
+        isProcessing = false;
+        obfuscateBtn.disabled = false;
+        deobfuscateBtn.disabled = false;
+        prettyPrint.checked = wasPretty;
+      }
+    }, 10);
+  });
+
+  // ─── Deobfuscate ───
+  deobfuscateBtn.addEventListener('click', function() {
+    const input = obfuscatedOutput.value;
+    if (!input.trim()) { log('⚠️ Nothing to deobfuscate', 'warn'); setStatus('Nothing to deobfuscate', 'warn'); return; }
+    try {
+      const decoded = deobfuscateOutput(input);
+      if (decoded.startsWith('Could not') || decoded.startsWith('No') || decoded.startsWith('Failed')) {
+        log('❌ ' + decoded, 'error');
+        setStatus('Deobf failed', 'error');
+        obfuscatedOutput.value = decoded;
+      } else {
+        obfuscatedOutput.value = decoded;
+        updateCounts();
+        log('🔓 Deobfuscation successful', 'success');
+        setStatus('Deobfuscated', 'ready');
+      }
+    } catch (e) {
+      log(`❌ Deobf error: ${e.message}`, 'error');
+      setStatus('Deobf error', 'error');
+    }
+  });
+
+  // ─── Init ───
+  sourceCode.value = 'print("hello world")';
+  setPreset('weak');
+  updateCounts();
+  setStatus('Ready', 'ready');
+  log('🚀 finny.obf v2.0 with dashboard loaded', 'info');
+  log('💡 All stats start at zero – they update when you obfuscate code', 'info');
+  toggleLogPanel(true);
+  updateDashboard();
+})();
+</script>
 </body>
 </html>
