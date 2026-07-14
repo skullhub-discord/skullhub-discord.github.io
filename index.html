@@ -3,24 +3,24 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>finny.obf – Obfuscator</title>
+  <title>light.obf – Obfuscator</title>
   <style>
     :root {
-      --bg-body: #f1f5f9;
-      --bg-app: #ffffff;
-      --bg-surface: #f8fafc;
-      --bg-elevated: #f1f5f9;
-      --bg-input: #ffffff;
-      --bg-panel: #ffffff;
-      --bg-log: #fafcff;
-      --text-primary: #0f172a;
-      --text-secondary: #475569;
-      --text-muted: #94a3b8;
-      --text-log: #1e293b;
-      --border-color: #e2e8f0;
-      --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
-      --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
-      --shadow-lg: 0 8px 30px rgba(0,0,0,0.10);
+      --bg-body: #0f1117;
+      --bg-app: #1a1d27;
+      --bg-surface: #232734;
+      --bg-elevated: #2a2f3e;
+      --bg-input: #141720;
+      --bg-panel: #141720;
+      --bg-log: #0d0f15;
+      --text-primary: #e2e8f0;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --text-log: #cbd5e1;
+      --border-color: #2d3344;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.4);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.5);
+      --shadow-lg: 0 8px 30px rgba(0,0,0,0.6);
       --radius-sm: 6px;
       --radius-md: 10px;
       --radius-lg: 16px;
@@ -58,8 +58,8 @@
     }
     ::-webkit-scrollbar { width: 5px; height: 5px; }
     ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: var(--radius-full); }
-    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    ::-webkit-scrollbar-thumb { background: #2d3344; border-radius: var(--radius-full); }
+    ::-webkit-scrollbar-thumb:hover { background: #3d4356; }
 
     .header {
       display: flex;
@@ -317,7 +317,7 @@
       position: absolute;
       cursor: pointer;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: #cbd5e1;
+      background: #2d3344;
       transition: 0.25s;
       border-radius: var(--radius-full);
     }
@@ -329,7 +329,7 @@
       background: white;
       transition: 0.25s;
       border-radius: 50%;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.3);
     }
     .switch input:checked + .slider { background: var(--accent-gradient); }
     .switch input:checked + .slider::before { transform: translateX(12px); }
@@ -352,7 +352,7 @@
       gap: 5px;
       box-shadow: var(--shadow-sm);
     }
-    .btn:hover { background: #e2e8f0; color: var(--text-primary); transform: translateY(-1px); box-shadow: var(--shadow-md); }
+    .btn:hover { background: #2d3344; color: var(--text-primary); transform: translateY(-1px); box-shadow: var(--shadow-md); }
     .btn:active { transform: translateY(0); }
     .btn-primary {
       background: var(--accent-gradient);
@@ -656,12 +656,12 @@
       font-size: 12px;
       font-weight: 400;
     }
-    .panel.output textarea { color: #065f46; }
+    .panel.output textarea { color: #6ee7b7; }
 
     .panel.drag-over {
       border-color: var(--accent-1);
       box-shadow: 0 0 0 3px rgba(139,92,246,0.15);
-      background: rgba(139,92,246,0.03);
+      background: rgba(139,92,246,0.05);
     }
     .drop-hint {
       display: none;
@@ -745,10 +745,10 @@
       border-bottom: 1px solid var(--border-color);
     }
     .log-body .log-entry:last-child { border-bottom: none; }
-    .log-body .log-entry.info { color: #2563eb; }
-    .log-body .log-entry.success { color: #059669; }
-    .log-body .log-entry.error { color: #dc2626; }
-    .log-body .log-entry.warn { color: #d97706; }
+    .log-body .log-entry.info { color: #60a5fa; }
+    .log-body .log-entry.success { color: #34d399; }
+    .log-body .log-entry.error { color: #f87171; }
+    .log-body .log-entry.warn { color: #fbbf24; }
     .log-body .log-entry .time {
       color: var(--text-muted);
       opacity: 0.6;
@@ -798,12 +798,12 @@
       width: 8px;
       height: 8px;
       border-radius: 50%;
-      background: #94a3b8;
+      background: #64748b;
     }
-    .status-bar .status .dot.green { background: #10b981; }
-    .status-bar .status .dot.red { background: #ef4444; }
+    .status-bar .status .dot.green { background: #34d399; }
+    .status-bar .status .dot.red { background: #f87171; }
     .status-bar .status .dot.yellow { background: #fbbf24; }
-    .status-bar .status .dot.blue { background: #3b82f6; }
+    .status-bar .status .dot.blue { background: #60a5fa; }
     #perfDisplay {
       color: var(--text-muted);
       font-feature-settings: "tnum";
@@ -845,8 +845,8 @@
 <div class="app" id="app">
   <div class="header">
     <div class="header-left">
-      <h1>finny.obf</h1>
-      <span class="badge">v3.0</span>
+      <h1>light.obf</h1>
+      <span class="badge">v4.0</span>
     </div>
     <div class="links">
       <span>⚡ Modular pipeline</span>
@@ -1025,7 +1025,7 @@
       </div>
     </div>
     <div class="log-body" id="logBody">
-      <div class="log-entry info"><span class="time">[init]</span> finny.obf v3.0 loaded</div>
+      <div class="log-entry info"><span class="time">[init]</span> light.obf v4.0 loaded</div>
       <div class="log-entry info"><span class="time">[init]</span> Preset: Balanced | 10 modules enabled</div>
     </div>
   </div>
@@ -1143,7 +1143,7 @@
       let html = '';
       const show = recentJobs.slice(-3).reverse();
       for (const job of show) {
-        const st = job.status === 'COMPLETED' ? '#10b981' : '#fbbf24';
+        const st = job.status === 'COMPLETED' ? '#34d399' : '#fbbf24';
         html += `<div class="job">
           <span class="status" style="background:${st}"></span>
           <span class="name">${job.name}</span>
@@ -1656,7 +1656,7 @@
     }
 
     // Watermark
-    p = `--[Obfuscated by finny.obf]\n` + p;
+    p = `--[Obfuscated by light.obf]\n` + p;
     return p;
   }
 
@@ -1710,7 +1710,7 @@
     const decodeFn = randomVar();
     const resultVar = randomVar();
 
-    let loader = '--obfuscated with finny.obf\n';
+    let loader = '--obfuscated with light.obf\n';
     loader += `return(function(...)local b=${tableStr}\n`;
     loader += `local o=${orderStr}\n`;
     loader += `local t={}\n`;
@@ -1924,12 +1924,12 @@
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'finny_output.lua';
+    a.download = 'light_output.lua';
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    log('⬇️ Downloaded as finny_output.lua', 'success');
+    log('⬇️ Downloaded as light_output.lua', 'success');
     setStatus('Downloaded', 'ready');
   });
 
@@ -2033,7 +2033,7 @@
   setPreset('balanced');
   updateCounts();
   setStatus('Ready – pipeline loaded', 'ready');
-  log('🚀 finny.obf v3.0 loaded', 'info');
+  log('🚀 light.obf v4.0 loaded', 'info');
   log(`📋 Preset: Balanced (${PRESETS.balanced.length} modules)`, 'info');
   toggleLogPanel(true);
   updateDashboard();
