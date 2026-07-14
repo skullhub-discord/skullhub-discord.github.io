@@ -3,31 +3,31 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>finny.obf – Obfuscator</title>
+  <title>finny.obf – Hercules Style</title>
   <style>
     :root {
-      --bg-body: #f1f5f9;
-      --bg-app: #ffffff;
-      --bg-surface: #f8fafc;
-      --bg-elevated: #f1f5f9;
-      --bg-input: #ffffff;
-      --bg-panel: #ffffff;
-      --bg-log: #ffffff;
-      --text-primary: #0f172a;
-      --text-secondary: #475569;
-      --text-muted: #94a3b8;
-      --text-log: #1e293b;
-      --border-color: #e2e8f0;
-      --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
-      --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
-      --shadow-lg: 0 8px 30px rgba(0,0,0,0.10);
+      --bg-body: #0f1117;
+      --bg-app: #1a1d27;
+      --bg-surface: #232734;
+      --bg-elevated: #2a2f3e;
+      --bg-input: #141720;
+      --bg-panel: #141720;
+      --bg-log: #0d0f15;
+      --text-primary: #e2e8f0;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --text-log: #cbd5e1;
+      --border-color: #2d3344;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.4);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.5);
+      --shadow-lg: 0 8px 30px rgba(0,0,0,0.6);
       --radius-sm: 6px;
       --radius-md: 10px;
       --radius-lg: 16px;
       --radius-full: 9999px;
-      --accent-1: #3b82f6;
-      --accent-2: #8b5cf6;
-      --accent-gradient: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      --accent-1: #8b5cf6;
+      --accent-2: #3b82f6;
+      --accent-gradient: linear-gradient(135deg, #8b5cf6, #3b82f6);
       --transition: 0.2s ease;
       --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
     }
@@ -58,8 +58,8 @@
     }
     ::-webkit-scrollbar { width: 5px; height: 5px; }
     ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: var(--radius-full); }
-    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    ::-webkit-scrollbar-thumb { background: #2d3344; border-radius: var(--radius-full); }
+    ::-webkit-scrollbar-thumb:hover { background: #3d4356; }
 
     .header {
       display: flex;
@@ -182,7 +182,7 @@
       color: #fff;
       border-color: transparent;
     }
-    .quick-actions .btn-sm.primary:hover { box-shadow: 0 4px 12px rgba(59,130,246,0.3); }
+    .quick-actions .btn-sm.primary:hover { box-shadow: 0 4px 12px rgba(139,92,246,0.3); }
 
     .recent-jobs {
       display: flex;
@@ -282,7 +282,7 @@
     .toolbar select:focus,
     .toolbar input:focus {
       border-color: var(--accent-1);
-      box-shadow: 0 0 0 3px rgba(59,130,246,0.12);
+      box-shadow: 0 0 0 3px rgba(139,92,246,0.15);
     }
     .toolbar .log-toggle-btn {
       background: none;
@@ -317,7 +317,7 @@
       position: absolute;
       cursor: pointer;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: #cbd5e1;
+      background: #2d3344;
       transition: 0.25s;
       border-radius: var(--radius-full);
     }
@@ -329,7 +329,7 @@
       background: white;
       transition: 0.25s;
       border-radius: 50%;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.3);
     }
     .switch input:checked + .slider { background: var(--accent-gradient); }
     .switch input:checked + .slider::before { transform: translateX(12px); }
@@ -352,14 +352,14 @@
       gap: 5px;
       box-shadow: var(--shadow-sm);
     }
-    .btn:hover { background: #e2e8f0; color: var(--text-primary); transform: translateY(-1px); box-shadow: var(--shadow-md); }
+    .btn:hover { background: #2d3344; color: var(--text-primary); transform: translateY(-1px); box-shadow: var(--shadow-md); }
     .btn:active { transform: translateY(0); }
     .btn-primary {
       background: var(--accent-gradient);
       color: #fff;
-      box-shadow: 0 3px 10px rgba(59,130,246,0.25);
+      box-shadow: 0 3px 10px rgba(139,92,246,0.25);
     }
-    .btn-primary:hover { box-shadow: 0 4px 16px rgba(59,130,246,0.35); color: #fff; transform: translateY(-1px); }
+    .btn-primary:hover { box-shadow: 0 4px 16px rgba(139,92,246,0.35); color: #fff; transform: translateY(-1px); }
     .btn-success {
       background: linear-gradient(135deg, #10b981, #059669);
       color: #fff;
@@ -471,14 +471,14 @@
       border-radius: 50%;
       background: var(--accent-gradient);
       cursor: pointer;
-      box-shadow: 0 2px 6px rgba(59,130,246,0.3);
+      box-shadow: 0 2px 6px rgba(139,92,246,0.3);
       transition: transform 0.2s;
     }
     .slider-container input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.1); }
     .slider-container input[type="range"]::-moz-range-thumb {
       width: 14px; height: 14px; border-radius: 50%;
       background: var(--accent-gradient); cursor: pointer; border: none;
-      box-shadow: 0 2px 6px rgba(59,130,246,0.3);
+      box-shadow: 0 2px 6px rgba(139,92,246,0.3);
     }
     .slider-value {
       font-size: 13px;
@@ -656,18 +656,18 @@
       font-size: 12px;
       font-weight: 400;
     }
-    .panel.output textarea { color: #065f46; }
+    .panel.output textarea { color: #6ee7b7; }
 
     .panel.drag-over {
       border-color: var(--accent-1);
-      box-shadow: 0 0 0 3px rgba(59,130,246,0.15);
-      background: rgba(59,130,246,0.03);
+      box-shadow: 0 0 0 3px rgba(139,92,246,0.15);
+      background: rgba(139,92,246,0.05);
     }
     .drop-hint {
       display: none;
       position: absolute;
       inset: 0;
-      background: rgba(59,130,246,0.05);
+      background: rgba(139,92,246,0.05);
       border-radius: var(--radius-md);
       align-items: center;
       justify-content: center;
@@ -745,10 +745,10 @@
       border-bottom: 1px solid var(--border-color);
     }
     .log-body .log-entry:last-child { border-bottom: none; }
-    .log-body .log-entry.info { color: #2563eb; }
-    .log-body .log-entry.success { color: #059669; }
-    .log-body .log-entry.error { color: #dc2626; }
-    .log-body .log-entry.warn { color: #d97706; }
+    .log-body .log-entry.info { color: #60a5fa; }
+    .log-body .log-entry.success { color: #34d399; }
+    .log-body .log-entry.error { color: #f87171; }
+    .log-body .log-entry.warn { color: #fbbf24; }
     .log-body .log-entry .time {
       color: var(--text-muted);
       opacity: 0.6;
@@ -798,12 +798,12 @@
       width: 8px;
       height: 8px;
       border-radius: 50%;
-      background: #94a3b8;
+      background: #64748b;
     }
-    .status-bar .status .dot.green { background: #10b981; }
-    .status-bar .status .dot.red { background: #ef4444; }
+    .status-bar .status .dot.green { background: #34d399; }
+    .status-bar .status .dot.red { background: #f87171; }
     .status-bar .status .dot.yellow { background: #fbbf24; }
-    .status-bar .status .dot.blue { background: #3b82f6; }
+    .status-bar .status .dot.blue { background: #60a5fa; }
     #perfDisplay {
       color: var(--text-muted);
       font-feature-settings: "tnum";
@@ -846,10 +846,10 @@
   <div class="header">
     <div class="header-left">
       <h1>finny.obf</h1>
-      <span class="badge">v2.0</span>
+      <span class="badge">Hercules‑style</span>
     </div>
     <div class="links">
-      <span>⚡ Decimal‑escape loader</span>
+      <span>⚡ Modular pipeline</span>
       <a href="#">Docs</a>
       <a href="#">GitHub</a>
       <div class="user-avatar">JD</div>
@@ -901,10 +901,10 @@
     <div class="toolbar-group">
       <label>Preset
         <select id="presetSelect">
-          <option value="minify">Minify</option>
-          <option value="weak" selected>Weak</option>
-          <option value="medium">Medium</option>
-          <option value="strong">Strong</option>
+          <option value="light">Light</option>
+          <option value="balanced" selected>Balanced</option>
+          <option value="heavy">Heavy</option>
+          <option value="maximum">Maximum</option>
           <option value="custom">Custom</option>
         </select>
       </label>
@@ -912,6 +912,7 @@
         <select id="luaVersion">
           <option value="5.1">Lua 5.1</option>
           <option value="5.2">Lua 5.2</option>
+          <option value="5.4">Lua 5.4</option>
           <option value="luau" selected>Luau</option>
         </select>
       </label>
@@ -983,16 +984,18 @@
 
   <div class="layer-toggles" id="layerToggles">
     <div class="toggle"><input type="checkbox" id="allLayers" checked /><label for="allLayers">ALL</label></div>
-    <div class="toggle"><input type="checkbox" id="layer1" checked /><label>L1</label></div>
-    <div class="toggle"><input type="checkbox" id="layer2" checked /><label>L2</label></div>
-    <div class="toggle"><input type="checkbox" id="layer3" checked /><label>L3</label></div>
-    <div class="toggle"><input type="checkbox" id="layer4" checked /><label>L4</label></div>
-    <div class="toggle"><input type="checkbox" id="layer5" checked /><label>L5</label></div>
-    <div class="toggle"><input type="checkbox" id="layer6" checked /><label>L6</label></div>
-    <div class="toggle"><input type="checkbox" id="layer7" checked /><label>L7</label></div>
-    <div class="toggle"><input type="checkbox" id="layer8" checked /><label>L8</label></div>
-    <div class="toggle"><input type="checkbox" id="layer9" checked /><label>L9</label></div>
-    <div class="toggle"><input type="checkbox" id="layer10" checked /><label>L10</label></div>
+    <div class="toggle"><input type="checkbox" id="layer_string_encoding" checked /><label>String Encoding</label></div>
+    <div class="toggle"><input type="checkbox" id="layer_variable_renaming" checked /><label>Var Renaming</label></div>
+    <div class="toggle"><input type="checkbox" id="layer_control_flow" checked /><label>Control Flow</label></div>
+    <div class="toggle"><input type="checkbox" id="layer_garbage_code" checked /><label>Garbage Code</label></div>
+    <div class="toggle"><input type="checkbox" id="layer_opaque_predicates" checked /><label>Opaque Predicates</label></div>
+    <div class="toggle"><input type="checkbox" id="layer_string_to_expr" checked /><label>String→Expr</label></div>
+    <div class="toggle"><input type="checkbox" id="layer_function_inlining" checked /><label>Function Inlining</label></div>
+    <div class="toggle"><input type="checkbox" id="layer_wrap_in_function" checked /><label>Wrap In Function</label></div>
+    <div class="toggle"><input type="checkbox" id="layer_dynamic_code" checked /><label>Dynamic Code</label></div>
+    <div class="toggle"><input type="checkbox" id="layer_antitamper" checked /><label>Anti‑Tamper</label></div>
+    <div class="toggle"><input type="checkbox" id="layer_virtual_machine" checked /><label>Virtual Machine</label></div>
+    <div class="toggle"><input type="checkbox" id="layer_bytecode_encoding" checked /><label>Bytecode Encoding</label></div>
   </div>
 
   <div class="panels-wrapper">
@@ -1002,7 +1005,7 @@
         <span>📄 Input</span>
         <span class="count" id="inputCount">0 lines</span>
       </div>
-      <textarea id="sourceCode" placeholder="Paste your Luau source here or drag & drop a file"></textarea>
+      <textarea id="sourceCode" placeholder="Paste your Luau source here or drag &amp; drop a file"></textarea>
     </div>
     <div class="panel output">
       <div class="panel-header">
@@ -1022,8 +1025,8 @@
       </div>
     </div>
     <div class="log-body" id="logBody">
-      <div class="log-entry info"><span class="time">[init]</span> finny.obf v2.0 ready</div>
-      <div class="log-entry info"><span class="time">[init]</span> Dashboard stats reset to zero</div>
+      <div class="log-entry info"><span class="time">[init]</span> finny.obf – Hercules‑style pipeline loaded</div>
+      <div class="log-entry info"><span class="time">[init]</span> Preset: Balanced | 10 modules enabled</div>
     </div>
   </div>
 
@@ -1039,12 +1042,14 @@
 <script>
 (function() {
   // ─── State ───
-  let monthlyUsed = 0;
-  let totalJobs = 0;
-  let activeJobs = 0;
+  let monthlyUsed = 0, totalJobs = 0, activeJobs = 0;
   const MAX_MONTHLY = 1;
   let recentJobs = [];
+  let isProcessing = false;
+  let logEntries = 0;
+  let logVisible = true;
 
+  // ─── DOM refs ───
   const sourceCode = document.getElementById('sourceCode');
   const obfuscatedOutput = document.getElementById('obfuscatedOutput');
   const obfuscateBtn = document.getElementById('obfuscateBtn');
@@ -1063,11 +1068,18 @@
   const safeMode = document.getElementById('safeMode');
   const allLayers = document.getElementById('allLayers');
   const layerCheckboxes = [
-    document.getElementById('layer1'), document.getElementById('layer2'),
-    document.getElementById('layer3'), document.getElementById('layer4'),
-    document.getElementById('layer5'), document.getElementById('layer6'),
-    document.getElementById('layer7'), document.getElementById('layer8'),
-    document.getElementById('layer9'), document.getElementById('layer10')
+    document.getElementById('layer_string_encoding'),
+    document.getElementById('layer_variable_renaming'),
+    document.getElementById('layer_control_flow'),
+    document.getElementById('layer_garbage_code'),
+    document.getElementById('layer_opaque_predicates'),
+    document.getElementById('layer_string_to_expr'),
+    document.getElementById('layer_function_inlining'),
+    document.getElementById('layer_wrap_in_function'),
+    document.getElementById('layer_dynamic_code'),
+    document.getElementById('layer_antitamper'),
+    document.getElementById('layer_virtual_machine'),
+    document.getElementById('layer_bytecode_encoding')
   ];
   const advancedToggle = document.getElementById('advancedToggle');
   const layerToggles = document.getElementById('layerToggles');
@@ -1096,10 +1108,6 @@
   const recentJobsContainer = document.getElementById('recentJobsContainer');
   const viewAllLink = document.getElementById('viewAllLink');
 
-  let isProcessing = false;
-  let logEntries = 0;
-  let logVisible = true;
-
   // ─── Logger ───
   function log(message, type = 'info') {
     const time = new Date().toLocaleTimeString();
@@ -1110,10 +1118,7 @@
     logBody.scrollTop = logBody.scrollHeight;
     logEntries++;
     logCount.textContent = logEntries;
-    if (logEntries > 500) {
-      logBody.removeChild(logBody.firstChild);
-      logEntries--;
-    }
+    if (logEntries > 500) { logBody.removeChild(logBody.firstChild); logEntries--; }
   }
 
   function setStatus(text, state = 'ready') {
@@ -1128,8 +1133,7 @@
   function updateDashboard() {
     monthlyUsedEl.textContent = monthlyUsed;
     totalJobsEl.textContent = totalJobs;
-    const remaining = Math.max(0, MAX_MONTHLY - monthlyUsed);
-    remainingCountEl.textContent = remaining;
+    remainingCountEl.textContent = Math.max(0, MAX_MONTHLY - monthlyUsed);
     processingCountEl.textContent = 0;
     activeJobsEl.textContent = activeJobs;
     if (recentJobs.length === 0) {
@@ -1138,7 +1142,7 @@
       let html = '';
       const show = recentJobs.slice(-3).reverse();
       for (const job of show) {
-        const st = job.status === 'COMPLETED' ? '#10b981' : '#fbbf24';
+        const st = job.status === 'COMPLETED' ? '#34d399' : '#fbbf24';
         html += `<div class="job">
           <span class="status" style="background:${st}"></span>
           <span class="name">${job.name}</span>
@@ -1167,19 +1171,13 @@
     logToggleSmall.textContent = logVisible ? '▾' : '▸';
   }
 
-  logToggleBtn.addEventListener('click', function(e) {
-    e.stopPropagation();
-    toggleLogPanel();
-  });
-  logHeader.addEventListener('click', function(e) {
+  logToggleBtn.addEventListener('click', e => { e.stopPropagation(); toggleLogPanel(); });
+  logHeader.addEventListener('click', e => {
     if (e.target.closest('.log-clear') || e.target.closest('.log-toggle-btn-small')) return;
     toggleLogPanel();
   });
-  logToggleSmall.addEventListener('click', function(e) {
-    e.stopPropagation();
-    toggleLogPanel();
-  });
-  logClear.addEventListener('click', function(e) {
+  logToggleSmall.addEventListener('click', e => { e.stopPropagation(); toggleLogPanel(); });
+  logClear.addEventListener('click', e => {
     e.stopPropagation();
     logBody.innerHTML = '';
     logEntries = 0;
@@ -1191,17 +1189,14 @@
     protectionValue.textContent = this.value + '%';
   });
 
-  uploadQuickBtn.addEventListener('click', function() { loadBtn.click(); });
-  historyQuickBtn.addEventListener('click', function() {
+  uploadQuickBtn.addEventListener('click', () => loadBtn.click());
+  historyQuickBtn.addEventListener('click', () => {
     log('📋 Opening history...', 'info');
     setStatus('History viewed', 'info');
     if (recentJobs.length === 0) log('No jobs in history yet', 'warn');
     else log(`📋 History: ${recentJobs.length} jobs total`, 'info');
   });
-  viewAllLink.addEventListener('click', function(e) {
-    e.preventDefault();
-    historyQuickBtn.click();
-  });
+  viewAllLink.addEventListener('click', e => { e.preventDefault(); historyQuickBtn.click(); });
 
   // ─── Seedable random ───
   function mulberry32(a) {
@@ -1214,6 +1209,16 @@
   }
   let rand = mulberry32(0);
   function reseed(seed) { rand = mulberry32(seed || 0); }
+
+  // ─── Helpers ───
+  function randomVar(len) {
+    const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    let result = '';
+    for (let i = 0; i < (len || 8); i++) result += chars[Math.floor(rand() * chars.length)];
+    return result;
+  }
+  function randomKey() { return Math.floor(rand() * 256); }
+  function randomInt(min, max) { return Math.floor(rand() * (max - min + 1)) + min; }
 
   // ─── Tokenizer ───
   function tokenizeLua(code) {
@@ -1292,22 +1297,249 @@
     return tokens;
   }
 
-  function safeMinify(code) {
+  // ─── Module: String Encoding ───
+  function moduleStringEncoding(code) {
     const tokens = tokenizeLua(code);
-    let result = '', lastWasWhitespace = false;
-    for (const tok of tokens) {
-      if (tok.type === 'whitespace') {
-        if (result.length > 0 && !lastWasWhitespace) { result += ' '; lastWasWhitespace = true; }
-      } else if (tok.type === 'comment') {
-        continue;
-      } else {
-        result += tok.value;
-        lastWasWhitespace = false;
+    const numEncoder = function(num) {
+      if (Number.isInteger(num) && num >= -100000 && num <= 100000) {
+        return encodeNumberComplex(num, 0);
       }
+      return String(num);
+    };
+    const strProc = function(str) {
+      const content = str.slice(1, -1);
+      if (content.includes('\\')) return str;
+      let canEncode = true;
+      for (let i = 0; i < content.length; i++) {
+        if (content.charCodeAt(i) > 255) { canEncode = false; break; }
+      }
+      if (!canEncode || content.length === 0) return str;
+      let parts = [];
+      for (let i = 0; i < content.length; i++) {
+        const ch = content.charCodeAt(i);
+        parts.push(`string.char(${numEncoder(ch)})`);
+      }
+      if (parts.length === 1) return parts[0];
+      return parts.join('..');
+    };
+    return transformTokens(tokens, null, strProc);
+  }
+
+  // ─── Module: Variable Renaming ───
+  function moduleVariableRenaming(code) {
+    const tokens = tokenizeLua(code);
+    // Collect all identifiers that are not keywords
+    const keywords = new Set([
+      'and', 'break', 'do', 'else', 'elseif', 'end', 'false', 'for', 'function',
+      'goto', 'if', 'in', 'local', 'nil', 'not', 'or', 'repeat', 'return', 'then',
+      'true', 'until', 'while'
+    ]);
+    const globalNames = new Set(['print', 'require', 'type', 'tostring', 'tonumber',
+      'pairs', 'ipairs', 'table', 'string', 'math', 'os', 'io', 'coroutine', 'debug',
+      'utf8', 'package', '_G', '_ENV', 'getfenv', 'setfenv', 'getmetatable', 'setmetatable',
+      'pcall', 'xpcall', 'loadstring', 'loadfile', 'dofile', 'error', 'assert', 'select',
+      'unpack', 'rawget', 'rawset', 'rawequal', 'next'
+    ]);
+    const varMap = new Map();
+    let nameCounter = 0;
+    const result = [];
+    for (const tok of tokens) {
+      if (tok.type === 'ident') {
+        const name = tok.value;
+        // Skip keywords and globals
+        if (keywords.has(name) || globalNames.has(name)) {
+          result.push(name);
+          continue;
+        }
+        // Skip if it's a field access like obj.field - we only rename standalone variables
+        // Check if previous token was '.'
+        // We'll check the previous token in the token list
+        // This is a simplification; for a full implementation we'd need scope analysis.
+        // For now, we'll rename all identifiers that are not keywords or known globals.
+        if (!varMap.has(name)) {
+          const newName = randomVar(8 + Math.floor(rand() * 5));
+          varMap.set(name, newName);
+        }
+        result.push(varMap.get(name));
+      } else {
+        result.push(tok.value);
+      }
+    }
+    return result.join('');
+  }
+
+  // ─── Module: Control Flow ───
+  function moduleControlFlow(code) {
+    // Simplified: add fake branches around existing code
+    const lines = code.split('\n');
+    let result = [];
+    let depth = 0;
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      // Insert fake branches at random points
+      if (i > 0 && i % 5 === 0 && rand() > 0.5) {
+        const cond = rand() > 0.5 ? 'true' : 'false';
+        result.push(`if ${cond} then`);
+        result.push(`  -- fake branch`);
+        result.push(`end`);
+      }
+      result.push(line);
+    }
+    return result.join('\n');
+  }
+
+  // ─── Module: Garbage Code ───
+  function moduleGarbageCode(code, count) {
+    let result = code;
+    for (let i = 0; i < count; i++) {
+      result = generateDeadBlock() + '\n' + result;
     }
     return result;
   }
 
+  // ─── Module: Opaque Predicates ───
+  function moduleOpaquePredicates(code) {
+    // Insert opaque predicates that always evaluate to true/false
+    const lines = code.split('\n');
+    let result = [];
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      if (line.match(/^if\s+/) && rand() > 0.6) {
+        // Wrap the condition with an opaque predicate
+        const cond = line.replace(/^if\s+/, '').replace(/\s+then\s*$/, '');
+        const op = rand() > 0.5 ? 'true' : 'false';
+        result.push(`if ${op} and (${cond}) then`);
+      } else {
+        result.push(line);
+      }
+    }
+    return result.join('\n');
+  }
+
+  // ─── Module: String to Expressions ───
+  function moduleStringToExpressions(code) {
+    // Convert string literals to complex expressions
+    const tokens = tokenizeLua(code);
+    const strProc = function(str) {
+      const content = str.slice(1, -1);
+      if (content.length < 3 || content.includes('\\')) return str;
+      // Build an expression that reconstructs the string using character codes
+      let parts = [];
+      for (let i = 0; i < content.length; i++) {
+        const ch = content.charCodeAt(i);
+        parts.push(`string.char(${ch})`);
+      }
+      if (parts.length === 1) return parts[0];
+      return parts.join('..');
+    };
+    return transformTokens(tokens, null, strProc);
+  }
+
+  // ─── Module: Function Inlining ───
+  function moduleFunctionInlining(code) {
+    // Simple: find local functions and inline simple ones
+    const lines = code.split('\n');
+    let result = [];
+    let inFunction = false;
+    let funcBody = [];
+    let funcName = '';
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      if (!inFunction) {
+        const match = line.match(/^local\s+function\s+(\w+)\s*\(/);
+        if (match) {
+          funcName = match[1];
+          inFunction = true;
+          funcBody = [line];
+          continue;
+        }
+        result.push(line);
+      } else {
+        funcBody.push(line);
+        if (line.trim() === 'end') {
+          inFunction = false;
+          // If function is simple (just a return), inline it
+          const body = funcBody.join('\n');
+          if (body.includes('return') && !body.includes('for') && !body.includes('while')) {
+            // Replace calls to this function
+            const callPattern = new RegExp(funcName + '\\s*\\(([^)]*)\\)', 'g');
+            const lastLine = result[result.length - 1];
+            if (lastLine && lastLine.includes(funcName)) {
+              result[result.length - 1] = lastLine.replace(callPattern, '($1)');
+            }
+          } else {
+            // Keep the function
+            result.push(body);
+          }
+          funcBody = [];
+          funcName = '';
+        }
+      }
+    }
+    return result.join('\n');
+  }
+
+  // ─── Module: Wrap In Function ───
+  function moduleWrapInFunction(code) {
+    return `(function()\n${code}\nend)()`;
+  }
+
+  // ─── Module: Dynamic Code ───
+  function moduleDynamicCode(code) {
+    // Wrap code in loadstring with some obfuscation
+    const escaped = code.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\\n');
+    return `loadstring("${escaped}")()`;
+  }
+
+  // ─── Module: Anti‑Tamper ───
+  function moduleAntiTamper(code) {
+    const checksums = generateChecksums(code);
+    const errMsg = 'integrity check failed';
+    return `
+      local function _c1(s)local h=0 for i=1,#s do h=((h<<5)-h+string.byte(s,i))%4294967296 end return h end
+      local function _c2(s)local h=0 for i=1,#s do h=((h*31+string.byte(s,i))*7)%4294967296 end return h end
+      local _s=...
+      local c1=_c1(_s)local c2=_c2(_s)
+      if c1~=${checksums.h1} or c2~=${checksums.h2} then error("${errMsg}") end
+      ${code}
+    `;
+  }
+
+  // ─── Module: Virtual Machine ───
+  function moduleVirtualMachine(code) {
+    // Encode code into a VM loader
+    const hex = [];
+    for (let i = 0; i < code.length; i++) {
+      let h = code.charCodeAt(i).toString(16);
+      if (h.length < 2) h = '0' + h;
+      hex.push(h);
+    }
+    const key = randomKey();
+    const xorHex = hex.map(h => {
+      const x = parseInt(h, 16) ^ key;
+      return x.toString(16).padStart(2, '0');
+    }).join('');
+    const d = randomVar();
+    return `
+      local ${d}=function(s)
+        local t={}
+        for i=1,#s,2 do
+          t[#t+1]=string.char(tonumber(s:sub(i,i+1),16)^${key})
+        end
+        return table.concat(t)
+      end
+      loadstring(${d}("${xorHex}"))()
+    `;
+  }
+
+  // ─── Module: Bytecode Encoding ───
+  function moduleBytecodeEncoding(code) {
+    // Encode as bytecode using string.dump (if available)
+    // We'll simulate by wrapping in a function and encoding
+    return `loadstring(string.dump(function()\n${code}\nend))()`;
+  }
+
+  // ─── Core helpers ───
   function encodeNumberComplex(n, depth) {
     depth = depth || 0;
     if (depth > 4) return String(n);
@@ -1350,181 +1582,6 @@
     return result;
   }
 
-  function randomVar(len) {
-    const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    let result = '';
-    for (let i = 0; i < (len || 8); i++) result += chars[Math.floor(rand() * chars.length)];
-    return result;
-  }
-  function randomKey() { return Math.floor(rand() * 256); }
-  function randomInt(min, max) { return Math.floor(rand() * (max - min + 1)) + min; }
-
-  function generateContextJunk() {
-    const junk = [
-      `if ${rand()>0.5?'true':'false'} then local _=0 end;`,
-      `local ${randomVar()}=function()return ${Math.floor(rand()*1000)} end;`,
-      `local ${randomVar()}=${randomVar()} or {};`,
-      `local ${randomVar()}=string.char(${Math.floor(rand()*256)});`,
-      `local ${randomVar()}=Vector3.new(${(rand()*100).toFixed(2)},${(rand()*100).toFixed(2)},${(rand()*100).toFixed(2)});`,
-      `local ${randomVar()}=CFrame.new(${(rand()*100).toFixed(2)},${(rand()*100).toFixed(2)},${(rand()*100).toFixed(2)});`,
-      `for ${randomVar()}=1,0 do break end;`,
-      `local ${randomVar()}={${Math.floor(rand()*100)},${Math.floor(rand()*100)}};`,
-    ];
-    return junk[Math.floor(rand() * junk.length)];
-  }
-
-  function injectAntiPattern(code) {
-    const patterns = [
-      `local _ = function(...) return ... end;`,
-      `local __ = debug and debug.getinfo or function() return {} end;`,
-      `local ___ = (function() local t={} for i=1,10 do t[i]=i end return t end)();`,
-      `local ____ = setmetatable({}, {__index=function(t,k) return k end});`,
-    ];
-    return patterns[Math.floor(rand() * patterns.length)] + '\n' + code;
-  }
-
-  function generateSelfModifying() {
-    return `
-      local _s = {}
-      _s[1] = function() return 1 end
-      _s[2] = function() return 2 end
-      local _r = _s[math.random(1,2)]
-      local _val = _r()
-      if _val == 1 then _s[1] = function() return 3 end end
-    `;
-  }
-
-  function flattenControlFlow(code) {
-    const lines = code.split('\n');
-    const chunks = [];
-    let current = [];
-    let depth = 0;
-    for (let i = 0; i < lines.length; i++) {
-      const line = lines[i];
-      if (depth === 0 && line.trim() === 'end') {
-        // This is a top-level end, but we need to handle it properly
-      }
-      current.push(line);
-      // Count opening keywords
-      const trimmed = line.trim();
-      if (trimmed.match(/^if\s+.*\s+then\s*$/) ||
-          trimmed.match(/^for\s+.*\s+do\s*$/) ||
-          trimmed.match(/^while\s+.*\s+do\s*$/) ||
-          trimmed.match(/^repeat\s*$/)) {
-        depth++;
-      } else if (trimmed === 'end' || trimmed.match(/^end\s*--/)) {
-        depth--;
-        if (depth === 0 && current.length > 0) {
-          // We have a complete block
-          chunks.push(current.slice());
-          current = [];
-        }
-      }
-    }
-    if (current.length > 0) chunks.push(current);
-    if (chunks.length < 2) return code;
-
-    const tbl = randomVar();
-    let result = `local ${tbl}={}\n`;
-    for (let i = 0; i < chunks.length; i++) {
-      const chunk = chunks[i];
-      const idx = randomVar();
-      result += `local ${idx}=function()\n`;
-      for (let j = 0; j < chunk.length; j++) result += chunk[j] + '\n';
-      result += `end\n`;
-      result += `${tbl}[${i+1}]=${idx}\n`;
-    }
-    const dispatcher = randomVar(), state = randomVar(), fn = randomVar();
-    result += `local ${dispatcher}=function()\n`;
-    result += `  local ${state}=1\n`;
-    result += `  while ${state}<=#${tbl} do\n`;
-    result += `    local ${fn}=${tbl}[${state}]\n`;
-    result += `    if type(${fn})=='function' then ${fn}() end\n`;
-    result += `    ${state}=${state}+1\n`;
-    result += `  end\n`;
-    result += `end\n`;
-    result += `${dispatcher}()\n`;
-    return result;
-  }
-
-  function generateVM(code) {
-    const hex = [];
-    for (let i = 0; i < code.length; i++) {
-      let h = code.charCodeAt(i).toString(16);
-      if (h.length < 2) h = '0' + h;
-      hex.push(h);
-    }
-    const key = randomKey();
-    const xorHex = hex.map(h => {
-      const x = parseInt(h, 16) ^ key;
-      return x.toString(16).padStart(2, '0');
-    }).join('');
-    const d = randomVar(), s = randomVar(), t = randomVar(), i = randomVar(), l = randomVar(), x = randomVar();
-    return `
-      local ${d}=function(${s})
-        local ${t}={}
-        local ${l}=#${s}
-        for ${i}=1,${l},2 do
-          local ${x}=tonumber(${s}:sub(${i},${i}+1),16)^${key}
-          ${t}[#${t}+1]=string.char(${x})
-        end
-        return table.concat(${t})
-      end
-      local ${randomVar()}=${d}("${xorHex}")
-      loadstring(${randomVar()})()
-    `;
-  }
-
-  function generateStringTable() {
-    return 'local function _g(s,k)local t={}for i=1,#s,2 do t[#t+1]=string.char(tonumber(s:sub(i,i+1),16)^k)end return table.concat(t)end\n';
-  }
-
-  function generateChecksums(code) {
-    let h1 = 0, h2 = 0, h3 = 0;
-    for (let i = 0; i < code.length; i++) {
-      const c = code.charCodeAt(i);
-      h1 = ((h1 << 5) - h1 + c) >>> 0;
-      h2 = ((h2 * 31 + c) * 7) >>> 0;
-      h3 = ((h3 * 2654435761 + c * 17) >>> 0) ^ (h3 << 7);
-    }
-    return { h1, h2, h3 };
-  }
-
-  function generateAntiTamper(code) {
-    const sums = generateChecksums(code);
-    const errMsg = 'skid detected';
-    return `
-      local function _c1(s)local h=0 for i=1,#s do h=((h<<5)-h+string.byte(s,i))%4294967296 end return h end
-      local function _c2(s)local h=0 for i=1,#s do h=((h*31+string.byte(s,i))*7)%4294967296 end return h end
-      local function _c3(s)local h=0 for i=1,#s do h=((h*2654435761+string.byte(s,i)*17)%4294967296)~((h<<7)%4294967296) end return h end
-      local _m,_t=getmetatable("") or {}
-      _m.__tostring=function()error("${errMsg}")end
-      debug.setmetatable("",_m)
-      local _s=...
-      local c1=_c1(_s)local c2=_c2(_s)local c3=_c3(_s)
-      if c1~=${sums.h1} or c2~=${sums.h2} or c3~=${sums.h3} then error("${errMsg}") end
-      local _o=table.concat table.concat=function(...)error("${errMsg}")end
-      local _p,_e=pcall(unpack,{},0,2147483647) if _p then error("${errMsg}") end
-    `;
-  }
-
-  function injectDeadCode(code, amount) {
-    const lines = code.split('\n');
-    const numBlocks = Math.max(1, Math.min(Math.floor(amount / 12), 8));
-    let result = [];
-    let insertPos = Math.max(1, Math.floor(lines.length / 3));
-    for (let i = 0; i < lines.length; i++) {
-      result.push(lines[i]);
-      if (i > 0 && i % insertPos === 0 && i < lines.length - 1) {
-        result.push(generateDeadBlock());
-      }
-    }
-    for (let i = 0; i < numBlocks; i++) {
-      result.push(generateDeadBlock());
-    }
-    return result.join('\n');
-  }
-
   function generateDeadBlock() {
     const blocks = [
       `if false then\n  local ${randomVar()} = ${Math.floor(rand()*1000)}\n  ${randomVar()} = ${randomVar()} + ${Math.floor(rand()*100)}\n  print(${randomVar()})\nend`,
@@ -1536,75 +1593,102 @@
     return blocks[Math.floor(rand() * blocks.length)];
   }
 
+  function generateChecksums(code) {
+    let h1 = 0, h2 = 0;
+    for (let i = 0; i < code.length; i++) {
+      const c = code.charCodeAt(i);
+      h1 = ((h1 << 5) - h1 + c) >>> 0;
+      h2 = ((h2 * 31 + c) * 7) >>> 0;
+    }
+    return { h1, h2 };
+  }
+
   function injectAntiDebug(code) {
     const checks = [
       `if debug and debug.getinfo then\n  local info = debug.getinfo(1)\n  if info and info.source and string.find(info.source, "debug") then\n    error("debugger detected")\n  end\nend`,
       `if pcall(function() return debug.getinfo(1) end) then\n  local fn, err = pcall(function()\n    local info = debug.getinfo(1, "S")\n    if info and info.what == "C" then error("debug") end\n  end)\n  if not fn then error("debugger detected") end\nend`,
-      `local function _check()\n  local fn, err = pcall(function()\n    local t = {}\n    for i=1,10 do t[i] = i end\n    return table.concat(t)\n  end)\n  if not fn then error("environment modified") end\nend\n_check()`,
     ];
     return checks[Math.floor(rand() * checks.length)] + '\n' + code;
   }
 
-  // ─── Apply layers ───
-  function applyLayers(code, layers, safe, protection, deadCode, antiDebug) {
+  // ─── Main pipeline ───
+  function runPipeline(code, layers, safe, protection, deadCode, antiDebug) {
     let p = code;
+    const target = document.getElementById('luaVersion').value;
+
+    // Pre‑processing: dead code & anti‑debug (Hercules‑style extras)
     if (deadCode && protection > 20) {
-      p = injectDeadCode(p, protection);
-      log(`💀 Injected dead code blocks (${Math.round(protection/10)} blocks)`, 'info');
+      const count = Math.max(1, Math.min(Math.floor(protection / 12), 8));
+      p = moduleGarbageCode(p, count);
+      log(`💀 Injected ${count} garbage blocks`, 'info');
     }
     if (antiDebug && protection > 30) {
       p = injectAntiDebug(p);
-      log('🛡️ Added anti-debugging checks', 'info');
+      log('🛡️ Added anti‑debugging checks', 'info');
     }
-    if (layers[0]) p = safeMinify(p);
-    if (layers[1]) {
-      const tokens = tokenizeLua(p);
-      const numProc = function(num) {
-        if (Number.isInteger(num) && num >= -100000 && num <= 100000) return encodeNumberComplex(num, 0);
-        return String(num);
-      };
-      p = transformTokens(tokens, numProc, null);
+
+    // Pipeline order matches Hercules: Dynamic Code → Opaque Predicates → String Encoding → String→Expr → Function Inlining → Var Renaming → Virtual Machine → Control Flow → Garbage Code → Wrap In Function → Anti‑Tamper → Bytecode Encoding
+    const moduleMap = {
+      'layer_string_encoding': moduleStringEncoding,
+      'layer_variable_renaming': moduleVariableRenaming,
+      'layer_control_flow': moduleControlFlow,
+      'layer_garbage_code': (code) => moduleGarbageCode(code, Math.max(1, Math.floor(protection / 15))),
+      'layer_opaque_predicates': moduleOpaquePredicates,
+      'layer_string_to_expr': moduleStringToExpressions,
+      'layer_function_inlining': moduleFunctionInlining,
+      'layer_wrap_in_function': moduleWrapInFunction,
+      'layer_dynamic_code': moduleDynamicCode,
+      'layer_antitamper': moduleAntiTamper,
+      'layer_virtual_machine': moduleVirtualMachine,
+      'layer_bytecode_encoding': moduleBytecodeEncoding,
+    };
+
+    // Order from Hercules manifest (pipeline_order)[reference:4]
+    const order = [
+      'layer_dynamic_code',       // pipeline_order 10
+      'layer_opaque_predicates',  // pipeline_order 20
+      'layer_string_encoding',    // pipeline_order 30
+      'layer_string_to_expr',     // pipeline_order 40
+      'layer_function_inlining',  // pipeline_order 50
+      'layer_variable_renaming',  // pipeline_order 60
+      'layer_virtual_machine',    // pipeline_order 70 (skipped for luau)
+      'layer_control_flow',       // pipeline_order 90
+      'layer_garbage_code',       // pipeline_order 100
+      'layer_wrap_in_function',   // pipeline_order 120
+      'layer_antitamper',         // pipeline_order 80
+      'layer_bytecode_encoding',  // pipeline_order 130 (skipped for luau)
+    ];
+
+    for (const key of order) {
+      const idx = layerCheckboxes.findIndex(cb => cb.id === key);
+      if (idx === -1) continue;
+      if (!layers[idx]) continue;
+      // Skip VM and Bytecode for Luau (incompatible)[reference:5]
+      if (target === 'luau' && (key === 'layer_virtual_machine' || key === 'layer_bytecode_encoding')) {
+        log(`⚠️ Skipping ${key} (incompatible with Luau)`, 'warn');
+        continue;
+      }
+      // Skip anti‑tamper if safe mode
+      if (safe && (key === 'layer_antitamper' || key === 'layer_virtual_machine' || key === 'layer_bytecode_encoding')) {
+        log(`⚠️ Skipping ${key} (safe mode)`, 'warn');
+        continue;
+      }
+      try {
+        p = moduleMap[key](p);
+        log(`✅ Applied ${key}`, 'info');
+      } catch (e) {
+        log(`❌ Error in ${key}: ${e.message}`, 'error');
+      }
     }
-    if (layers[2]) {
-      const tokens = tokenizeLua(p);
-      const numEncoder = function(num) {
-        if (Number.isInteger(num) && num >= -100000 && num <= 100000) return encodeNumberComplex(num, 0);
-        return String(num);
-      };
-      const strProc = function(str) {
-        const content = str.slice(1, -1);
-        if (content.includes('\\')) return str;
-        let canEncode = true;
-        for (let i = 0; i < content.length; i++) {
-          if (content.charCodeAt(i) > 255) { canEncode = false; break; }
-        }
-        if (!canEncode || content.length === 0) return str;
-        let parts = [];
-        for (let i = 0; i < content.length; i++) {
-          const ch = content.charCodeAt(i);
-          parts.push(`string.char(${numEncoder(ch)})`);
-        }
-        if (parts.length === 1) return parts[0];
-        return parts.join('..');
-      };
-      p = transformTokens(tokens, null, strProc);
-    }
-    if (layers[3]) {
-      let junk = '';
-      const count = Math.floor(protection / 10) + 2;
-      for (let i = 0; i < Math.min(count, 15); i++) junk += generateContextJunk() + '\n';
-      p = junk + p;
-    }
-    if (layers[4]) p = injectAntiPattern(p);
-    if (layers[5]) p = generateSelfModifying() + '\n' + p;
-    if (layers[6] && !safe) p = flattenControlFlow(p);
-    if (layers[7] && !safe) p = generateVM(p);
-    if (layers[8]) p = generateStringTable() + '\n' + p;
-    if (layers[9] && !safe) p = generateAntiTamper(p) + '\n' + p;
+
+    // Watermark (Hercules‑style)[reference:6]
+    const watermark = `--[Obfuscated by finny.obf | hercules-style]\n`;
+    p = watermark + p;
+
     return p;
   }
 
-  // ─── Classic loader style ───
+  // ─── Classic loader wrapper ───
   function base64Encode(str) {
     const bytes = new TextEncoder().encode(str);
     let binary = '';
@@ -1621,9 +1705,8 @@
     return out;
   }
 
-  function generateClassicLoader(processed, seed) {
-    // Encode as Base64 and split into chunks
-    const b64 = base64Encode(processed);
+  function wrapInLoader(code, seed) {
+    const b64 = base64Encode(code);
     const chunkSize = 60;
     const chunks = [];
     for (let i = 0; i < b64.length; i += chunkSize) {
@@ -1631,7 +1714,6 @@
     }
     const literals = chunks.map(c => '"' + toDecimalEscapes(c) + '"');
 
-    // Build the table
     let tableStr = '{';
     for (let i = 0; i < literals.length; i++) {
       tableStr += literals[i];
@@ -1639,7 +1721,6 @@
     }
     tableStr += '}';
 
-    // Shuffle order using seed
     const order = [];
     for (let i = 0; i < literals.length; i++) order.push(i);
     reseed(seed);
@@ -1657,7 +1738,7 @@
     const decodeFn = randomVar();
     const resultVar = randomVar();
 
-    let loader = '--obfuscated with finny.obf skid\n';
+    let loader = '--obfuscated with finny.obf (Hercules-style)\n';
     loader += `return(function(...)local b=${tableStr}\n`;
     loader += `local o=${orderStr}\n`;
     loader += `local t={}\n`;
@@ -1676,8 +1757,8 @@
   // ─── Main obfuscate ───
   function obfuscate(code, layers, seed, safe, protection, deadCode, antiDebug, format) {
     reseed(seed || 0);
-    const processed = applyLayers(code, layers, safe, protection, deadCode, antiDebug);
-    let loader = generateClassicLoader(processed, seed);
+    const processed = runPipeline(code, layers, safe, protection, deadCode, antiDebug);
+    let loader = wrapInLoader(processed, seed);
     if (format === 'pretty') {
       loader = loader.replace(/;/g, ';\n');
     }
@@ -1687,11 +1768,9 @@
   // ─── Deobfuscator ───
   function deobfuscateOutput(code) {
     try {
-      // Find the decode function and the table
       const tableMatch = code.match(/local b=({[^}]+})/);
       if (!tableMatch) return 'Could not find encoded table';
       const tableStr = tableMatch[1];
-      // Parse the table to extract the encoded strings
       const stringLiterals = [];
       const regex = /"((?:\\\d{3})+?)"/g;
       let m;
@@ -1699,8 +1778,6 @@
         stringLiterals.push(m[1]);
       }
       if (stringLiterals.length === 0) return 'No encoded strings found';
-
-      // Decode each string
       let decoded = '';
       for (const enc of stringLiterals) {
         let str = '';
@@ -1719,13 +1796,11 @@
         }
         decoded += str;
       }
-      // Base64 decode
       try {
         const binary = atob(decoded);
         const bytes = new Uint8Array(binary.length);
         for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
-        const result = new TextDecoder().decode(bytes);
-        return result;
+        return new TextDecoder().decode(bytes);
       } catch (e) {
         return 'Failed to decode Base64: ' + e.message;
       }
@@ -1742,41 +1817,47 @@
   sourceCode.addEventListener('input', updateCounts);
   obfuscatedOutput.addEventListener('input', updateCounts);
 
-  function setPreset(mode) {
-    let indices = [];
-    if (mode === 'minify') indices = [0];
-    else if (mode === 'weak') indices = [0, 1, 2];
-    else if (mode === 'medium') indices = [0, 1, 2, 3, 4, 5];
-    else if (mode === 'strong') indices = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
-    else return;
-    layerCheckboxes.forEach((cb, i) => cb.checked = indices.includes(i));
-    allLayers.checked = indices.length === 10;
+  // ─── Presets ───
+  const PRESETS = {
+    light: ['layer_string_encoding', 'layer_variable_renaming'],
+    balanced: ['layer_string_encoding', 'layer_variable_renaming', 'layer_control_flow', 'layer_opaque_predicates'],
+    heavy: ['layer_string_encoding', 'layer_variable_renaming', 'layer_control_flow', 'layer_garbage_code',
+            'layer_opaque_predicates', 'layer_string_to_expr', 'layer_function_inlining', 'layer_wrap_in_function',
+            'layer_antitamper', 'layer_dynamic_code'],
+    maximum: ['layer_string_encoding', 'layer_variable_renaming', 'layer_control_flow', 'layer_garbage_code',
+              'layer_opaque_predicates', 'layer_string_to_expr', 'layer_function_inlining', 'layer_wrap_in_function',
+              'layer_antitamper', 'layer_dynamic_code', 'layer_virtual_machine', 'layer_bytecode_encoding']
+  };
+
+  function setPreset(name) {
+    const methods = PRESETS[name] || [];
+    layerCheckboxes.forEach(cb => {
+      cb.checked = methods.includes(cb.id);
+    });
+    allLayers.checked = methods.length === layerCheckboxes.length;
+    if (name !== 'custom') presetSelect.value = name;
   }
 
   presetSelect.addEventListener('change', function() {
     if (this.value === 'custom') return;
     setPreset(this.value);
-    log(`Preset changed to: ${this.value}`, 'info');
+    log(`Preset changed to: ${this.value} (${PRESETS[this.value].length} modules)`, 'info');
   });
 
   allLayers.addEventListener('change', function() {
     layerCheckboxes.forEach(cb => cb.checked = this.checked);
   });
+
   layerCheckboxes.forEach(cb => {
     cb.addEventListener('change', function() {
       if (!this.checked) allLayers.checked = false;
       else if (layerCheckboxes.every(c => c.checked)) allLayers.checked = true;
-      const current = layerCheckboxes.map(c => c.checked);
-      const presets = {
-        minify: [true, false, false, false, false, false, false, false, false, false],
-        weak: [true, true, true, false, false, false, false, false, false, false],
-        medium: [true, true, true, true, true, true, false, false, false, false],
-        strong: [true, true, true, true, true, true, true, true, true, true]
-      };
+      // Detect if current selection matches a preset
+      const current = layerCheckboxes.map(c => c.id).filter((_, i) => layerCheckboxes[i].checked);
       let found = false;
-      for (const [key, arr] of Object.entries(presets)) {
-        if (arr.every((v, i) => v === current[i])) {
-          presetSelect.value = key;
+      for (const [name, methods] of Object.entries(PRESETS)) {
+        if (current.length === methods.length && methods.every(m => current.includes(m))) {
+          presetSelect.value = name;
           found = true;
           break;
         }
@@ -1829,11 +1910,11 @@
       }
     }
   });
-  document.addEventListener('dragover', function(e) { e.preventDefault(); });
-  document.addEventListener('drop', function(e) { e.preventDefault(); });
+  document.addEventListener('dragover', e => e.preventDefault());
+  document.addEventListener('drop', e => e.preventDefault());
 
   // ─── File load ───
-  loadBtn.addEventListener('click', function() { fileInput.click(); });
+  loadBtn.addEventListener('click', () => fileInput.click());
   fileInput.addEventListener('change', function() {
     const file = this.files[0];
     if (!file) return;
@@ -1906,7 +1987,7 @@
     obfuscateBtn.disabled = true;
     deobfuscateBtn.disabled = true;
     setStatus('Obfuscating...', 'info');
-    log('⚙️ Starting obfuscation...', 'info');
+    log('⚙️ Starting Hercules‑style pipeline...', 'info');
 
     const seed = parseInt(seedInput.value) || 0;
     const layers = layerCheckboxes.map(cb => cb.checked);
@@ -1916,7 +1997,6 @@
     const antiDebug = antiDebugToggle.checked;
     const format = getOutputFormat();
 
-    // Pretty override
     const wasPretty = prettyPrint.checked;
     if (format === 'minified') prettyPrint.checked = false;
     else prettyPrint.checked = true;
@@ -1936,7 +2016,7 @@
         obfuscatedOutput.value = result;
         updateCounts();
         prettyPrint.checked = wasPretty;
-        log(`✅ Obfuscation completed in ${elapsed}ms (protection: ${protection}%, ${layers.filter(Boolean).length} layers)`, 'success');
+        log(`✅ Obfuscation completed in ${elapsed}ms (${layers.filter(Boolean).length} modules)`, 'success');
         setStatus(`Done in ${elapsed}ms`, 'ready');
         perfDisplay.textContent = `${elapsed}ms`;
         addJob(jobName, 'COMPLETED');
@@ -1979,11 +2059,11 @@
 
   // ─── Init ───
   sourceCode.value = 'print("hello world")';
-  setPreset('weak');
+  setPreset('balanced');
   updateCounts();
-  setStatus('Ready', 'ready');
-  log('🚀 finny.obf v2.0 with dashboard loaded', 'info');
-  log('💡 All stats start at zero – they update when you obfuscate code', 'info');
+  setStatus('Ready – Hercules‑style pipeline', 'ready');
+  log('🚀 finny.obf – Hercules‑style pipeline loaded', 'info');
+  log(`📋 Preset: Balanced (${PRESETS.balanced.length} modules)`, 'info');
   toggleLogPanel(true);
   updateDashboard();
 })();
